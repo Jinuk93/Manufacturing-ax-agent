@@ -65,6 +65,7 @@ docs/
 ├── 0-project-definition/          # Phase 0: 프로젝트 정의
 │   ├── prd-v1.0.md                #   PRD (제품 요구사항 정의서)
 │   ├── data-collection-strategy.md #   데이터 수집 전략 기준 문서
+│   ├── required-data-summary.md   #   실수집/합성/미정 데이터 요약표
 │   └── open-items.md              #   미결 사항 추적
 ├── future/                        # 향후 제품화/확장 비전
 │   └── customer-onboarding-ontology-strategy.md
