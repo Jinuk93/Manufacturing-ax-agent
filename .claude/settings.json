@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init)",
+      "Bash(git remote add origin https://github.com/Jinuk93/Manufacturing-ax-agent.git)",
+      "Bash(git fetch origin)",
+      "Bash(git add README.md)",
+      "Bash(git commit:*)",
+      "Bash(git branch -M main)",
+      "Bash(git push -u origin main)",
+      "Bash(git add docs/)",
+      "Bash(git push)",
+      "Bash(git add README.md docs/)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\nugikim\\Desktop\\workspace\\Manufacturing-ax-agent\\.claude\\skills"
+    ]
+  }
+}

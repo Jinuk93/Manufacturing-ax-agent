@@ -121,8 +121,8 @@
 
 ## 5. 미결 사항 (Open Items)
 
-PRD v1.0 시점에서 아직 결정되지 않은 항목들입니다.
-각 항목은 해당 Phase 진입 시 ADR로 기록하며 확정합니다.
+PRD v1.0 시점의 미결 항목입니다.
+최신 전체 목록(12건)은 [open-items.md](open-items.md)를 기준으로 관리합니다.
 
 | # | 항목 | 관련 기능 | 비고 |
 |---|------|-----------|------|
@@ -135,6 +135,9 @@ PRD v1.0 시점에서 아직 결정되지 않은 항목들입니다.
 | 7 | 합성 데이터 시나리오 설계 기준 | F3, F5 | 어떤 비즈니스 시나리오를 커버할 것인가 |
 | 8 | 세부 마일스톤 정의 | 전체 | 데이터 탐색 이후 구체화 |
 
+> **Note:** PRD v1.0 이후 추가된 미결 항목(KAMP 데이터 실체 확인, Canonical Model 초안 등)은
+> [open-items.md](open-items.md)에서 관리합니다.
+
 ---
 
 ## 6. 관련 ADR 목록
@@ -144,7 +147,7 @@ PRD v1.0 시점에서 아직 결정되지 않은 항목들입니다.
 | ADR-000 | 데이터 도메인을 CNC 단일로 통일 (NASA 데이터 배제) | Decided |
 | ADR-001 | RUL 예측 포기, Forecasting 방식으로 전환 | Decided |
 | ADR-002 | MES/ERP 데이터 Python 합성 생성 | Decided |
-| ADR-003 | PostgreSQL 단일 DB 통합 (TimescaleDB + pgvector) | Decided |
+| ADR-003 | PostgreSQL 통합 (TimescaleDB + pgvector) + Neo4j 별도, 총 2개 DB | Decided |
 | ADR-004 | 실시간 처리를 폴링 방식으로 대체 | Decided |
 | ADR-005 | 시각적 결과물(대시보드 MVP) 앞당김 | Decided |
 
