@@ -1,7 +1,7 @@
 # 필요한 데이터 정리표
 
 **상태:** Draft (검토 중)
-**최종 수정일:** 2026-03-09
+**최종 수정일:** 2026-03-10
 
 이 문서는 현재 프로젝트에서 필요한 데이터를
 "실제로 수집할 것", "합성으로 만들 것", "미정 또는 혼합 방식으로 갈 것"으로 나누어 정리합니다.
@@ -43,7 +43,7 @@
 
 | 구분 | 데이터 종류 | 현재 방식 | 왜 필요한가 | 대표 키 / 컬럼 |
 |------|-------------|----------|-------------|----------------|
-| 실제 수집 | SCADA / CNC 센서 시계열 | KAMP 공공 데이터 수집 | F1 전처리, F2 이상탐지, forecasting 핵심 입력 | equipment_id, timestamp, vibration, current, temperature, spindle_speed |
+| 실제 수집 | SCADA / CNC 센서 시계열 | Kaggle CNC Mill 확보, Bosch 보조 참고 | F1 전처리, F2 이상탐지, forecasting 핵심 입력 | experiment, sequence, current, power, velocity, position |
 | 실제 수집 가능 | 공개 정비 매뉴얼 / 기술 문서 | 공개 자료 수집 | F4 GraphRAG, 정비 지식 근거 확보 | manual_id, equipment_type, part_id, symptom_keyword |
 | 합성 생성 | MES 작업지시 데이터 | Python 합성 | 알람 시점의 작업 상태, 납기, 생산 맥락 판단 | work_order_id, equipment_id, start_time, end_time, due_date, priority |
 | 합성 생성 | ERP 부품 재고 데이터 | Python 합성 | 부품 재고, 리드타임, 즉시 정지 가능 여부 판단 | part_id, equipment_id, stock_quantity, lead_time_days, snapshot_time |
@@ -62,6 +62,15 @@
 | **F4** GraphRAG | ✅ | ✅ | ✅ | |
 | **F5** LLM 조치 제안 | | | | ✅ F2+F3+F4 |
 | **F6** 대시보드 | | | | ✅ F1~F5 |
+
+### F1, F2에서 구분해서 봐야 할 것
+
+| 구분 | 현재 확보 | 목표 표준 |
+|------|-----------|-----------|
+| 시간축 | `sequence` 기반 순서 정보 | `timestamp` |
+| 설비 식별 | `experiment` 단위 파일 구분 | `equipment_id` |
+| 핵심 센서 | 전류, 전력, 속도, 위치, 가속도 | 전류, 전력, 속도 중심 + 필요 시 진동/온도 보강 |
+| 부족한 항목 | 온도, 실제 정비 이벤트 | 합성 이벤트 로그, 보강 센서 |
 
 ### 기능별 필요 데이터셋 상세 매핑
 
@@ -331,7 +340,7 @@
 
 아래 순서로 가는 것이 가장 현실적입니다.
 
-1. KAMP 센서 데이터를 실제로 확보한다.
+1. Kaggle CNC Mill 센서 데이터를 기준 데이터로 사용한다.
 2. EDA를 통해 실제 컬럼, 주기, 결측 현황을 확인한다.
 3. 그 결과에 맞춰 MES/ERP 합성 스키마를 고정한다.
 4. 예지보전 해석용 이벤트 로그 최소 버전을 설계한다.
