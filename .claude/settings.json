@@ -1,13 +1,14 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions",
-    "additionalDirectories": [
-      "c:\\Users\\nugikim\\Desktop\\workspace\\Manufacturing-ax-agent\\.claude\\skills"
-    ],
     "allow": [
       "Bash(git add .gitignore .claude/settings.json docs/progress/constraints.md docs/0-project-definition/required-data-summary.md)",
       "Bash(git commit:*)",
-      "Bash(git push origin main)"
+      "Bash(git push origin main)",
+      "Read(//c/Users/nugikim/Downloads/**)"
+    ],
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "c:\\Users\\nugikim\\Desktop\\workspace\\Manufacturing-ax-agent\\.claude\\skills"
     ]
   }
 }

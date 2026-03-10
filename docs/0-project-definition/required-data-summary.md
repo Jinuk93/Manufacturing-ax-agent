@@ -85,9 +85,9 @@
 | 데이터셋 | 출처 | 용도 | 비고 |
 |----------|------|------|------|
 | CNC Mill Tool Wear | [Kaggle](https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill) | F1, F2 핵심 입력 | 48컬럼, 18실험, 100ms 샘플링, tool_condition 라벨 |
-| KAMP 제조 AI 데이터셋 | [공공데이터포털](https://www.data.go.kr/data/15089213/fileData.do) | F1 보조 데이터 | CNC 포함 50종, 가이드북 포함 |
-| Bosch CNC Machining | [GitHub](https://github.com/boschresearch/CNC_Machining) | F1 보조 데이터 | 실제 산업 진동 데이터 |
-| Milling Tool Wear & RUL | [Kaggle](https://www.kaggle.com/datasets/programmer3/milling-tool-wear-and-rul-dataset) | F2 참고 | 공구 수명 예측용, 진동+전류 |
+| KAMP 제조 AI 데이터셋 | [공공데이터포털](https://www.data.go.kr/data/15089213/fileData.do) | 참고용 카탈로그 | 50종 목록(메타데이터)만 보유, 실제 센서 데이터는 kamp-ai.kr 회원가입 필요. Kaggle CNC Mill로 대체 |
+| Bosch CNC Machining | [GitHub](https://github.com/boschresearch/CNC_Machining) | F1 보조 데이터 | 실제 산업 진동 데이터, HDF5(.h5) 포맷 — EDA 시 h5py 필요 |
+| Milling Tool Wear & RUL | [Kaggle](https://www.kaggle.com/datasets/programmer3/milling-tool-wear-and-rul-dataset) | F2 참고 | 센서 패턴(vibration, acoustic_rms 등)만 참고. RUL 컬럼은 ADR-001에 의해 미사용 |
 | Multi-Sensor CNC Tool Wear | [Kaggle](https://www.kaggle.com/datasets/ziya07/multi-sensor-cnc-tool-wear-dataset/data) | F2 참고 | 다중 센서 데이터 |
 
 > **핵심:** 직접 확보해야 하는 것은 딱 2가지입니다.
@@ -110,19 +110,33 @@
 - F2 이상탐지와 forecasting의 핵심 입력
 - 전체 시스템의 시간축 기준
 
-우선 확인할 항목:
+실제 확보된 핵심 센서 (Kaggle CNC Mill 기준):
 
-- `timestamp`
-- `equipment_id`
-- 진동
-- 전류
-- 온도
-- 주축 속도
+- 전류 (CurrentFeedback, OutputCurrent) — X/Y/S축
+- 전압 (DCBusVoltage, OutputVoltage) — X/Y/S축
+- 전력 (OutputPower) — X/Y/Z/S축
+- 위치 (ActualPosition, CommandPosition) — X/Y/Z/S축
+- 속도 (ActualVelocity, CommandVelocity) — X/Y/Z/S축
+- 가속도 (ActualAcceleration, CommandAcceleration) — X/Y/Z/S축
+- 주축 속도 (S1_ActualVelocity)
+- 가공 단계 (Machining_Process) — 10단계
+
+확보되지 않은 센서:
+
+- ~~진동~~ → Bosch CNC(보조)와 Multi-Sensor(참고)로 보완
+- ~~온도~~ → 현 데이터셋으로 불가. 전류·전력 기반으로 대체 설계
+- `timestamp` → Phase 1에서 합성 (sequence × 100ms → datetime)
+- `equipment_id` → Phase 1에서 매핑 (experiment_01 → CNC-001)
+
+참고: Z축 전기 피드백 4개 컬럼(CurrentFeedback, DCBusVoltage, OutputCurrent, OutputVoltage)은 전 실험에서 0값 — 제거 대상.
+상수 컬럼 2개(S1_SystemInertia=12.0, M1_CURRENT_PROGRAM_NUMBER=1.0)도 제거 대상.
+실질 유효 컬럼: **42개**
 
 현재 확보 방식:
 
-- KAMP 공공 데이터 다운로드
-- Phase 1 EDA에서 실제 컬럼과 주기 확인
+- ✅ Kaggle CNC Mill Tool Wear 다운로드 완료 (핵심, 18실험)
+- ✅ Bosch CNC Machining 다운로드 완료 (보조, HDF5)
+- Phase 1 EDA에서 실제 패턴과 분포 확인
 
 ### 3.2. 공개 정비 문서 / 기술 자료
 
