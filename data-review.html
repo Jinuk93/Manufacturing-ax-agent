@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데이터 전략 리뷰</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;scroll-padding-top:64px;}
+  body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;background:#fff;color:#222;line-height:1.75;-webkit-font-smoothing:antialiased;}
+
+  /* ===== Top Nav ===== */
+  .topnav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #eee;padding:0 24px;display:flex;align-items:center;height:56px;overflow-x:auto;gap:4px;-webkit-overflow-scrolling:touch;}
+  .topnav::-webkit-scrollbar{display:none;}
+  .topnav a{white-space:nowrap;text-decoration:none;font-size:13px;font-weight:600;color:#999;padding:8px 14px;border-radius:8px;transition:all .15s;flex-shrink:0;}
+  .topnav a:hover{color:#222;background:#f5f5f5;}
+  .topnav a.active{color:#222;background:#f0f0f0;}
+
+  /* ===== Page Container ===== */
+  .pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+  .pages::-webkit-scrollbar{display:none;}
+  .page{flex:0 0 100vw;width:100vw;min-height:calc(100vh - 56px);scroll-snap-align:start;overflow-y:auto;padding:40px 24px 80px;}
+  .inner{max-width:780px;margin:0 auto;}
+
+  /* ===== Typography ===== */
+  .page-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
+  .page-sub{font-size:15px;color:#888;margin-bottom:40px;}
+  h3{font-size:18px;font-weight:700;margin:36px 0 12px;letter-spacing:-0.2px;}
+  h4{font-size:15px;font-weight:700;margin:24px 0 8px;color:#444;}
+  p{font-size:14px;color:#555;margin-bottom:12px;}
+  .caption{font-size:12px;color:#aaa;margin-top:4px;}
+
+  /* ===== Dataset List Card ===== */
+  .ds-list{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+  .ds-item{border:1px solid #eee;border-radius:14px;padding:20px 22px;display:flex;align-items:flex-start;gap:18px;transition:border-color .15s;}
+  .ds-item:hover{border-color:#ccc;}
+  .ds-icon{flex:0 0 44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;}
+  .ds-icon.main{background:#222;}
+  .ds-icon.sub{background:#888;}
+  .ds-icon.ref{background:#bbb;}
+  .ds-icon.meta{background:#ddd;color:#999;}
+  .ds-body{flex:1;min-width:0;}
+  .ds-body h4{margin:0 0 2px;font-size:15px;color:#222;}
+  .ds-body .ds-desc{font-size:13px;color:#888;margin-bottom:8px;}
+  .ds-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .ds-tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;border:1px solid #eee;color:#666;background:#fafafa;}
+
+  /* ===== Table ===== */
+  .tbl-wrap{overflow-x:auto;margin:16px 0 24px;border:1px solid #eee;border-radius:14px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{background:#fafafa;color:#999;font-weight:700;font-size:11px;letter-spacing:0.5px;text-transform:uppercase;padding:12px 14px;text-align:left;border-bottom:1px solid #eee;position:sticky;top:0;z-index:1;}
+  tbody td{padding:14px;border-bottom:1px solid #f5f5f5;vertical-align:top;color:#444;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#fafafa;}
+  .td-purpose{font-weight:700;color:#222;}
+  .td-fn{font-weight:700;color:#3182f6;white-space:nowrap;}
+  .td-why{font-size:12px;color:#999;margin-top:4px;line-height:1.6;}
+
+  /* ===== Status ===== */
+  .st{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;}
+  .st-done{background:#e8faf0;color:#00a854;}
+  .st-synth{background:#fff8e6;color:#d48806;}
+  .st-plan{background:#f5f5f5;color:#999;}
+  .st-output{background:#e8f3ff;color:#3182f6;}
+
+  /* ===== Flow ===== */
+  .flow{display:flex;gap:6px;margin:20px 0 32px;overflow-x:auto;padding-bottom:4px;}
+  .flow::-webkit-scrollbar{display:none;}
+  .fn{border:1.5px solid #eee;border-radius:14px;padding:16px 14px;min-width:110px;text-align:center;flex-shrink:0;transition:border-color .15s;}
+  .fn:hover{border-color:#3182f6;}
+  .fn .fid{font-size:20px;font-weight:800;color:#3182f6;}
+  .fn .fname{font-size:12px;font-weight:600;color:#444;margin-top:2px;}
+  .fn .fsub{font-size:11px;color:#aaa;margin-top:6px;line-height:1.4;}
+  .farr{display:flex;align-items:center;color:#ddd;font-size:18px;flex-shrink:0;}
+
+  /* ===== Progress ===== */
+  .prog-list{display:flex;flex-direction:column;gap:16px;margin:20px 0;}
+  .prog-item{display:flex;align-items:center;gap:14px;}
+  .prog-label{flex:0 0 100px;font-size:13px;font-weight:600;color:#444;}
+  .prog-bar{flex:1;background:#f2f2f2;border-radius:6px;height:8px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:6px;background:#222;transition:width .5s;}
+  .prog-pct{flex:0 0 40px;font-size:13px;font-weight:700;text-align:right;color:#222;}
+  .prog-note{font-size:12px;color:#aaa;margin:-4px 0 0 114px;}
+
+  /* ===== Gap ===== */
+  .gap-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+  .gap-card{border:1px solid #eee;border-radius:14px;padding:18px 20px;}
+  .gap-card:hover{border-color:#ccc;}
+  .gap-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .gap-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+  .gap-num.r{background:#ff4d4f;}
+  .gap-num.y{background:#faad14;}
+  .gap-num.g{background:#52c41a;}
+  .gap-title{font-size:14px;font-weight:700;color:#222;}
+  .gap-desc{font-size:13px;color:#888;margin-bottom:6px;}
+  .gap-fix{font-size:13px;color:#3182f6;font-weight:600;}
+
+  /* ===== Info Box ===== */
+  .info{background:#f9f9f9;border-radius:14px;padding:20px 22px;margin:20px 0;}
+  .info p{margin:0;font-size:14px;color:#555;}
+  .info strong{color:#222;}
+
+  /* ===== Detail Grid ===== */
+  .meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:16px 0;}
+  .meta-box{background:#f9f9f9;border-radius:12px;padding:14px 16px;}
+  .meta-box .ml{font-size:11px;color:#aaa;font-weight:600;letter-spacing:0.3px;}
+  .meta-box .mv{font-size:18px;font-weight:800;color:#222;margin-top:2px;}
+  .meta-box .mv.sm{font-size:14px;font-weight:600;}
+
+  /* ===== Warn Box ===== */
+  .warn{background:#fffbe6;border:1px solid #fff1b8;border-radius:12px;padding:16px 18px;margin:12px 0;font-size:13px;color:#876800;line-height:1.7;}
+  .warn strong{color:#614700;}
+
+  /* ===== Next Steps ===== */
+  .steps{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+  .step-item{border:1px solid #eee;border-radius:14px;padding:18px 20px;}
+  .step-item:hover{border-color:#ccc;}
+  .step-item h4{margin:0 0 4px;font-size:14px;color:#222;}
+  .step-item p{margin:0;font-size:13px;color:#888;}
+
+  @media(max-width:640px){
+    .page{padding:28px 16px 60px;}
+    .page-title{font-size:22px;}
+    .meta-grid{grid-template-columns:1fr 1fr;}
+    .flow{flex-wrap:nowrap;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav" id="nav">
+  <a href="#p0" class="active" data-idx="0">보유 데이터</a>
+  <a href="#p1" data-idx="1">해결할 문제</a>
+  <a href="#p2" data-idx="2">6가지 기능</a>
+  <a href="#p3" data-idx="3">데이터 매핑표</a>
+  <a href="#p4" data-idx="4">데이터셋 상세</a>
+  <a href="#p5" data-idx="5">진행도</a>
+  <a href="#p6" data-idx="6">갭 분석</a>
+  <a href="#p7" data-idx="7">다음 단계</a>
+</nav>
+
+<div class="pages" id="pages">
+
+<!-- =============================== -->
+<!-- PAGE 0: 보유 데이터 리스트 -->
+<!-- =============================== -->
+<div class="page" id="p0">
+<div class="inner">
+  <div class="page-title">현재 보유 데이터셋</div>
+  <p class="page-sub">다운로드 완료한 4종 + 카탈로그 1종. data/raw/ 폴더에 저장되어 있어요.</p>
+
+  <div class="ds-list">
+    <div class="ds-item">
+      <div class="ds-icon main">1</div>
+      <div class="ds-body">
+        <h4>Kaggle CNC Mill Tool Wear</h4>
+        <div class="ds-desc">미시간대 SMART Lab | 실제 CNC 밀링 실험 | 18실험, ~25,286행, 48컬럼 (유효 42개), 100ms 샘플링</div>
+        <div class="ds-tags">
+          <span class="ds-tag">전류</span>
+          <span class="ds-tag">전압</span>
+          <span class="ds-tag">전력</span>
+          <span class="ds-tag">위치</span>
+          <span class="ds-tag">속도</span>
+          <span class="ds-tag">가속도</span>
+          <span class="ds-tag">가공 단계</span>
+          <span class="ds-tag">공구 상태 라벨</span>
+        </div>
+      </div>
+      <span class="st st-done">핵심</span>
+    </div>
+
+    <div class="ds-item">
+      <div class="ds-icon sub">2</div>
+      <div class="ds-body">
+        <h4>Bosch CNC Machining</h4>
+        <div class="ds-desc">Bosch Research (GitHub) | 실제 산업 데이터 | 1,702개 HDF5 파일 | M01~M03 × OP00~OP14 × good/bad</div>
+        <div class="ds-tags">
+          <span class="ds-tag">진동 센서</span>
+          <span class="ds-tag">HDF5 포맷</span>
+          <span class="ds-tag">품질 분류</span>
+        </div>
+      </div>
+      <span class="st st-output">보조</span>
+    </div>
+
+    <div class="ds-item">
+      <div class="ds-icon ref">3</div>
+      <div class="ds-body">
+        <h4>Multi-Sensor CNC Tool Wear</h4>
+        <div class="ds-desc">Kaggle | 2,000행 × 17컬럼 | 절삭력 + 진동 + 음향방출 피처 | 3단계 마모 분류</div>
+        <div class="ds-tags">
+          <span class="ds-tag">절삭력 5개</span>
+          <span class="ds-tag">진동 5개</span>
+          <span class="ds-tag">음향방출 5개</span>
+          <span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span>
+        </div>
+      </div>
+      <span class="st st-synth">참고</span>
+    </div>
+
+    <div class="ds-item">
+      <div class="ds-icon ref">4</div>
+      <div class="ds-body">
+        <h4>Milling Tool Wear & RUL</h4>
+        <div class="ds-desc">Kaggle | 1,400행 × 10컬럼 | 진동 3축 + 음향 + 공정 파라미터</div>
+        <div class="ds-tags">
+          <span class="ds-tag">vibration x/y/z</span>
+          <span class="ds-tag">acoustic_rms</span>
+          <span class="ds-tag" style="color:#ff4d4f;">RUL 미사용 (ADR-001)</span>
+          <span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span>
+        </div>
+      </div>
+      <span class="st st-synth">참고</span>
+    </div>
+
+    <div class="ds-item" style="opacity:0.55;">
+      <div class="ds-icon meta">5</div>
+      <div class="ds-body">
+        <h4>KAMP 제조AI 50종 카탈로그</h4>
+        <div class="ds-desc">공공데이터포털 | 50개 데이터셋 목록(메타데이터) | 실제 센서 데이터 아님</div>
+        <div class="ds-tags">
+          <span class="ds-tag">목록만 보유</span>
+          <span class="ds-tag">Kaggle로 대체</span>
+        </div>
+      </div>
+      <span class="st st-plan">카탈로그</span>
+    </div>
+  </div>
+
+  <div class="info">
+    <p>이 데이터들이 <strong>왜 필요한지, 어디에 쓰이는지</strong>를 이해하려면 &rarr; 다음 페이지로 넘어가세요.</p>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 1: 해결할 문제 -->
+<!-- =============================== -->
+<div class="page" id="p1">
+<div class="inner">
+  <div class="page-title">우리가 해결하려는 문제</div>
+  <p class="page-sub">CNC 공장에서 실제로 겪는 3가지 문제. 이걸 해결하려면 데이터가 필요해요.</p>
+
+  <h3>1. 이상탐지</h3>
+  <p>장비 센서가 평소와 달라지고 있는데, 사람이 눈치채기 전에 시스템이 먼저 감지해야 해요.</p>
+  <p style="color:#999;">예를 들어 X축 전류가 평소 0.08A인데 갑자기 0.3A로 튀면 &mdash; "뭔가 이상하다"고 자동으로 알려주는 거예요.</p>
+
+  <h3>2. 예지보전</h3>
+  <p>이상이 감지되면, "앞으로 어떻게 될지" 예측해서 <strong>지금 멈춰야 하는지, 감속하면 되는지, 다음 정비 때 하면 되는지</strong> 판단해야 해요.</p>
+  <p style="color:#999;">단순히 "이상하다"를 넘어서, "30분 뒤에 위험해진다" 같은 미래 예측이 핵심이에요.</p>
+
+  <h3>3. 지식 구조화 (온톨로지)</h3>
+  <p>"이 고장코드가 뜨면 → 이 부품을 교체하고 → 매뉴얼 3장을 참고해"</p>
+  <p>이런 정비 지식이 지금은 숙련공 머릿속에만 있어요. 이걸 그래프(온톨로지)로 구조화해서 AI가 검색하고 활용할 수 있게 해야 해요.</p>
+
+  <div class="info" style="margin-top:32px;">
+    <p>이 3가지를 합치면 최종 모습은 이거예요:</p>
+    <p style="margin-top:8px;"><strong>센서 이상 감지 &rarr; 원인 추정 &rarr; 매뉴얼 검색 &rarr; 조치 보고서 자동 생성</strong></p>
+    <p style="margin-top:8px;">사람이 "뭐 해야 하지?" 가 아니라, 시스템이 먼저 알려주는 거예요.</p>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 2: 6가지 기능 -->
+<!-- =============================== -->
+<div class="page" id="p2">
+<div class="inner">
+  <div class="page-title">그래서 6가지 기능을 만들어요</div>
+  <p class="page-sub">앞 기능의 출력이 뒷 기능의 입력이 됩니다. 순서대로 만들어요.</p>
+
+  <div class="flow">
+    <div class="fn">
+      <div class="fid">F1</div>
+      <div class="fname">센서 전처리</div>
+      <div class="fsub">원시 데이터를<br>깨끗하게 정리</div>
+    </div>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid">F2</div>
+      <div class="fname">이상탐지 + 예측</div>
+      <div class="fsub">"이상한가?" +<br>"앞으로 어떻게 되나?"</div>
+    </div>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid">F3</div>
+      <div class="fname">IT/OT 동기화</div>
+      <div class="fsub">센서 + 작업지시 +<br>재고를 하나로</div>
+    </div>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid">F4</div>
+      <div class="fname">GraphRAG</div>
+      <div class="fsub">온톨로지에서<br>관련 지식 검색</div>
+    </div>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid">F5</div>
+      <div class="fname">LLM 자율 판단</div>
+      <div class="fsub">조치 보고서<br>자동 생성</div>
+    </div>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid">F6</div>
+      <div class="fname">대시보드</div>
+      <div class="fsub">전체를<br>한눈에</div>
+    </div>
+  </div>
+
+  <h3>각 기능이 어떤 문제를 해결하나?</h3>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>기능</th><th>해결하는 문제</th><th>하는 일</th><th>입력</th><th>출력</th></tr></thead>
+    <tbody>
+      <tr><td class="td-fn">F1</td><td>이상탐지 / 예지보전</td><td>센서 원시 데이터를 정리 (노이즈 제거, 정규화, 결측 처리)</td><td>CNC 센서 CSV</td><td>깨끗한 시계열</td></tr>
+      <tr><td class="td-fn">F2</td><td>이상탐지 / 예지보전</td><td>패턴 이상 감지 + 미래 센서값 예측 (Forecasting)</td><td>F1 출력 + 라벨</td><td>이상 점수 + 예측값</td></tr>
+      <tr><td class="td-fn">F3</td><td>예지보전</td><td>센서(OT)와 작업지시·재고(IT) 정보를 시간 기준으로 합침</td><td>F1 + MES + ERP</td><td>통합 운영 맥락</td></tr>
+      <tr><td class="td-fn">F4</td><td>온톨로지</td><td>온톨로지 그래프에서 관련 매뉴얼·부품·고장 이력 검색</td><td>Neo4j + 매뉴얼</td><td>검색 결과</td></tr>
+      <tr><td class="td-fn">F5</td><td>전체 통합</td><td>F2+F3+F4 결과를 LLM에 넘겨 조치 보고서 자동 작성</td><td>F2+F3+F4 출력</td><td>조치 보고서</td></tr>
+      <tr><td class="td-fn">F6</td><td>관제</td><td>모든 기능의 결과를 한 화면에 시각화</td><td>F1~F5 전체</td><td>실시간 화면</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 3: 데이터 매핑표 -->
+<!-- =============================== -->
+<div class="page" id="p3">
+<div class="inner">
+  <div class="page-title">기능별 필요 데이터 상세 매핑</div>
+  <p class="page-sub">목적 &rarr; 기능 &rarr; 어떤 데이터가 필요한지 &rarr; 왜 &rarr; 언제 &rarr; 지금 있는지를 한 표에서 볼 수 있어요.</p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:70px">목적</th>
+        <th style="width:36px">기능</th>
+        <th style="width:170px">필요한 데이터</th>
+        <th>왜 필요한가?</th>
+        <th style="width:60px">Phase</th>
+        <th style="width:75px">현재</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 이상탐지 -->
+      <tr>
+        <td class="td-purpose" rowspan="5">이상탐지</td>
+        <td class="td-fn" rowspan="3">F1</td>
+        <td><strong>CNC 센서 시계열</strong><br><span style="font-size:11px;color:#999;">전류, 전압, 전력, 위치, 속도, 가속도</span></td>
+        <td>이상탐지의 출발점. "평소 패턴"을 학습하려면 정상 센서 데이터가 있어야 해요.<div class="td-why">예: X축 전류가 평소 0.08A → 갑자기 0.3A = 이상 의심</div></td>
+        <td><span class="st st-output">P1</span></td>
+        <td><span class="st st-done">확보</span></td>
+      </tr>
+      <tr>
+        <td><strong>가공 단계 라벨</strong><br><span style="font-size:11px;color:#999;">Machining_Process (10단계)</span></td>
+        <td>같은 센서값이라도 "절삭 중"과 "이동 중"에서 의미가 달라요. 단계별로 나눠 분석해야 정확.<div class="td-why">예: Layer 1에서 전류 0.3A는 정상, Repositioning에서 0.3A는 비정상</div></td>
+        <td><span class="st st-output">P1</span></td>
+        <td><span class="st st-done">확보</span></td>
+      </tr>
+      <tr>
+        <td><strong>timestamp / equipment_id</strong><br><span style="font-size:11px;color:#999;">시간축 + 설비 식별자</span></td>
+        <td>여러 설비를 시간 기준으로 비교하려면 반드시 필요. 현재 데이터에 없어서 합성해야 해요.<div class="td-why">sequence × 100ms → datetime / experiment_01 → CNC-001</div></td>
+        <td><span class="st st-output">P1</span></td>
+        <td><span class="st st-synth">합성 예정</span></td>
+      </tr>
+      <tr>
+        <td class="td-fn" rowspan="2">F2</td>
+        <td><strong>공구 상태 라벨</strong><br><span style="font-size:11px;color:#999;">tool_condition: worn / unworn</span></td>
+        <td>"이 패턴이 정상인지 이상인지" 모델을 학습시키려면 정답이 있어야 해요.<div class="td-why">worn 10실험 / unworn 8실험으로 균형 양호</div></td>
+        <td><span class="st st-output">P1</span></td>
+        <td><span class="st st-done">확보</span></td>
+      </tr>
+      <tr>
+        <td><strong>정비/고장 이벤트 로그</strong><br><span style="font-size:11px;color:#999;">failure_code, maintenance_time</span></td>
+        <td>"전류 올라간 뒤 실제로 고장이 났었나?" 연결하려면 이벤트 기록 필요. 공개 데이터에 없어서 합성.<div class="td-why">"진짜 이상"과 "단순 노이즈" 구분에 필수</div></td>
+        <td><span class="st st-plan">P2</span></td>
+        <td><span class="st st-plan">합성</span></td>
+      </tr>
+
+      <!-- 예지보전 -->
+      <tr>
+        <td class="td-purpose" rowspan="4">예지보전</td>
+        <td class="td-fn">F2</td>
+        <td><strong>전처리된 센서 시계열</strong><br><span style="font-size:11px;color:#999;">F1에서 정규화된 데이터</span></td>
+        <td>"30분 뒤 전류가 어떻게 변할까?" 예측하려면 깨끗한 시계열 입력 필요.<div class="td-why">ADR-001: RUL 대신 Forecasting 방식 — 미래값 예측 후 임계치 돌파 여부 판단</div></td>
+        <td><span class="st st-output">P1</span></td>
+        <td><span class="st st-done">F1 출력</span></td>
+      </tr>
+      <tr>
+        <td class="td-fn" rowspan="3">F3</td>
+        <td><strong>MES 작업지시</strong><br><span style="font-size:11px;color:#999;">work_order, due_date, priority</span></td>
+        <td>이상 감지 시 "지금 멈춰도 되나?" 판단하려면 현재 작업 상태를 알아야 해요.<div class="td-why">예: 납기 3시간 전 + 불량 위험 → 즉시 정지 vs 납기 여유 → 감속</div></td>
+        <td><span class="st st-plan">P2</span></td>
+        <td><span class="st st-plan">합성</span></td>
+      </tr>
+      <tr>
+        <td><strong>ERP 부품 재고</strong><br><span style="font-size:11px;color:#999;">part_id, stock, lead_time</span></td>
+        <td>"교체 부품이 창고에 있나?" 확인해야 실제 정비 가능. 없으면 발주 필요.<div class="td-why">예: 베어링 재고 0개, 리드타임 5일 → "즉시 교체" 불가</div></td>
+        <td><span class="st st-plan">P2</span></td>
+        <td><span class="st st-plan">합성</span></td>
+      </tr>
+      <tr>
+        <td><strong>센서 데이터 (OT측)</strong><br><span style="font-size:11px;color:#999;">F1 전처리 출력</span></td>
+        <td>MES(IT)와 센서(OT)를 하나의 타임라인에 동기화해야 "이 시점에 뭘 하고 있었는지" 볼 수 있어요.</td>
+        <td><span class="st st-output">P1</span></td>
+        <td><span class="st st-done">F1 출력</span></td>
+      </tr>
+
+      <!-- 온톨로지 -->
+      <tr>
+        <td class="td-purpose" rowspan="3">온톨로지</td>
+        <td class="td-fn" rowspan="3">F4</td>
+        <td><strong>온톨로지 관계 데이터</strong><br><span style="font-size:11px;color:#999;">설비→고장코드→부품→매뉴얼</span></td>
+        <td>지식 그래프의 뼈대. "이 고장 → 이 부품 → 이 매뉴얼" 관계를 Neo4j에 구축.<div class="td-why">노드(설비, 고장, 부품, 매뉴얼)와 관계(발생, 필요, 참조)를 직접 설계</div></td>
+        <td><span class="st st-plan">P3</span></td>
+        <td><span class="st st-plan">설계</span></td>
+      </tr>
+      <tr>
+        <td><strong>정비 매뉴얼 텍스트</strong><br><span style="font-size:11px;color:#999;">title, section, text_chunk</span></td>
+        <td>GraphRAG가 "비슷한 과거 사례"를 검색하려면 매뉴얼이 벡터 DB에 있어야 해요.<div class="td-why">CNC 매뉴얼 수집 + 부족하면 합성 보강</div></td>
+        <td><span class="st st-plan">P3</span></td>
+        <td><span class="st st-plan">수집</span></td>
+      </tr>
+      <tr>
+        <td><strong>고장 코드 체계</strong><br><span style="font-size:11px;color:#999;">failure_code, description, severity</span></td>
+        <td>온톨로지 핵심 노드. "E-001 = 스핀들 과열"처럼 코드와 의미를 정의해야 관계 연결 가능.</td>
+        <td><span class="st st-plan">P3</span></td>
+        <td><span class="st st-plan">설계</span></td>
+      </tr>
+
+      <!-- 자율 판단 -->
+      <tr>
+        <td class="td-purpose">자율 판단</td>
+        <td class="td-fn">F5</td>
+        <td><strong>F2 + F3 + F4 출력 조합</strong><br><span style="font-size:11px;color:#999;">이상 점수 + 운영 맥락 + 검색 결과</span></td>
+        <td>LLM이 보고서를 쓰려면 3가지가 합쳐져야 해요: (1) 뭐가 이상? (F2) (2) 상황이 어떤가? (F3) (3) 과거 사례? (F4)<div class="td-why">별도 데이터 수집 필요 없음 — 앞 기능 출력을 LLM에 넘기면 됨</div></td>
+        <td><span class="st st-plan">P3~4</span></td>
+        <td><span class="st st-output">앞 기능 출력</span></td>
+      </tr>
+
+      <!-- 관제 -->
+      <tr>
+        <td class="td-purpose">관제</td>
+        <td class="td-fn">F6</td>
+        <td><strong>F1~F5 전체 출력</strong><br><span style="font-size:11px;color:#999;">센서 현황 + 알람 + 보고서</span></td>
+        <td>현장 관리자가 한 화면에서 전체 상황을 보려면 모든 결과가 시각화되어야 해요.<div class="td-why">ADR-005: 대시보드를 일찍 만들어서 기능 추가될 때마다 시각 확인</div></td>
+        <td><span class="st st-output">P1~</span></td>
+        <td><span class="st st-output">점진 구축</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 4: 데이터셋 상세 -->
+<!-- =============================== -->
+<div class="page" id="p4">
+<div class="inner">
+  <div class="page-title">데이터셋 상세 분석</div>
+  <p class="page-sub">각 데이터셋을 열어보고 실제로 어떤 데이터가 들어있는지 확인한 결과예요.</p>
+
+  <h3>1. Kaggle CNC Mill Tool Wear</h3>
+  <p>이 프로젝트의 핵심 데이터. F1과 F2에서 사용해요.</p>
+
+  <div class="meta-grid">
+    <div class="meta-box"><div class="ml">실험 수</div><div class="mv">18개</div></div>
+    <div class="meta-box"><div class="ml">총 행 수</div><div class="mv">~25,286</div></div>
+    <div class="meta-box"><div class="ml">전체 컬럼</div><div class="mv">48개</div></div>
+    <div class="meta-box"><div class="ml">유효 컬럼</div><div class="mv">42개</div></div>
+    <div class="meta-box"><div class="ml">샘플링</div><div class="mv sm">100ms</div></div>
+    <div class="meta-box"><div class="ml">결측값</div><div class="mv sm" style="color:#00a854;">0건</div></div>
+    <div class="meta-box"><div class="ml">라벨</div><div class="mv sm">worn 10 / unworn 8</div></div>
+    <div class="meta-box"><div class="ml">쓰이는 기능</div><div class="mv sm" style="color:#3182f6;">F1, F2</div></div>
+  </div>
+
+  <div class="info">
+    <p><strong>"유효 42컬럼"은 뭔 뜻이야?</strong></p>
+    <p style="margin-top:8px;">원래 48개 컬럼인데, 분석해보니 6개가 쓸모없어요.</p>
+    <p style="margin-top:8px;"><strong>상수 컬럼 2개</strong> &mdash; 값이 항상 같아서(12.0, 1.0) 분석 의미 없음.</p>
+    <p style="margin-top:4px;"><strong>Z축 전기 피드백 4개</strong> &mdash; 18개 실험 전부에서 값이 0. 센서가 연결 안 됐거나 수집되지 않은 것.<br>
+    <span style="color:#999;">(단, Z축의 위치/속도/가속도는 정상! 전기 데이터만 0이에요.)</span></p>
+    <p style="margin-top:8px;">48 - 2(상수) - 4(Z축 전기) = <strong>42개</strong>가 실제 분석에 쓸 수 있는 컬럼.</p>
+  </div>
+
+  <h3>2. Bosch CNC Machining</h3>
+  <p>유일한 실제 산업 데이터이고, 주력 데이터에 없는 <strong>진동 센서</strong>를 보완해줘요.</p>
+
+  <div class="meta-grid">
+    <div class="meta-box"><div class="ml">파일 수</div><div class="mv">1,702</div></div>
+    <div class="meta-box"><div class="ml">설비</div><div class="mv sm">M01~M03</div></div>
+    <div class="meta-box"><div class="ml">공정</div><div class="mv sm">OP00~OP14</div></div>
+    <div class="meta-box"><div class="ml">라벨</div><div class="mv sm">good / bad</div></div>
+  </div>
+
+  <div class="warn">
+    <strong>주의:</strong> CSV가 아닌 HDF5(.h5) 포맷이라 h5py 라이브러리 설치 필요. Phase 1 EDA에서 내부 구조 확인 예정.
+  </div>
+
+  <h3>3. Multi-Sensor CNC / 4. Milling RUL</h3>
+  <p>둘 다 참고용이에요. 핵심 분석에는 쓰지 않아요.</p>
+
+  <div class="warn">
+    <strong>합성 데이터 의심:</strong> Multi-Sensor는 센서값이 너무 균등한 분포 + 마모량에 음수. Milling RUL은 진동이 표준정규분포 + RUL이 선형 감소. 실제 센서 데이터가 아닌 인위적 생성 데이터일 가능성 높음.
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 5: 진행도 -->
+<!-- =============================== -->
+<div class="page" id="p5">
+<div class="inner">
+  <div class="page-title">목적별 데이터 확보 진행도</div>
+  <p class="page-sub">해결하려는 문제별로 필요한 데이터가 얼마나 준비됐는지.</p>
+
+  <div class="prog-list">
+    <div class="prog-item">
+      <div class="prog-label">이상탐지</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:75%;"></div></div>
+      <div class="prog-pct">75%</div>
+    </div>
+    <div class="prog-note">센서 + 라벨 확보. 이벤트 로그·timestamp는 합성 예정</div>
+
+    <div class="prog-item">
+      <div class="prog-label">예지보전</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:40%;"></div></div>
+      <div class="prog-pct">40%</div>
+    </div>
+    <div class="prog-note">센서(F1 출력) 준비. MES·ERP는 Phase 2 합성</div>
+
+    <div class="prog-item">
+      <div class="prog-label">온톨로지</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:5%;"></div></div>
+      <div class="prog-pct">5%</div>
+    </div>
+    <div class="prog-note">설계 원칙만 확정. 관계·매뉴얼·고장코드는 Phase 3</div>
+
+    <div class="prog-item">
+      <div class="prog-label">자율 판단</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:0%;"></div></div>
+      <div class="prog-pct">0%</div>
+    </div>
+    <div class="prog-note">F2+F3+F4 완성 후 시작. 별도 수집 필요 없음</div>
+
+    <div class="prog-item">
+      <div class="prog-label">대시보드</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:10%;"></div></div>
+      <div class="prog-pct">10%</div>
+    </div>
+    <div class="prog-note">ADR-005로 조기 시작 결정. Phase 1부터 점진 구축</div>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 6: 갭 분석 -->
+<!-- =============================== -->
+<div class="page" id="p6">
+<div class="inner">
+  <div class="page-title">전략 vs 실제 &mdash; 어디가 안 맞았나?</div>
+  <p class="page-sub">문서에서 계획한 것과 실제 데이터를 비교하면서 발견된 불일치 4건. 3회 크로스 리뷰 결과예요.</p>
+
+  <div class="gap-list">
+    <div class="gap-card">
+      <div class="gap-head">
+        <div class="gap-num r">1</div>
+        <div class="gap-title">전략 문서에 "KAMP가 핵심"이라고 적혀 있었음</div>
+      </div>
+      <div class="gap-desc">data-collection-strategy 에서 F1/F2 데이터를 "KAMP 공공 데이터"로 적어놨는데, KAMP는 카탈로그(목록)만 있고 실제 센서 데이터는 없었어요.</div>
+      <div class="gap-fix">&rarr; 해결 완료: "Kaggle CNC Mill (핵심) + Bosch CNC (보조)"로 수정</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-head">
+        <div class="gap-num y">2</div>
+        <div class="gap-title">필수 센서에 "진동, 온도"가 있었는데 실제로 없음</div>
+      </div>
+      <div class="gap-desc">진동과 온도를 필수로 적어놨지만, 핵심 데이터(Kaggle Mill)에는 둘 다 없어요. 대신 전류·전압·전력·속도가 풍부.</div>
+      <div class="gap-fix">&rarr; 해결 완료: 실제 확보 센서 기준으로 문서 전면 재작성</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-head">
+        <div class="gap-num y">3</div>
+        <div class="gap-title">timestamp와 equipment_id가 모든 데이터셋에 없음</div>
+      </div>
+      <div class="gap-desc">설계 원칙 1번 "모든 데이터는 equipment_id + timestamp 기준 연결"인데, 4개 전부 없어요. 공개 학술 데이터의 한계.</div>
+      <div class="gap-fix">&rarr; Phase 1 EDA 첫 번째 과제로 등록: 합성 규칙 설계</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-head">
+        <div class="gap-num g">4</div>
+        <div class="gap-title">보조 데이터 2종이 합성 데이터로 의심됨</div>
+      </div>
+      <div class="gap-desc">Multi-Sensor와 Milling RUL이 너무 완벽한 분포를 보여서 합성 데이터일 가능성 높음.</div>
+      <div class="gap-fix">&rarr; 해결 완료: "참고용" 명시. 핵심 분석은 Kaggle Mill 기준</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 7: 다음 단계 -->
+<!-- =============================== -->
+<div class="page" id="p7">
+<div class="inner">
+  <div class="page-title">다음 단계</div>
+  <p class="page-sub">Phase 0(계획)은 완료. Phase 1(EDA)으로 넘어가요.</p>
+
+  <div class="steps">
+    <div class="step-item">
+      <h4>1순위 &mdash; Kaggle CNC Mill 탐색적 분석</h4>
+      <p>18개 실험의 센서 분포, 이상/정상 차이, 가공 단계별 특성을 시각적으로 분석. timestamp·equipment_id 합성 규칙도 여기서 확정.</p>
+    </div>
+    <div class="step-item">
+      <h4>2순위 &mdash; Bosch CNC 구조 확인</h4>
+      <p>h5py 설치 후 HDF5 내부 구조 탐색. 진동 데이터가 어떤 형태인지 확인하고 결합 가능성 판단.</p>
+    </div>
+    <div class="step-item">
+      <h4>3순위 &mdash; EDA 환경 세팅</h4>
+      <p>Python 가상환경(venv) + Jupyter Notebook + pandas, matplotlib, h5py 등 필요 패키지 설치.</p>
+    </div>
+  </div>
+
+  <div class="info" style="margin-top:32px;">
+    <p><strong>Phase 0 완료 상태</strong></p>
+    <p style="margin-top:8px;">문서 6종 완성 · 데이터 4종 확보 · 크로스 리뷰 3회 · 갭 4건 모두 해결</p>
+    <p style="margin-top:8px;"><strong>Phase 1(EDA)로 진입할 준비가 완료됐어요.</strong></p>
+  </div>
+</div>
+</div>
+
+</div><!-- /pages -->
+
+<script>
+const pages=document.getElementById('pages');
+const navLinks=document.querySelectorAll('.topnav a');
+const pageEls=document.querySelectorAll('.page');
+
+// Click nav → scroll to page
+navLinks.forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const idx=parseInt(a.dataset.idx);
+    pages.scrollTo({left:idx*window.innerWidth,behavior:'smooth'});
+  });
+});
+
+// Observe scroll → update active nav
+const updateNav=()=>{
+  const idx=Math.round(pages.scrollLeft/window.innerWidth);
+  navLinks.forEach((a,i)=>{
+    a.classList.toggle('active',i===idx);
+  });
+};
+pages.addEventListener('scroll',updateNav);
+window.addEventListener('resize',()=>{
+  // Re-snap on resize
+  const idx=Math.round(pages.scrollLeft/window.innerWidth);
+  pages.scrollLeft=idx*window.innerWidth;
+});
+</script>
+
+</body>
+</html>
