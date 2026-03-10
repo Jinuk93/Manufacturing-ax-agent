@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>데이터 전략 리뷰</title>
+<title>Manufacturing AX Agent — 프로젝트 대시보드</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -11,25 +11,30 @@
   body{font-family:'Pretendard',-apple-system,'Segoe UI',sans-serif;background:#fff;color:#222;line-height:1.75;-webkit-font-smoothing:antialiased;}
 
   /* ===== Top Nav ===== */
-  .topnav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #eee;padding:0 24px;display:flex;align-items:center;height:56px;overflow-x:auto;gap:4px;-webkit-overflow-scrolling:touch;}
+  .topnav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid #eee;padding:0 24px;display:flex;align-items:center;height:56px;overflow-x:auto;gap:4px;-webkit-overflow-scrolling:touch;}
   .topnav::-webkit-scrollbar{display:none;}
   .topnav a{white-space:nowrap;text-decoration:none;font-size:13px;font-weight:600;color:#999;padding:8px 14px;border-radius:8px;transition:all .15s;flex-shrink:0;}
   .topnav a:hover{color:#222;background:#f5f5f5;}
   .topnav a.active{color:#222;background:#f0f0f0;}
+  .nav-divider{width:1px;height:24px;background:#e0e0e0;flex-shrink:0;margin:0 8px;}
 
   /* ===== Page Container ===== */
   .pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
   .pages::-webkit-scrollbar{display:none;}
   .page{flex:0 0 100vw;width:100vw;min-height:calc(100vh - 56px);scroll-snap-align:start;overflow-y:auto;padding:40px 24px 80px;}
-  .inner{max-width:780px;margin:0 auto;}
+  .inner{max-width:820px;margin:0 auto;}
 
   /* ===== Typography ===== */
   .page-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
-  .page-sub{font-size:15px;color:#888;margin-bottom:40px;}
-  h3{font-size:18px;font-weight:700;margin:36px 0 12px;letter-spacing:-0.2px;}
+  .page-sub{font-size:15px;color:#888;margin-bottom:36px;}
+  h3{font-size:18px;font-weight:700;margin:32px 0 12px;letter-spacing:-0.2px;}
   h4{font-size:15px;font-weight:700;margin:24px 0 8px;color:#444;}
   p{font-size:14px;color:#555;margin-bottom:12px;}
+  ul{font-size:14px;color:#555;margin:8px 0 16px 20px;line-height:2;}
+  li{margin-bottom:2px;}
+  li strong{color:#222;}
   .caption{font-size:12px;color:#aaa;margin-top:4px;}
+  .section-label{font-size:11px;font-weight:700;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
 
   /* ===== Dataset List Card ===== */
   .ds-list{display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
@@ -74,31 +79,10 @@
   .fn .fsub{font-size:11px;color:#aaa;margin-top:6px;line-height:1.4;}
   .farr{display:flex;align-items:center;color:#ddd;font-size:18px;flex-shrink:0;}
 
-  /* ===== Progress ===== */
-  .prog-list{display:flex;flex-direction:column;gap:16px;margin:20px 0;}
-  .prog-item{display:flex;align-items:center;gap:14px;}
-  .prog-label{flex:0 0 100px;font-size:13px;font-weight:600;color:#444;}
-  .prog-bar{flex:1;background:#f2f2f2;border-radius:6px;height:8px;overflow:hidden;}
-  .prog-fill{height:100%;border-radius:6px;background:#222;transition:width .5s;}
-  .prog-pct{flex:0 0 40px;font-size:13px;font-weight:700;text-align:right;color:#222;}
-  .prog-note{font-size:12px;color:#aaa;margin:-4px 0 0 114px;}
-
-  /* ===== Gap ===== */
-  .gap-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
-  .gap-card{border:1px solid #eee;border-radius:14px;padding:18px 20px;}
-  .gap-card:hover{border-color:#ccc;}
-  .gap-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-  .gap-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
-  .gap-num.r{background:#ff4d4f;}
-  .gap-num.y{background:#faad14;}
-  .gap-num.g{background:#52c41a;}
-  .gap-title{font-size:14px;font-weight:700;color:#222;}
-  .gap-desc{font-size:13px;color:#888;margin-bottom:6px;}
-  .gap-fix{font-size:13px;color:#3182f6;font-weight:600;}
-
   /* ===== Info Box ===== */
   .info{background:#f9f9f9;border-radius:14px;padding:20px 22px;margin:20px 0;}
-  .info p{margin:0;font-size:14px;color:#555;}
+  .info p{margin:0 0 6px;font-size:14px;color:#555;}
+  .info p:last-child{margin-bottom:0;}
   .info strong{color:#222;}
 
   /* ===== Detail Grid ===== */
@@ -112,12 +96,55 @@
   .warn{background:#fffbe6;border:1px solid #fff1b8;border-radius:12px;padding:16px 18px;margin:12px 0;font-size:13px;color:#876800;line-height:1.7;}
   .warn strong{color:#614700;}
 
-  /* ===== Next Steps ===== */
+  /* ===== Day Log ===== */
+  .day-card{border:1px solid #eee;border-radius:14px;padding:24px 26px;margin:16px 0;}
+  .day-card:hover{border-color:#ddd;}
+  .day-date{font-size:13px;font-weight:700;color:#3182f6;margin-bottom:2px;}
+  .day-goal{font-size:16px;font-weight:700;color:#222;margin-bottom:12px;}
+  .day-card ul{margin:4px 0 12px 20px;font-size:13px;color:#555;line-height:1.9;}
+  .day-card li{margin-bottom:2px;}
+  .day-card li strong{color:#333;}
+  .day-outputs{margin-top:12px;padding-top:12px;border-top:1px solid #f0f0f0;}
+  .day-outputs .section-label{margin-bottom:6px;}
+  .day-outputs ul{font-size:12px;color:#888;margin:0 0 0 16px;line-height:1.8;}
+
+  /* ===== Gap ===== */
+  .gap-list{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+  .gap-card{border:1px solid #eee;border-radius:14px;padding:18px 20px;}
+  .gap-card:hover{border-color:#ccc;}
+  .gap-head{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .gap-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;}
+  .gap-num.r{background:#ff4d4f;}
+  .gap-num.y{background:#faad14;}
+  .gap-num.g{background:#52c41a;}
+  .gap-title{font-size:14px;font-weight:700;color:#222;}
+  .gap-desc{font-size:13px;color:#666;margin-bottom:6px;line-height:1.7;}
+  .gap-fix{font-size:13px;color:#3182f6;font-weight:600;}
+
+  /* ===== Open Item ===== */
+  .oi-card{border:1px solid #eee;border-radius:14px;padding:16px 20px;margin:8px 0;}
+  .oi-card:hover{border-color:#ccc;}
+  .oi-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+  .oi-num{font-size:12px;font-weight:800;color:#999;}
+  .oi-title{font-size:14px;font-weight:700;color:#222;}
+  .oi-desc{font-size:13px;color:#666;line-height:1.7;margin-bottom:4px;}
+  .oi-meta{font-size:12px;color:#aaa;}
+
+  /* ===== Steps ===== */
   .steps{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
   .step-item{border:1px solid #eee;border-radius:14px;padding:18px 20px;}
   .step-item:hover{border-color:#ccc;}
   .step-item h4{margin:0 0 4px;font-size:14px;color:#222;}
-  .step-item p{margin:0;font-size:13px;color:#888;}
+  .step-item p{margin:0;font-size:13px;color:#888;line-height:1.7;}
+
+  /* ===== Progress ===== */
+  .prog-list{display:flex;flex-direction:column;gap:16px;margin:20px 0;}
+  .prog-item{display:flex;align-items:center;gap:14px;}
+  .prog-label{flex:0 0 100px;font-size:13px;font-weight:600;color:#444;}
+  .prog-bar{flex:1;background:#f2f2f2;border-radius:6px;height:8px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:6px;background:#222;transition:width .5s;}
+  .prog-pct{flex:0 0 40px;font-size:13px;font-weight:700;text-align:right;color:#222;}
+  .prog-note{font-size:12px;color:#aaa;margin:-4px 0 0 114px;}
 
   @media(max-width:640px){
     .page{padding:28px 16px 60px;}
@@ -130,106 +157,129 @@
 <body>
 
 <nav class="topnav" id="nav">
-  <a href="#p0" class="active" data-idx="0">보유 데이터</a>
+  <a href="#p0" class="active" data-idx="0">프로젝트 개요</a>
   <a href="#p1" data-idx="1">해결할 문제</a>
   <a href="#p2" data-idx="2">6가지 기능</a>
-  <a href="#p3" data-idx="3">데이터 매핑표</a>
-  <a href="#p4" data-idx="4">데이터셋 상세</a>
-  <a href="#p5" data-idx="5">진행도</a>
-  <a href="#p6" data-idx="6">갭 분석</a>
+  <a href="#p3" data-idx="3">데이터 전략</a>
+  <div class="nav-divider"></div>
+  <a href="#p4" data-idx="4">Phase 0 로그</a>
+  <a href="#p5" data-idx="5">갭 분석</a>
+  <a href="#p6" data-idx="6">미결 사항</a>
   <a href="#p7" data-idx="7">다음 단계</a>
 </nav>
 
 <div class="pages" id="pages">
 
 <!-- =============================== -->
-<!-- PAGE 0: 보유 데이터 리스트 -->
+<!-- PAGE 0: 프로젝트 개요 -->
 <!-- =============================== -->
 <div class="page" id="p0">
 <div class="inner">
-  <div class="page-title">현재 보유 데이터셋</div>
-  <p class="page-sub">다운로드 완료한 4종 + 카탈로그 1종. data/raw/ 폴더에 저장되어 있어요.</p>
+  <div class="page-title">Manufacturing AX Agent</div>
+  <p class="page-sub">CNC 설비의 예지보전 + 온톨로지 + LLM 자율 판단 관제 시스템</p>
 
-  <div class="ds-list">
-    <div class="ds-item">
-      <div class="ds-icon main">1</div>
-      <div class="ds-body">
-        <h4>Kaggle CNC Mill Tool Wear</h4>
-        <div class="ds-desc">미시간대 SMART Lab | 실제 CNC 밀링 실험 | 18실험, ~25,286행, 48컬럼 (유효 42개), 100ms 샘플링</div>
-        <div class="ds-tags">
-          <span class="ds-tag">전류</span>
-          <span class="ds-tag">전압</span>
-          <span class="ds-tag">전력</span>
-          <span class="ds-tag">위치</span>
-          <span class="ds-tag">속도</span>
-          <span class="ds-tag">가속도</span>
-          <span class="ds-tag">가공 단계</span>
-          <span class="ds-tag">공구 상태 라벨</span>
-        </div>
-      </div>
-      <span class="st st-done">핵심</span>
+  <h3>배경 및 문제 정의</h3>
+  <p>제조 현장의 설비 데이터(SCADA), 생산 맥락(MES), 자원 상태(ERP), 정비 지식(매뉴얼)이 각각 독립적인 시스템(Silo)에 분산되어 저장 및 관리되고 있습니다.</p>
+  <p>설비 이상 발생 시, 작업자가 3~4개의 시스템을 수동으로 순회하며 상황을 대조하고 판단해야 합니다. 이로 인해 의사결정이 지연되고, 결과적으로 설비의 평균 수리 시간(MTTR)과 비가동 시간(Downtime)이 불필요하게 증가하여 생산 원가 손실이 발생합니다.</p>
+
+  <h3>프로젝트 목표</h3>
+  <p>기존의 분절된 IT/OT 데이터를 데이터베이스 스키마 단위에서 통합하고, <strong>센서 수치 예측(Forecasting)</strong>과 LLM(대형 언어 모델)을 결합하여 <strong>설비 정지 전 선제적 알람과 비즈니스 맥락이 반영된 자율 조치 지시서를 즉각적으로 제공하는 AI 에이전트 시스템</strong>을 구축합니다.</p>
+
+  <div class="flow" style="margin:24px 0 28px;">
+    <div class="fn">
+      <div class="fid" style="font-size:16px;">1</div>
+      <div class="fname">이상 감지</div>
+      <div class="fsub">센서 패턴이<br>평소와 다른가?</div>
     </div>
-
-    <div class="ds-item">
-      <div class="ds-icon sub">2</div>
-      <div class="ds-body">
-        <h4>Bosch CNC Machining</h4>
-        <div class="ds-desc">Bosch Research (GitHub) | 실제 산업 데이터 | 1,702개 HDF5 파일 | M01~M03 × OP00~OP14 × good/bad</div>
-        <div class="ds-tags">
-          <span class="ds-tag">진동 센서</span>
-          <span class="ds-tag">HDF5 포맷</span>
-          <span class="ds-tag">품질 분류</span>
-        </div>
-      </div>
-      <span class="st st-output">보조</span>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid" style="font-size:16px;">2</div>
+      <div class="fname">미래 예측</div>
+      <div class="fsub">30분 뒤에<br>위험해지나?</div>
     </div>
-
-    <div class="ds-item">
-      <div class="ds-icon ref">3</div>
-      <div class="ds-body">
-        <h4>Multi-Sensor CNC Tool Wear</h4>
-        <div class="ds-desc">Kaggle | 2,000행 × 17컬럼 | 절삭력 + 진동 + 음향방출 피처 | 3단계 마모 분류</div>
-        <div class="ds-tags">
-          <span class="ds-tag">절삭력 5개</span>
-          <span class="ds-tag">진동 5개</span>
-          <span class="ds-tag">음향방출 5개</span>
-          <span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span>
-        </div>
-      </div>
-      <span class="st st-synth">참고</span>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid" style="font-size:16px;">3</div>
+      <div class="fname">맥락 파악</div>
+      <div class="fsub">지금 뭘 만들고<br>부품은 있나?</div>
     </div>
-
-    <div class="ds-item">
-      <div class="ds-icon ref">4</div>
-      <div class="ds-body">
-        <h4>Milling Tool Wear & RUL</h4>
-        <div class="ds-desc">Kaggle | 1,400행 × 10컬럼 | 진동 3축 + 음향 + 공정 파라미터</div>
-        <div class="ds-tags">
-          <span class="ds-tag">vibration x/y/z</span>
-          <span class="ds-tag">acoustic_rms</span>
-          <span class="ds-tag" style="color:#ff4d4f;">RUL 미사용 (ADR-001)</span>
-          <span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span>
-        </div>
-      </div>
-      <span class="st st-synth">참고</span>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid" style="font-size:16px;">4</div>
+      <div class="fname">지식 검색</div>
+      <div class="fsub">과거에<br>어떻게 했나?</div>
     </div>
-
-    <div class="ds-item" style="opacity:0.55;">
-      <div class="ds-icon meta">5</div>
-      <div class="ds-body">
-        <h4>KAMP 제조AI 50종 카탈로그</h4>
-        <div class="ds-desc">공공데이터포털 | 50개 데이터셋 목록(메타데이터) | 실제 센서 데이터 아님</div>
-        <div class="ds-tags">
-          <span class="ds-tag">목록만 보유</span>
-          <span class="ds-tag">Kaggle로 대체</span>
-        </div>
-      </div>
-      <span class="st st-plan">카탈로그</span>
+    <div class="farr">&rarr;</div>
+    <div class="fn">
+      <div class="fid" style="font-size:16px;">5</div>
+      <div class="fname">조치 생성</div>
+      <div class="fsub">보고서를<br>자동 작성</div>
     </div>
   </div>
 
+  <h3>프로젝트 범위 (Scope)</h3>
+  <p>본 프로젝트는 <strong>데이터가 도착한 이후의 분석/판단/관제 레이어(F1~F6)</strong>를 구축하는 것이 목표입니다. 실제 장비에 IoT 센서를 부착하거나, FOCAS/OPC UA 같은 제조사 폐쇄 프로토콜을 연결하는 데이터 수집 레이어는 범위 밖입니다.</p>
   <div class="info">
-    <p>이 데이터들이 <strong>왜 필요한지, 어디에 쓰이는지</strong>를 이해하려면 &rarr; 다음 페이지로 넘어가세요.</p>
+    <p><strong>범위 안:</strong> 센서 데이터 전처리(F1) → 이상탐지/예측(F2) → IT/OT 동기화(F3) → GraphRAG 검색(F4) → LLM 자율 판단(F5) → 대시보드(F6)</p>
+    <p><strong>범위 밖:</strong> IoT 센서 부착, 프로토콜 브릿지(FOCAS, OPC UA), 엣지 게이트웨이, 공장 네트워크 접근</p>
+    <p style="color:#888;font-size:13px;">수집된 데이터를 온톨로지 + GraphRAG + LLM으로 자율 판단까지 연결하는 것이 차별화 포인트입니다.</p>
+  </div>
+
+  <h3>핵심 기술 스택</h3>
+  <div class="meta-grid">
+    <div class="meta-box"><div class="ml">도메인</div><div class="mv sm">CNC 밀링</div></div>
+    <div class="meta-box"><div class="ml">예측 방식</div><div class="mv sm">Forecasting</div></div>
+    <div class="meta-box"><div class="ml">지식 그래프</div><div class="mv sm">Neo4j</div></div>
+    <div class="meta-box"><div class="ml">검색</div><div class="mv sm">GraphRAG</div></div>
+    <div class="meta-box"><div class="ml">DB</div><div class="mv sm">PostgreSQL + Neo4j</div></div>
+    <div class="meta-box"><div class="ml">판단</div><div class="mv sm">LLM Agent</div></div>
+  </div>
+
+  <h3>핵심 의사결정 (ADR)</h3>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>ADR</th><th>결정</th><th>결정 근거</th></tr></thead>
+    <tbody>
+      <tr><td style="white-space:nowrap;font-weight:700;">ADR-000</td><td>CNC 단일 도메인</td><td>다중 도메인(NASA 등) 혼합 시 데이터 조인 키 충돌 및 LLM 환각 발생. 하나의 도메인에서 깊게 파는 것이 MVP에 적합</td></tr>
+      <tr><td style="white-space:nowrap;font-weight:700;">ADR-001</td><td>RUL 포기, Forecasting</td><td>가상의 잔여수명(RUL) 합성 → 모델 신뢰성 평가 불가. 실제 센서값의 미래를 예측하고 임계치 돌파 여부로 판단하는 방식이 더 신뢰할 수 있음</td></tr>
+      <tr><td style="white-space:nowrap;font-weight:700;">ADR-002</td><td>MES/ERP 합성 생성</td><td>기업 IT 데이터는 비공개. 시나리오 기반으로 합성하여 F3 IT/OT 동기화 파이프라인을 구현</td></tr>
+      <tr><td style="white-space:nowrap;font-weight:700;">ADR-003</td><td>PostgreSQL + Neo4j</td><td>1인 개발, DB 2개로 제한. PostgreSQL에 TimescaleDB(시계열) + pgvector(벡터) 확장으로 3역할 통합, 온톨로지는 Neo4j 별도</td></tr>
+      <tr><td style="white-space:nowrap;font-weight:700;">ADR-004</td><td>5초 폴링</td><td>MVP에 Kafka/Flink 불필요. 5초 주기 조회로 실시간 모사. 단순 구조 우선</td></tr>
+      <tr><td style="white-space:nowrap;font-weight:700;">ADR-005</td><td>대시보드 조기 착수</td><td>파이프라인 완성 전에도 시각적 결과물로 방향 검증. Phase 1부터 점진 구축</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>설계 원칙 (5가지)</h3>
+  <ul>
+    <li><strong>원칙 1:</strong> 모든 데이터는 <code>equipment_id</code>와 <code>timestamp</code> 기준으로 연결</li>
+    <li><strong>원칙 2:</strong> 센서만으로 가능한 기능 vs 이벤트 필요 기능 구분</li>
+    <li><strong>원칙 3:</strong> 온톨로지는 Entity/Relation 먼저 정의</li>
+    <li><strong>원칙 4:</strong> 합성 데이터는 LLM 판단이 달라지는 시나리오 설계</li>
+    <li><strong>원칙 5:</strong> 내부 표준 형식(Canonical Model) 기준 설계 — 원본 데이터 형식이 아닌 내부 표준 형식으로 정규화. 향후 고객사 확장 시 Onboarding Layer 추가만으로 대응 가능</li>
+  </ul>
+
+  <h3>제약사항</h3>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>제약</th><th>결정 근거</th><th>관련 ADR</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600;">CNC 단일 도메인</td><td>도메인 혼합 시 데이터 조인 키 충돌 및 LLM 환각 방지</td><td>ADR-000</td></tr>
+      <tr><td style="font-weight:600;">RUL 대신 Forecasting</td><td>합성 타겟 변수로는 모델 신뢰성 평가 불가</td><td>ADR-001</td></tr>
+      <tr><td style="font-weight:600;">합성 MES/ERP</td><td>기업 데이터 비공개, Kaggle 타임라인에 맞춰 합성</td><td>ADR-002</td></tr>
+      <tr><td style="font-weight:600;">DB 2개로 제한</td><td>1인 개발, PostgreSQL 확장으로 3역할 통합</td><td>ADR-003</td></tr>
+      <tr><td style="font-weight:600;">폴링 방식</td><td>Kafka/Flink 없이 5초 주기 조회로 실시간 모사</td><td>ADR-004</td></tr>
+      <tr><td style="font-weight:600;">데이터 수집 레이어 범위 밖</td><td>실제 장비/IoT/프로토콜 연결 없이 공공 데이터 + 합성으로 대체</td><td>&mdash;</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>현재 진행 단계</h3>
+  <div class="info">
+    <p><strong>Phase 0 (프로젝트 정의)</strong> &mdash; 완료</p>
+    <p>PRD v1.0 작성, 데이터 수집 전략 v2 완성, ADR 6건 확정, 외부 데이터 4종 확보, 크로스 리뷰 3회 실시, 갭 4건 식별 및 해결</p>
+    <p style="margin-top:8px;"><strong>Phase 1 (EDA)</strong> &mdash; 진입 예정</p>
+    <p>Kaggle CNC Mill 탐색적 분석 + timestamp/equipment_id 합성 규칙 설계 + EDA 환경 세팅</p>
   </div>
 </div>
 </div>
@@ -240,25 +290,39 @@
 <div class="page" id="p1">
 <div class="inner">
   <div class="page-title">우리가 해결하려는 문제</div>
-  <p class="page-sub">CNC 공장에서 실제로 겪는 3가지 문제. 이걸 해결하려면 데이터가 필요해요.</p>
+  <p class="page-sub">CNC 공장에서 실제로 겪는 3가지 문제. 이걸 해결하려면 데이터가 필요합니다.</p>
 
   <h3>1. 이상탐지</h3>
-  <p>장비 센서가 평소와 달라지고 있는데, 사람이 눈치채기 전에 시스템이 먼저 감지해야 해요.</p>
-  <p style="color:#999;">예를 들어 X축 전류가 평소 0.08A인데 갑자기 0.3A로 튀면 &mdash; "뭔가 이상하다"고 자동으로 알려주는 거예요.</p>
+  <p>장비 센서가 평소와 달라지고 있는데, 사람이 눈치채기 전에 시스템이 먼저 감지해야 합니다.</p>
+  <p>예를 들어 X축 전류가 평소 0.08A인데 갑자기 0.3A로 튀면 "뭔가 이상하다"고 자동으로 알려주는 것입니다. 비지도 학습 모델(Isolation Forest, AutoEncoder 등)로 현재 센서 수치의 이상 상태(Anomaly Score)를 판별합니다.</p>
 
-  <h3>2. 예지보전</h3>
-  <p>이상이 감지되면, "앞으로 어떻게 될지" 예측해서 <strong>지금 멈춰야 하는지, 감속하면 되는지, 다음 정비 때 하면 되는지</strong> 판단해야 해요.</p>
-  <p style="color:#999;">단순히 "이상하다"를 넘어서, "30분 뒤에 위험해진다" 같은 미래 예측이 핵심이에요.</p>
+  <h3>2. 예지보전 (Forecasting)</h3>
+  <p>이상이 감지되면, "앞으로 어떻게 될지" 예측해서 <strong>지금 멈춰야 하는지, 감속하면 되는지, 다음 정비 때 하면 되는지</strong> 판단해야 합니다.</p>
+  <p>단순히 "이상하다"를 넘어서, "30분 뒤에 위험해진다" 같은 미래 예측이 핵심입니다. 시계열 예측 딥러닝 모델(LSTM 등)을 통해 미래 센서값을 예측하고, 위험 임계치 돌파 여부를 선제적으로 알립니다.</p>
+  <div class="info">
+    <p><strong>왜 RUL(잔여수명)이 아닌 Forecasting인가? (ADR-001)</strong></p>
+    <p>RUL은 "이 부품이 몇 시간 뒤에 고장난다"를 직접 예측하는 방식이지만, 신뢰할 수 있는 RUL 타겟 변수를 합성하기 어렵습니다. 대신 실제 센서값의 미래를 예측하고, 그 예측값이 임계치를 돌파하는지로 "언제 위험해지는가"를 판단하는 Forecasting 방식을 채택했습니다.</p>
+  </div>
 
   <h3>3. 지식 구조화 (온톨로지)</h3>
   <p>"이 고장코드가 뜨면 → 이 부품을 교체하고 → 매뉴얼 3장을 참고해"</p>
-  <p>이런 정비 지식이 지금은 숙련공 머릿속에만 있어요. 이걸 그래프(온톨로지)로 구조화해서 AI가 검색하고 활용할 수 있게 해야 해요.</p>
+  <p>이런 정비 지식이 지금은 숙련공 머릿속에만 있습니다. 이걸 그래프(온톨로지)로 구조화해서 AI가 검색하고 활용할 수 있게 해야 합니다. Neo4j에 '설비 → 고장 코드 → 필요 부품 → 조치 매뉴얼'의 관계망을 구축하고, 에러 키워드(BM25)와 증상 설명(Vector Search)을 결합한 하이브리드 검색으로 관련 지식을 찾습니다.</p>
 
-  <div class="info" style="margin-top:32px;">
-    <p>이 3가지를 합치면 최종 모습은 이거예요:</p>
-    <p style="margin-top:8px;"><strong>센서 이상 감지 &rarr; 원인 추정 &rarr; 매뉴얼 검색 &rarr; 조치 보고서 자동 생성</strong></p>
-    <p style="margin-top:8px;">사람이 "뭐 해야 하지?" 가 아니라, 시스템이 먼저 알려주는 거예요.</p>
+  <h3>예지보전은 하나의 데이터가 아니다</h3>
+  <div class="info">
+    <p>이 프로젝트에서 "예지보전 데이터"라는 단일 테이블이 따로 있는 것이 아닙니다. 예지보전은 아래 데이터가 합쳐져서 만들어집니다:</p>
+    <p style="margin-top:8px;"><strong>예지보전 = 센서 신호 + 이벤트 근거 + 운영 맥락 + 자원 맥락 + 정비 지식</strong></p>
+    <p style="margin-top:8px;">그래서 지금 해야 할 일은 "예지보전 데이터셋 하나를 찾는 것"이 아니라, <strong>어떤 데이터를 어떻게 연결해서 예지보전 판단을 만들지</strong> 정리하는 것입니다.</p>
   </div>
+
+  <h4>예지보전을 구성하는 5가지 데이터</h4>
+  <ul>
+    <li><strong>센서 신호</strong> — 전류, 전압, 전력, 속도, 가속도 → 이상탐지, Forecasting, 위험 신호 포착</li>
+    <li><strong>이벤트 근거</strong> — 알람 발생, 정비 시점, 부품 교체, 고장 시점 → 센서 패턴의 의미 해석, 전조와 실제 이벤트 연결</li>
+    <li><strong>운영 맥락</strong> — 현재 작업지시, 납기 긴급도, 생산 잔량 → 지금 멈출지, 감속할지, 계획 정비로 넘길지 판단</li>
+    <li><strong>자원 맥락</strong> — 부품 재고, 리드타임, 최근 교체 이력 → 실제 조치 가능성 판단</li>
+    <li><strong>정비 지식</strong> — 고장 코드, 조치 절차, 매뉴얼 문서 → GraphRAG 검색, LLM 조치 리포트 근거</li>
+  </ul>
 </div>
 </div>
 
@@ -267,73 +331,209 @@
 <!-- =============================== -->
 <div class="page" id="p2">
 <div class="inner">
-  <div class="page-title">그래서 6가지 기능을 만들어요</div>
+  <div class="page-title">그래서 6가지 기능을 만듭니다</div>
   <p class="page-sub">앞 기능의 출력이 뒷 기능의 입력이 됩니다. 순서대로 만들어요.</p>
 
   <div class="flow">
-    <div class="fn">
-      <div class="fid">F1</div>
-      <div class="fname">센서 전처리</div>
-      <div class="fsub">원시 데이터를<br>깨끗하게 정리</div>
-    </div>
+    <div class="fn"><div class="fid">F1</div><div class="fname">센서 전처리</div><div class="fsub">원시 데이터를<br>깨끗하게 정리</div></div>
     <div class="farr">&rarr;</div>
-    <div class="fn">
-      <div class="fid">F2</div>
-      <div class="fname">이상탐지 + 예측</div>
-      <div class="fsub">"이상한가?" +<br>"앞으로 어떻게 되나?"</div>
-    </div>
+    <div class="fn"><div class="fid">F2</div><div class="fname">이상탐지 + 예측</div><div class="fsub">"이상한가?" +<br>"앞으로 어떻게 되나?"</div></div>
     <div class="farr">&rarr;</div>
-    <div class="fn">
-      <div class="fid">F3</div>
-      <div class="fname">IT/OT 동기화</div>
-      <div class="fsub">센서 + 작업지시 +<br>재고를 하나로</div>
-    </div>
+    <div class="fn"><div class="fid">F3</div><div class="fname">IT/OT 동기화</div><div class="fsub">센서 + 작업지시 +<br>재고를 하나로</div></div>
     <div class="farr">&rarr;</div>
-    <div class="fn">
-      <div class="fid">F4</div>
-      <div class="fname">GraphRAG</div>
-      <div class="fsub">온톨로지에서<br>관련 지식 검색</div>
-    </div>
+    <div class="fn"><div class="fid">F4</div><div class="fname">GraphRAG</div><div class="fsub">온톨로지에서<br>관련 지식 검색</div></div>
     <div class="farr">&rarr;</div>
-    <div class="fn">
-      <div class="fid">F5</div>
-      <div class="fname">LLM 자율 판단</div>
-      <div class="fsub">조치 보고서<br>자동 생성</div>
-    </div>
+    <div class="fn"><div class="fid">F5</div><div class="fname">LLM 자율 판단</div><div class="fsub">조치 보고서<br>자동 생성</div></div>
     <div class="farr">&rarr;</div>
-    <div class="fn">
-      <div class="fid">F6</div>
-      <div class="fname">대시보드</div>
-      <div class="fsub">전체를<br>한눈에</div>
-    </div>
+    <div class="fn"><div class="fid">F6</div><div class="fname">대시보드</div><div class="fsub">전체를<br>한눈에</div></div>
   </div>
 
-  <h3>각 기능이 어떤 문제를 해결하나?</h3>
+  <h3>F1. 실시간 시계열 데이터 수집 및 전처리</h3>
+  <p>원시 센서 데이터(CNC Mill)를 수집하여 결측치 및 이상치를 통계적으로 제거합니다. 지정된 윈도우(Sliding Window) 크기로 이동 평균, 분산 등 파생 변수(Feature)를 추출합니다.</p>
+  <ul>
+    <li><strong>입력:</strong> CNC 센서 CSV (48컬럼, 100ms 샘플링)</li>
+    <li><strong>출력:</strong> 깨끗한 시계열 데이터 (정규화, 결측 처리, 파생 변수 추가)</li>
+    <li><strong>데이터:</strong> Kaggle CNC Mill (핵심) + Bosch CNC (보조, 진동)</li>
+    <li><strong>확보 방식:</strong> 실제 수집 완료</li>
+  </ul>
 
+  <h3>F2. 사전 위험 예측 및 이상 탐지</h3>
+  <p>비지도 학습 모델로 현재 센서 수치의 이상 상태(Anomaly Score)를 판별합니다. 시계열 예측 딥러닝 모델(LSTM 등)로 미래 센서값을 예측하고 위험 임계치 돌파 여부를 선제적으로 알림(Trigger)합니다.</p>
+  <ul>
+    <li><strong>입력:</strong> F1 전처리 출력 + 공구 상태 라벨(worn/unworn)</li>
+    <li><strong>출력:</strong> 이상 점수(Anomaly Score) + 미래 예측값</li>
+    <li><strong>데이터:</strong> F1 출력 + 정비/고장 이벤트 로그(합성)</li>
+    <li><strong>확보 방식:</strong> F1 출력(자동) + 이벤트 로그(Phase 2 합성)</li>
+  </ul>
+
+  <h3>F3. IT/OT 데이터 타임라인 동기화</h3>
+  <p>F2에서 알람이 발생한 정확한 시점을 기준으로 RDBMS에 쿼리를 실행합니다. 해당 시점의 작업 지시 내역 및 납기 중요도(MES), 필수 교체 부품의 현재 창고 재고량(ERP)을 조회하여 단일 JSON 형태로 병합합니다.</p>
+  <ul>
+    <li><strong>입력:</strong> F1 출력(OT) + MES 작업지시(IT) + ERP 부품 재고(IT)</li>
+    <li><strong>출력:</strong> 통합 운영 맥락 JSON</li>
+    <li><strong>데이터:</strong> MES(work_order_id, due_date, priority) + ERP(part_id, stock_quantity, lead_time_days)</li>
+    <li><strong>확보 방식:</strong> 합성 생성 (ADR-002)</li>
+  </ul>
+
+  <h3>F4. 지식그래프 연동 하이브리드 검색 (GraphRAG)</h3>
+  <p>Neo4j에 구축된 온톨로지 지식그래프를 순회하여 '설비 → 고장 코드 → 필요 부품 → 조치 매뉴얼'의 관계망을 식별합니다. 에러 키워드(BM25)와 증상 설명(Vector Search)을 결합한 하이브리드 검색으로 관련 정비 지식을 찾습니다.</p>
+  <ul>
+    <li><strong>입력:</strong> Neo4j 온톨로지 + 정비 매뉴얼 텍스트</li>
+    <li><strong>출력:</strong> 관련 매뉴얼·부품·고장 이력 검색 결과</li>
+    <li><strong>데이터:</strong> 온톨로지 관계(직접 설계) + 매뉴얼(수집+합성) + 고장코드 체계(직접 설계)</li>
+    <li><strong>확보 방식:</strong> Phase 3에서 구축</li>
+  </ul>
+
+  <h3>F5. LLM 기반 자율 조치 판단</h3>
+  <p>F2(이상 점수) + F3(운영 맥락) + F4(정비 지식)의 결과를 LLM에 넘겨, 비즈니스 맥락이 반영된 조치 보고서를 자동 작성합니다. 별도 데이터 수집 필요 없이, 앞 기능의 출력을 조합합니다.</p>
+
+  <h3>F6. 대시보드 (관제 화면)</h3>
+  <p>F1~F5의 모든 결과를 한 화면에 시각화합니다. ADR-005에 의해 Phase 1부터 조기 착수하여, 기능이 추가될 때마다 시각적으로 검증합니다.</p>
+
+  <h3>기능별 데이터 확보 방식 요약</h3>
   <div class="tbl-wrap">
   <table>
-    <thead><tr><th>기능</th><th>해결하는 문제</th><th>하는 일</th><th>입력</th><th>출력</th></tr></thead>
+    <thead><tr><th>기능</th><th>실제 수집</th><th>합성 생성</th><th>직접 설계</th><th>앞 기능 출력</th></tr></thead>
     <tbody>
-      <tr><td class="td-fn">F1</td><td>이상탐지 / 예지보전</td><td>센서 원시 데이터를 정리 (노이즈 제거, 정규화, 결측 처리)</td><td>CNC 센서 CSV</td><td>깨끗한 시계열</td></tr>
-      <tr><td class="td-fn">F2</td><td>이상탐지 / 예지보전</td><td>패턴 이상 감지 + 미래 센서값 예측 (Forecasting)</td><td>F1 출력 + 라벨</td><td>이상 점수 + 예측값</td></tr>
-      <tr><td class="td-fn">F3</td><td>예지보전</td><td>센서(OT)와 작업지시·재고(IT) 정보를 시간 기준으로 합침</td><td>F1 + MES + ERP</td><td>통합 운영 맥락</td></tr>
-      <tr><td class="td-fn">F4</td><td>온톨로지</td><td>온톨로지 그래프에서 관련 매뉴얼·부품·고장 이력 검색</td><td>Neo4j + 매뉴얼</td><td>검색 결과</td></tr>
-      <tr><td class="td-fn">F5</td><td>전체 통합</td><td>F2+F3+F4 결과를 LLM에 넘겨 조치 보고서 자동 작성</td><td>F2+F3+F4 출력</td><td>조치 보고서</td></tr>
-      <tr><td class="td-fn">F6</td><td>관제</td><td>모든 기능의 결과를 한 화면에 시각화</td><td>F1~F5 전체</td><td>실시간 화면</td></tr>
+      <tr><td class="td-fn">F1</td><td>Kaggle CNC Mill, Bosch CNC</td><td></td><td></td><td></td></tr>
+      <tr><td class="td-fn">F2</td><td>공구 상태 라벨(Kaggle)</td><td>정비/고장 이벤트 로그</td><td></td><td>F1 출력</td></tr>
+      <tr><td class="td-fn">F3</td><td></td><td>MES 작업지시, ERP 부품 재고</td><td></td><td>F1 출력</td></tr>
+      <tr><td class="td-fn">F4</td><td>공개 정비 매뉴얼</td><td>매뉴얼 보강</td><td>온톨로지 관계, 고장코드</td><td></td></tr>
+      <tr><td class="td-fn">F5</td><td></td><td></td><td></td><td>F2+F3+F4 출력</td></tr>
+      <tr><td class="td-fn">F6</td><td></td><td></td><td></td><td>F1~F5 전체</td></tr>
     </tbody>
   </table>
   </div>
+
+  <div class="info">
+    <p><strong>핵심:</strong> 직접 확보해야 하는 것은 딱 2가지입니다.</p>
+    <p>1. <strong>Kaggle CNC Mill Tool Wear</strong> → F1, F2의 핵심 입력</p>
+    <p>2. <strong>공개 정비 매뉴얼</strong> → F4 GraphRAG의 텍스트 근거</p>
+    <p style="color:#888;font-size:13px;margin-top:4px;">나머지는 전부 합성하거나(F3 MES/ERP, F2 이벤트 로그), 직접 설계하거나(F4 온톨로지), 앞 기능의 출력을 이어받는 구조(F5, F6)입니다.</p>
+  </div>
 </div>
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 3: 데이터 매핑표 -->
+<!-- PAGE 3: 데이터 전략 -->
 <!-- =============================== -->
 <div class="page" id="p3">
 <div class="inner">
-  <div class="page-title">기능별 필요 데이터 상세 매핑</div>
-  <p class="page-sub">목적 &rarr; 기능 &rarr; 어떤 데이터가 필요한지 &rarr; 왜 &rarr; 언제 &rarr; 지금 있는지를 한 표에서 볼 수 있어요.</p>
+  <div class="page-title">데이터 전략</div>
+  <p class="page-sub">보유 데이터셋 5종 + 기능별 매핑 + 데이터셋 상세 분석을 한 페이지에서 봅니다.</p>
 
+  <h3>현재 보유 데이터셋 (5종)</h3>
+  <div class="ds-list">
+    <div class="ds-item">
+      <div class="ds-icon main">1</div>
+      <div class="ds-body">
+        <h4>Kaggle CNC Mill Tool Wear</h4>
+        <div class="ds-desc">미시간대 SMART Lab | 실제 CNC 밀링 실험 | 18실험, ~25,286행, 48컬럼 (유효 42개), 100ms 샘플링</div>
+        <div class="ds-tags">
+          <span class="ds-tag">전류</span><span class="ds-tag">전압</span><span class="ds-tag">전력</span><span class="ds-tag">위치</span><span class="ds-tag">속도</span><span class="ds-tag">가속도</span><span class="ds-tag">가공 단계</span><span class="ds-tag">공구 상태 라벨</span>
+        </div>
+      </div>
+      <span class="st st-done">핵심</span>
+    </div>
+    <div class="ds-item">
+      <div class="ds-icon sub">2</div>
+      <div class="ds-body">
+        <h4>Bosch CNC Machining</h4>
+        <div class="ds-desc">Bosch Research (GitHub) | 실제 산업 데이터 | 1,702개 HDF5 파일 | M01~M03 &times; OP00~OP14 &times; good/bad</div>
+        <div class="ds-tags"><span class="ds-tag">진동 센서</span><span class="ds-tag">HDF5 포맷</span><span class="ds-tag">품질 분류</span></div>
+      </div>
+      <span class="st st-output">보조</span>
+    </div>
+    <div class="ds-item">
+      <div class="ds-icon ref">3</div>
+      <div class="ds-body">
+        <h4>Multi-Sensor CNC Tool Wear</h4>
+        <div class="ds-desc">Kaggle | 2,000행 &times; 17컬럼 | 절삭력 + 진동 + 음향방출 피처 | 3단계 마모 분류</div>
+        <div class="ds-tags"><span class="ds-tag">절삭력 5개</span><span class="ds-tag">진동 5개</span><span class="ds-tag">음향방출 5개</span><span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span></div>
+      </div>
+      <span class="st st-synth">참고</span>
+    </div>
+    <div class="ds-item">
+      <div class="ds-icon ref">4</div>
+      <div class="ds-body">
+        <h4>Milling Tool Wear & RUL</h4>
+        <div class="ds-desc">Kaggle | 1,400행 &times; 10컬럼 | 진동 3축 + 음향 + 공정 파라미터</div>
+        <div class="ds-tags"><span class="ds-tag">vibration x/y/z</span><span class="ds-tag">acoustic_rms</span><span class="ds-tag" style="color:#ff4d4f;">RUL 미사용 (ADR-001)</span><span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span></div>
+      </div>
+      <span class="st st-synth">참고</span>
+    </div>
+    <div class="ds-item" style="opacity:0.55;">
+      <div class="ds-icon meta">5</div>
+      <div class="ds-body">
+        <h4>KAMP 제조AI 50종 카탈로그</h4>
+        <div class="ds-desc">공공데이터포털 | 50개 데이터셋 목록(메타데이터) | 실제 센서 데이터 아님</div>
+        <div class="ds-tags"><span class="ds-tag">목록만 보유</span><span class="ds-tag">Kaggle로 대체</span></div>
+      </div>
+      <span class="st st-plan">카탈로그</span>
+    </div>
+  </div>
+
+  <h3>핵심 데이터: Kaggle CNC Mill 상세</h3>
+  <div class="meta-grid">
+    <div class="meta-box"><div class="ml">실험 수</div><div class="mv">18개</div></div>
+    <div class="meta-box"><div class="ml">총 행 수</div><div class="mv">~25,286</div></div>
+    <div class="meta-box"><div class="ml">전체 컬럼</div><div class="mv">48개</div></div>
+    <div class="meta-box"><div class="ml">유효 컬럼</div><div class="mv">42개</div></div>
+    <div class="meta-box"><div class="ml">샘플링</div><div class="mv sm">100ms</div></div>
+    <div class="meta-box"><div class="ml">결측값</div><div class="mv sm" style="color:#00a854;">0건</div></div>
+    <div class="meta-box"><div class="ml">라벨</div><div class="mv sm">worn 10 / unworn 8</div></div>
+    <div class="meta-box"><div class="ml">쓰이는 기능</div><div class="mv sm" style="color:#3182f6;">F1, F2</div></div>
+  </div>
+
+  <h4>실제 확보된 핵심 센서 (Kaggle CNC Mill 기준)</h4>
+  <ul>
+    <li><strong>전류</strong> (CurrentFeedback, OutputCurrent) &mdash; X/Y/S축</li>
+    <li><strong>전압</strong> (DCBusVoltage, OutputVoltage) &mdash; X/Y/S축</li>
+    <li><strong>전력</strong> (OutputPower) &mdash; X/Y/Z/S축</li>
+    <li><strong>위치</strong> (ActualPosition, CommandPosition) &mdash; X/Y/Z/S축</li>
+    <li><strong>속도</strong> (ActualVelocity, CommandVelocity) &mdash; X/Y/Z/S축</li>
+    <li><strong>가속도</strong> (ActualAcceleration, CommandAcceleration) &mdash; X/Y/Z/S축</li>
+    <li><strong>주축 속도</strong> (S1_ActualVelocity)</li>
+    <li><strong>가공 단계</strong> (Machining_Process) &mdash; 10단계</li>
+  </ul>
+
+  <h4>확보되지 않은 센서</h4>
+  <ul>
+    <li><strong>진동</strong> &rarr; Bosch CNC(보조)와 Multi-Sensor(참고)로 보완</li>
+    <li><strong>온도</strong> &rarr; 현 데이터셋으로 불가. 전류·전력 기반으로 대체 설계</li>
+    <li><strong>timestamp</strong> &rarr; Phase 1에서 합성 (sequence &times; 100ms &rarr; datetime)</li>
+    <li><strong>equipment_id</strong> &rarr; Phase 1에서 매핑 (experiment_01 &rarr; CNC-001)</li>
+  </ul>
+
+  <div class="info">
+    <p><strong>"유효 42컬럼"의 의미</strong></p>
+    <p>원래 48개 컬럼 중 6개가 분석에 쓸모없습니다.</p>
+    <p><strong>상수 컬럼 2개:</strong> S1_SystemInertia(항상 12.0), M1_CURRENT_PROGRAM_NUMBER(항상 1.0)</p>
+    <p><strong>Z축 전기 피드백 4개:</strong> CurrentFeedback, DCBusVoltage, OutputCurrent, OutputVoltage &mdash; 18개 실험 전부에서 값이 0. 센서 미연결 또는 미수집.</p>
+    <p style="color:#888;font-size:13px;">(단, Z축의 위치/속도/가속도는 정상입니다! 전기 데이터만 0이에요.)</p>
+    <p>48 - 2(상수) - 4(Z축 전기) = <strong>42개</strong>가 실제 분석에 쓸 수 있는 컬럼.</p>
+  </div>
+
+  <h3>Bosch CNC Machining 상세</h3>
+  <p>유일한 실제 산업 데이터이고, 핵심 데이터에 없는 <strong>진동 센서</strong>를 보완합니다.</p>
+  <div class="meta-grid">
+    <div class="meta-box"><div class="ml">파일 수</div><div class="mv">1,702</div></div>
+    <div class="meta-box"><div class="ml">설비</div><div class="mv sm">M01~M03</div></div>
+    <div class="meta-box"><div class="ml">공정</div><div class="mv sm">OP00~OP14</div></div>
+    <div class="meta-box"><div class="ml">라벨</div><div class="mv sm">good / bad</div></div>
+  </div>
+  <div class="warn">
+    <strong>주의:</strong> CSV가 아닌 HDF5(.h5) 포맷이라 h5py 라이브러리 설치 필요. Phase 1 EDA에서 내부 구조 확인 예정.
+  </div>
+
+  <h3>참고 데이터: Multi-Sensor CNC / Milling RUL</h3>
+  <p>둘 다 참고용입니다. 핵심 분석에는 쓰지 않습니다.</p>
+  <div class="warn">
+    <strong>합성 데이터 의심:</strong> Multi-Sensor는 센서값이 너무 균등한 분포 + 마모량에 음수 값이 존재. Milling RUL은 진동이 표준정규분포 + RUL이 선형 감소. 실제 센서 데이터가 아닌 인위적으로 생성된 데이터일 가능성이 높습니다. Milling RUL의 RUL 컬럼은 ADR-001에 의해 미사용하며, 센서 패턴만 참고합니다.
+  </div>
+
+  <h3>기능별 필요 데이터 상세 매핑</h3>
+  <p>목적 &rarr; 기능 &rarr; 어떤 데이터가 필요한지 &rarr; 왜 &rarr; 언제 &rarr; 지금 있는지를 한 표에서 봅니다.</p>
   <div class="tbl-wrap">
   <table>
     <thead>
@@ -347,31 +547,30 @@
       </tr>
     </thead>
     <tbody>
-      <!-- 이상탐지 -->
       <tr>
         <td class="td-purpose" rowspan="5">이상탐지</td>
         <td class="td-fn" rowspan="3">F1</td>
         <td><strong>CNC 센서 시계열</strong><br><span style="font-size:11px;color:#999;">전류, 전압, 전력, 위치, 속도, 가속도</span></td>
-        <td>이상탐지의 출발점. "평소 패턴"을 학습하려면 정상 센서 데이터가 있어야 해요.<div class="td-why">예: X축 전류가 평소 0.08A → 갑자기 0.3A = 이상 의심</div></td>
+        <td>이상탐지의 출발점. "평소 패턴"을 학습하려면 정상 센서 데이터가 있어야 합니다.<div class="td-why">예: X축 전류가 평소 0.08A &rarr; 갑자기 0.3A = 이상 의심</div></td>
         <td><span class="st st-output">P1</span></td>
         <td><span class="st st-done">확보</span></td>
       </tr>
       <tr>
         <td><strong>가공 단계 라벨</strong><br><span style="font-size:11px;color:#999;">Machining_Process (10단계)</span></td>
-        <td>같은 센서값이라도 "절삭 중"과 "이동 중"에서 의미가 달라요. 단계별로 나눠 분석해야 정확.<div class="td-why">예: Layer 1에서 전류 0.3A는 정상, Repositioning에서 0.3A는 비정상</div></td>
+        <td>같은 센서값이라도 "절삭 중"과 "이동 중"에서 의미가 다릅니다. 단계별로 나눠 분석해야 정확합니다.<div class="td-why">예: Layer 1에서 전류 0.3A는 정상, Repositioning에서 0.3A는 비정상</div></td>
         <td><span class="st st-output">P1</span></td>
         <td><span class="st st-done">확보</span></td>
       </tr>
       <tr>
         <td><strong>timestamp / equipment_id</strong><br><span style="font-size:11px;color:#999;">시간축 + 설비 식별자</span></td>
-        <td>여러 설비를 시간 기준으로 비교하려면 반드시 필요. 현재 데이터에 없어서 합성해야 해요.<div class="td-why">sequence × 100ms → datetime / experiment_01 → CNC-001</div></td>
+        <td>여러 설비를 시간 기준으로 비교하려면 반드시 필요. 현재 데이터에 없어서 합성 필요.<div class="td-why">sequence &times; 100ms &rarr; datetime / experiment_01 &rarr; CNC-001</div></td>
         <td><span class="st st-output">P1</span></td>
         <td><span class="st st-synth">합성 예정</span></td>
       </tr>
       <tr>
         <td class="td-fn" rowspan="2">F2</td>
         <td><strong>공구 상태 라벨</strong><br><span style="font-size:11px;color:#999;">tool_condition: worn / unworn</span></td>
-        <td>"이 패턴이 정상인지 이상인지" 모델을 학습시키려면 정답이 있어야 해요.<div class="td-why">worn 10실험 / unworn 8실험으로 균형 양호</div></td>
+        <td>"이 패턴이 정상인지 이상인지" 모델을 학습시키려면 정답이 있어야 합니다.<div class="td-why">worn 10실험 / unworn 8실험으로 균형 양호</div></td>
         <td><span class="st st-output">P1</span></td>
         <td><span class="st st-done">확보</span></td>
       </tr>
@@ -381,48 +580,44 @@
         <td><span class="st st-plan">P2</span></td>
         <td><span class="st st-plan">합성</span></td>
       </tr>
-
-      <!-- 예지보전 -->
       <tr>
         <td class="td-purpose" rowspan="4">예지보전</td>
         <td class="td-fn">F2</td>
         <td><strong>전처리된 센서 시계열</strong><br><span style="font-size:11px;color:#999;">F1에서 정규화된 데이터</span></td>
-        <td>"30분 뒤 전류가 어떻게 변할까?" 예측하려면 깨끗한 시계열 입력 필요.<div class="td-why">ADR-001: RUL 대신 Forecasting 방식 — 미래값 예측 후 임계치 돌파 여부 판단</div></td>
+        <td>"30분 뒤 전류가 어떻게 변할까?" 예측하려면 깨끗한 시계열 입력 필요.<div class="td-why">ADR-001: RUL 대신 Forecasting 방식 &mdash; 미래값 예측 후 임계치 돌파 여부 판단</div></td>
         <td><span class="st st-output">P1</span></td>
         <td><span class="st st-done">F1 출력</span></td>
       </tr>
       <tr>
         <td class="td-fn" rowspan="3">F3</td>
         <td><strong>MES 작업지시</strong><br><span style="font-size:11px;color:#999;">work_order, due_date, priority</span></td>
-        <td>이상 감지 시 "지금 멈춰도 되나?" 판단하려면 현재 작업 상태를 알아야 해요.<div class="td-why">예: 납기 3시간 전 + 불량 위험 → 즉시 정지 vs 납기 여유 → 감속</div></td>
+        <td>이상 감지 시 "지금 멈춰도 되나?" 판단하려면 현재 작업 상태를 알아야 합니다.<div class="td-why">예: 납기 3시간 전 + 불량 위험 &rarr; 즉시 정지 vs 납기 여유 &rarr; 감속</div></td>
         <td><span class="st st-plan">P2</span></td>
         <td><span class="st st-plan">합성</span></td>
       </tr>
       <tr>
         <td><strong>ERP 부품 재고</strong><br><span style="font-size:11px;color:#999;">part_id, stock, lead_time</span></td>
-        <td>"교체 부품이 창고에 있나?" 확인해야 실제 정비 가능. 없으면 발주 필요.<div class="td-why">예: 베어링 재고 0개, 리드타임 5일 → "즉시 교체" 불가</div></td>
+        <td>"교체 부품이 창고에 있나?" 확인해야 실제 정비 가능. 없으면 발주 필요.<div class="td-why">예: 베어링 재고 0개, 리드타임 5일 &rarr; "즉시 교체" 불가</div></td>
         <td><span class="st st-plan">P2</span></td>
         <td><span class="st st-plan">합성</span></td>
       </tr>
       <tr>
         <td><strong>센서 데이터 (OT측)</strong><br><span style="font-size:11px;color:#999;">F1 전처리 출력</span></td>
-        <td>MES(IT)와 센서(OT)를 하나의 타임라인에 동기화해야 "이 시점에 뭘 하고 있었는지" 볼 수 있어요.</td>
+        <td>MES(IT)와 센서(OT)를 하나의 타임라인에 동기화해야 "이 시점에 뭘 하고 있었는지" 볼 수 있습니다.</td>
         <td><span class="st st-output">P1</span></td>
         <td><span class="st st-done">F1 출력</span></td>
       </tr>
-
-      <!-- 온톨로지 -->
       <tr>
         <td class="td-purpose" rowspan="3">온톨로지</td>
         <td class="td-fn" rowspan="3">F4</td>
-        <td><strong>온톨로지 관계 데이터</strong><br><span style="font-size:11px;color:#999;">설비→고장코드→부품→매뉴얼</span></td>
-        <td>지식 그래프의 뼈대. "이 고장 → 이 부품 → 이 매뉴얼" 관계를 Neo4j에 구축.<div class="td-why">노드(설비, 고장, 부품, 매뉴얼)와 관계(발생, 필요, 참조)를 직접 설계</div></td>
+        <td><strong>온톨로지 관계 데이터</strong><br><span style="font-size:11px;color:#999;">설비&rarr;고장코드&rarr;부품&rarr;매뉴얼</span></td>
+        <td>지식 그래프의 뼈대. "이 고장 &rarr; 이 부품 &rarr; 이 매뉴얼" 관계를 Neo4j에 구축.</td>
         <td><span class="st st-plan">P3</span></td>
         <td><span class="st st-plan">설계</span></td>
       </tr>
       <tr>
         <td><strong>정비 매뉴얼 텍스트</strong><br><span style="font-size:11px;color:#999;">title, section, text_chunk</span></td>
-        <td>GraphRAG가 "비슷한 과거 사례"를 검색하려면 매뉴얼이 벡터 DB에 있어야 해요.<div class="td-why">CNC 매뉴얼 수집 + 부족하면 합성 보강</div></td>
+        <td>GraphRAG가 "비슷한 과거 사례"를 검색하려면 매뉴얼이 벡터 DB에 있어야 합니다.</td>
         <td><span class="st st-plan">P3</span></td>
         <td><span class="st st-plan">수집</span></td>
       </tr>
@@ -432,94 +627,27 @@
         <td><span class="st st-plan">P3</span></td>
         <td><span class="st st-plan">설계</span></td>
       </tr>
-
-      <!-- 자율 판단 -->
       <tr>
         <td class="td-purpose">자율 판단</td>
         <td class="td-fn">F5</td>
-        <td><strong>F2 + F3 + F4 출력 조합</strong><br><span style="font-size:11px;color:#999;">이상 점수 + 운영 맥락 + 검색 결과</span></td>
-        <td>LLM이 보고서를 쓰려면 3가지가 합쳐져야 해요: (1) 뭐가 이상? (F2) (2) 상황이 어떤가? (F3) (3) 과거 사례? (F4)<div class="td-why">별도 데이터 수집 필요 없음 — 앞 기능 출력을 LLM에 넘기면 됨</div></td>
+        <td><strong>F2 + F3 + F4 출력 조합</strong></td>
+        <td>LLM이 보고서를 쓰려면: (1) 뭐가 이상? (F2) (2) 상황이 어떤가? (F3) (3) 과거 사례? (F4) &mdash; 별도 수집 불필요</td>
         <td><span class="st st-plan">P3~4</span></td>
         <td><span class="st st-output">앞 기능 출력</span></td>
       </tr>
-
-      <!-- 관제 -->
       <tr>
         <td class="td-purpose">관제</td>
         <td class="td-fn">F6</td>
-        <td><strong>F1~F5 전체 출력</strong><br><span style="font-size:11px;color:#999;">센서 현황 + 알람 + 보고서</span></td>
-        <td>현장 관리자가 한 화면에서 전체 상황을 보려면 모든 결과가 시각화되어야 해요.<div class="td-why">ADR-005: 대시보드를 일찍 만들어서 기능 추가될 때마다 시각 확인</div></td>
+        <td><strong>F1~F5 전체 출력</strong></td>
+        <td>현장 관리자가 한 화면에서 전체 상황을 보려면 모든 결과가 시각화되어야 합니다.</td>
         <td><span class="st st-output">P1~</span></td>
         <td><span class="st st-output">점진 구축</span></td>
       </tr>
     </tbody>
   </table>
   </div>
-</div>
-</div>
 
-<!-- =============================== -->
-<!-- PAGE 4: 데이터셋 상세 -->
-<!-- =============================== -->
-<div class="page" id="p4">
-<div class="inner">
-  <div class="page-title">데이터셋 상세 분석</div>
-  <p class="page-sub">각 데이터셋을 열어보고 실제로 어떤 데이터가 들어있는지 확인한 결과예요.</p>
-
-  <h3>1. Kaggle CNC Mill Tool Wear</h3>
-  <p>이 프로젝트의 핵심 데이터. F1과 F2에서 사용해요.</p>
-
-  <div class="meta-grid">
-    <div class="meta-box"><div class="ml">실험 수</div><div class="mv">18개</div></div>
-    <div class="meta-box"><div class="ml">총 행 수</div><div class="mv">~25,286</div></div>
-    <div class="meta-box"><div class="ml">전체 컬럼</div><div class="mv">48개</div></div>
-    <div class="meta-box"><div class="ml">유효 컬럼</div><div class="mv">42개</div></div>
-    <div class="meta-box"><div class="ml">샘플링</div><div class="mv sm">100ms</div></div>
-    <div class="meta-box"><div class="ml">결측값</div><div class="mv sm" style="color:#00a854;">0건</div></div>
-    <div class="meta-box"><div class="ml">라벨</div><div class="mv sm">worn 10 / unworn 8</div></div>
-    <div class="meta-box"><div class="ml">쓰이는 기능</div><div class="mv sm" style="color:#3182f6;">F1, F2</div></div>
-  </div>
-
-  <div class="info">
-    <p><strong>"유효 42컬럼"은 뭔 뜻이야?</strong></p>
-    <p style="margin-top:8px;">원래 48개 컬럼인데, 분석해보니 6개가 쓸모없어요.</p>
-    <p style="margin-top:8px;"><strong>상수 컬럼 2개</strong> &mdash; 값이 항상 같아서(12.0, 1.0) 분석 의미 없음.</p>
-    <p style="margin-top:4px;"><strong>Z축 전기 피드백 4개</strong> &mdash; 18개 실험 전부에서 값이 0. 센서가 연결 안 됐거나 수집되지 않은 것.<br>
-    <span style="color:#999;">(단, Z축의 위치/속도/가속도는 정상! 전기 데이터만 0이에요.)</span></p>
-    <p style="margin-top:8px;">48 - 2(상수) - 4(Z축 전기) = <strong>42개</strong>가 실제 분석에 쓸 수 있는 컬럼.</p>
-  </div>
-
-  <h3>2. Bosch CNC Machining</h3>
-  <p>유일한 실제 산업 데이터이고, 주력 데이터에 없는 <strong>진동 센서</strong>를 보완해줘요.</p>
-
-  <div class="meta-grid">
-    <div class="meta-box"><div class="ml">파일 수</div><div class="mv">1,702</div></div>
-    <div class="meta-box"><div class="ml">설비</div><div class="mv sm">M01~M03</div></div>
-    <div class="meta-box"><div class="ml">공정</div><div class="mv sm">OP00~OP14</div></div>
-    <div class="meta-box"><div class="ml">라벨</div><div class="mv sm">good / bad</div></div>
-  </div>
-
-  <div class="warn">
-    <strong>주의:</strong> CSV가 아닌 HDF5(.h5) 포맷이라 h5py 라이브러리 설치 필요. Phase 1 EDA에서 내부 구조 확인 예정.
-  </div>
-
-  <h3>3. Multi-Sensor CNC / 4. Milling RUL</h3>
-  <p>둘 다 참고용이에요. 핵심 분석에는 쓰지 않아요.</p>
-
-  <div class="warn">
-    <strong>합성 데이터 의심:</strong> Multi-Sensor는 센서값이 너무 균등한 분포 + 마모량에 음수. Milling RUL은 진동이 표준정규분포 + RUL이 선형 감소. 실제 센서 데이터가 아닌 인위적 생성 데이터일 가능성 높음.
-  </div>
-</div>
-</div>
-
-<!-- =============================== -->
-<!-- PAGE 5: 진행도 -->
-<!-- =============================== -->
-<div class="page" id="p5">
-<div class="inner">
-  <div class="page-title">목적별 데이터 확보 진행도</div>
-  <p class="page-sub">해결하려는 문제별로 필요한 데이터가 얼마나 준비됐는지.</p>
-
+  <h3>목적별 데이터 확보 진행도</h3>
   <div class="prog-list">
     <div class="prog-item">
       <div class="prog-label">이상탐지</div>
@@ -527,28 +655,24 @@
       <div class="prog-pct">75%</div>
     </div>
     <div class="prog-note">센서 + 라벨 확보. 이벤트 로그·timestamp는 합성 예정</div>
-
     <div class="prog-item">
       <div class="prog-label">예지보전</div>
       <div class="prog-bar"><div class="prog-fill" style="width:40%;"></div></div>
       <div class="prog-pct">40%</div>
     </div>
     <div class="prog-note">센서(F1 출력) 준비. MES·ERP는 Phase 2 합성</div>
-
     <div class="prog-item">
       <div class="prog-label">온톨로지</div>
       <div class="prog-bar"><div class="prog-fill" style="width:5%;"></div></div>
       <div class="prog-pct">5%</div>
     </div>
     <div class="prog-note">설계 원칙만 확정. 관계·매뉴얼·고장코드는 Phase 3</div>
-
     <div class="prog-item">
       <div class="prog-label">자율 판단</div>
       <div class="prog-bar"><div class="prog-fill" style="width:0%;"></div></div>
       <div class="prog-pct">0%</div>
     </div>
     <div class="prog-note">F2+F3+F4 완성 후 시작. 별도 수집 필요 없음</div>
-
     <div class="prog-item">
       <div class="prog-label">대시보드</div>
       <div class="prog-bar"><div class="prog-fill" style="width:10%;"></div></div>
@@ -560,12 +684,164 @@
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 6: 갭 분석 -->
+<!-- PAGE 4: Phase 0 로그 -->
 <!-- =============================== -->
-<div class="page" id="p6">
+<div class="page" id="p4">
 <div class="inner">
-  <div class="page-title">전략 vs 실제 &mdash; 어디가 안 맞았나?</div>
-  <p class="page-sub">문서에서 계획한 것과 실제 데이터를 비교하면서 발견된 불일치 4건. 3회 크로스 리뷰 결과예요.</p>
+  <div class="page-title">Phase 0: 프로젝트 정의 &mdash; 일일 로그</div>
+  <p class="page-sub">Phase 0의 목표: 프로젝트 범위 확정, 데이터 전략 수립, 핵심 기술 의사결정</p>
+
+  <!-- Day 1 -->
+  <div class="day-card">
+    <div class="day-date">2026-03-08 (Day 1)</div>
+    <div class="day-goal">프로젝트 정의 및 핵심 의사결정</div>
+    <ul>
+      <li><strong>PRD v1.0 작성</strong> (제품 요구사항 정의서)
+        <ul>
+          <li>Problem &rarr; Solution &rarr; 6개 Feature Pipeline 정의</li>
+          <li>System Pipeline 구조 확정 (상시 레이어 + 독립 모듈 + 관제 자동화 흐름)</li>
+        </ul>
+      </li>
+      <li><strong>데이터셋 전략 초안 작성</strong>
+        <ul>
+          <li>5종 데이터셋 정의 (KAMP 센서, MES, ERP, 온톨로지, 매뉴얼)</li>
+          <li>기능별 필요 데이터 분류 (필수/중요/보강)</li>
+        </ul>
+      </li>
+      <li><strong>핵심 기술 의사결정 5건</strong>
+        <ul>
+          <li>ADR-000: CNC 단일 도메인 확정</li>
+          <li>ADR-001: Forecasting 기반 접근 확정</li>
+          <li>ADR-002: MES/ERP 합성 생성 확정</li>
+          <li>ADR-003: PostgreSQL 통합 DB 확정</li>
+          <li>ADR-004: 5초 폴링 방식 확정</li>
+        </ul>
+      </li>
+      <li><strong>미결사항(Open Items) 11건 정리</strong></li>
+    </ul>
+    <div class="day-outputs">
+      <div class="section-label">산출물</div>
+      <ul>
+        <li>prd-v1.0.md</li>
+        <li>data-collection-strategy.md (초안)</li>
+        <li>open-items.md</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Day 2 -->
+  <div class="day-card">
+    <div class="day-date">2026-03-09 (Day 2)</div>
+    <div class="day-goal">데이터 전략 고도화 및 설계 원칙 확립</div>
+    <ul>
+      <li><strong>data-collection-strategy.md 크로스 리뷰</strong> (AI 피드백 교차 검토)
+        <ul>
+          <li>6개 품질 이슈 식별 및 수정</li>
+          <li>중복 섹션 통합 (&sect;5/&sect;3 병합, &sect;8/&sect;10 병합)</li>
+          <li>연결 다이어그램 개선 (그리드 구조)</li>
+          <li>누락 컬럼 추가 (MES end_time, ERP snapshot_time)</li>
+          <li>&sect;10 전통적 데이터 맵 추가 &mdash; 시스템별/설비별/연동/저장/운영흐름 표 5종 + Mermaid 아키텍처 다이어그램</li>
+        </ul>
+      </li>
+      <li><strong>5번째 설계 원칙 추가: 내부 표준 형식(Canonical Model)</strong>
+        <ul>
+          <li>모든 파이프라인은 원본 데이터 형식이 아니라 내부 표준 형식 기준으로 설계</li>
+          <li>Phase 0에서는 원칙만 확정, 실제 스키마는 Phase 1-2에서 구체화</li>
+          <li>향후 고객사 확장 시 Onboarding Layer 추가만으로 대응 가능</li>
+        </ul>
+      </li>
+      <li><strong>향후 제품화 비전 논의</strong>
+        <ul>
+          <li>Palantir 스타일 고객 온보딩 전략 검토</li>
+          <li>고객 데이터 &rarr; 자동 프로파일링 &rarr; 매핑 &rarr; 온톨로지 인스턴스 생성 흐름</li>
+          <li>MVP 아키텍처가 전면 수정 없이 확장 가능함을 확인</li>
+          <li>비전 문서는 docs/future/에 분리 보관</li>
+        </ul>
+      </li>
+      <li><strong>ADR-005: 대시보드 MVP 앞당김 결정</strong> &mdash; 파이프라인 완성 전에도 시각적 결과물로 방향 검증</li>
+      <li><strong>프로젝트 관리 구조 개선</strong> &mdash; README.md에서 프로젝트 소개와 진행 관리 분리, docs/progress/ 폴더 구조 생성</li>
+    </ul>
+    <div class="day-outputs">
+      <div class="section-label">산출물</div>
+      <ul>
+        <li>data-collection-strategy.md (v2 - 대폭 보강)</li>
+        <li>customer-onboarding-ontology-strategy.md (향후 비전)</li>
+        <li>docs/progress/ 폴더 구조</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Day 3 -->
+  <div class="day-card">
+    <div class="day-date">2026-03-10 (Day 3)</div>
+    <div class="day-goal">데이터셋 수집 완료 및 정합성 검증</div>
+    <ul>
+      <li><strong>외부 데이터셋 4종 다운로드 및 폴더 구조 정리</strong>
+        <ul>
+          <li>data/raw/kaggle-cnc-mill/ &mdash; Kaggle CNC Mill Tool Wear (48컬럼, 18실험, 100ms)</li>
+          <li>data/raw/bosch-cnc/ &mdash; Bosch CNC Machining (HDF5, 진동 센서)</li>
+          <li>data/raw/multi-sensor-cnc/ &mdash; Multi-Sensor CNC Tool Wear (2000행, 17컬럼)</li>
+          <li>data/raw/milling-rul/ &mdash; Milling Tool Wear &amp; RUL (1400행)</li>
+          <li>data/raw/kamp/ &mdash; KAMP 제조AI 50종 카탈로그 (메타데이터)</li>
+        </ul>
+      </li>
+      <li><strong>.gitignore 생성</strong> &mdash; data/ 폴더 및 Python/IDE 임시 파일 제외</li>
+      <li><strong>KAMP CSV 인코딩 수정</strong> &mdash; CP949 &rarr; UTF-8 변환 (한국 공공데이터 인코딩 이슈)</li>
+      <li><strong>required-data-summary.md에 F1~F6 데이터 매핑표 추가</strong>
+        <ul>
+          <li>기능별 데이터 확보 방식 요약</li>
+          <li>기능별 필요 데이터셋 상세 매핑</li>
+          <li>외부 데이터셋 출처 목록 (Kaggle, KAMP, Bosch 링크)</li>
+        </ul>
+      </li>
+      <li><strong>constraints.md에 프로젝트 범위 섹션 추가</strong>
+        <ul>
+          <li>데이터 수집 레이어(IoT/센서/프로토콜)는 범위 밖으로 명시</li>
+          <li>분석/판단/관제 레이어(F1~F6)에 집중하는 이유 문서화</li>
+        </ul>
+      </li>
+      <li><strong>크로스 리뷰 반영 (4건 이슈)</strong>
+        <ul>
+          <li>ZIP 파일 4개 삭제 (압축 해제 후 원본 정리)</li>
+          <li>KAMP: 카탈로그만 보유, 실제 센서 데이터는 Kaggle로 대체 &mdash; 문서 반영</li>
+          <li>Bosch: HDF5 포맷 확인 &mdash; EDA 시 h5py 필요 (메모)</li>
+          <li>milling-rul: RUL 컬럼은 ADR-001에 의해 미사용, 센서 패턴만 참고 &mdash; 문서 반영</li>
+        </ul>
+      </li>
+      <li><strong>데이터 갭 분석 + 크로스 검증 (3회 리뷰)</strong>
+        <ul>
+          <li>설계 원칙 1번(equipment_id + timestamp 기준 연결) vs 실제 데이터 대조</li>
+          <li><strong>발견:</strong> 4개 데이터셋 모두 timestamp&middot;equipment_id 없음 &rarr; Phase 1에서 합성 필요</li>
+          <li><strong>발견:</strong> 주력 데이터셋(Kaggle Mill)에 진동&middot;온도 센서 없음 &rarr; 전류&middot;전력&middot;속도 중심으로 F1/F2 설계</li>
+          <li><strong>발견:</strong> Z축 전기 피드백 4컬럼 전 실험 0값, 상수 컬럼 2개 &rarr; 실질 유효 42컬럼</li>
+          <li><strong>발견:</strong> Multi-Sensor, Milling-RUL은 합성 데이터 (균등/정규분포, 음수 마모량)</li>
+          <li><strong>발견:</strong> 미완료 실험 4건은 "비정상 중단"이 아닌 "의도적으로 짧게 종료된 실험" (전부 End로 정상 종료)</li>
+          <li>open-items #1을 "KAMP 실체 확인" &rarr; "timestamp/equipment_id 합성 설계"로 업데이트</li>
+          <li>data-collection-strategy &sect;2 표: "KAMP 공공 데이터" &rarr; "Kaggle CNC Mill" 수정</li>
+          <li>required-data-summary &sect;3.1: 필수 센서 목록을 실제 확보 데이터 기준으로 전면 수정</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="day-outputs">
+      <div class="section-label">산출물</div>
+      <ul>
+        <li>.gitignore</li>
+        <li>required-data-summary.md (F1~F6 매핑표 추가)</li>
+        <li>constraints.md (범위 섹션 추가)</li>
+        <li>data/raw/ 5개 폴더 (외부 데이터셋 4종 + KAMP 카탈로그)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 5: 갭 분석 -->
+<!-- =============================== -->
+<div class="page" id="p5">
+<div class="inner">
+  <div class="page-title">전략 vs 실제 &mdash; 갭 분석</div>
+  <p class="page-sub">문서에서 계획한 것과 실제 데이터를 비교하면서 발견된 불일치 4건. 3회 크로스 리뷰(독립 검토 &rarr; 교차 검증 &rarr; 오류 수정) 결과입니다.</p>
 
   <div class="gap-list">
     <div class="gap-card">
@@ -573,8 +849,8 @@
         <div class="gap-num r">1</div>
         <div class="gap-title">전략 문서에 "KAMP가 핵심"이라고 적혀 있었음</div>
       </div>
-      <div class="gap-desc">data-collection-strategy 에서 F1/F2 데이터를 "KAMP 공공 데이터"로 적어놨는데, KAMP는 카탈로그(목록)만 있고 실제 센서 데이터는 없었어요.</div>
-      <div class="gap-fix">&rarr; 해결 완료: "Kaggle CNC Mill (핵심) + Bosch CNC (보조)"로 수정</div>
+      <div class="gap-desc">data-collection-strategy &sect;2 표에서 F1/F2 데이터를 "KAMP 공공 데이터"로 적어놨는데, 실제로 KAMP에서 확보한 것은 50종 데이터셋의 카탈로그(목록)뿐이었습니다. 실제 센서 데이터는 kamp-ai.kr에서 회원가입 후 개별 신청이 필요하며, 현재는 Kaggle CNC Mill이 핵심 데이터로 확정되었습니다.</div>
+      <div class="gap-fix">&rarr; 해결 완료: data-collection-strategy &sect;2 표를 "Kaggle CNC Mill (핵심) + Bosch CNC (보조)"로 수정. KAMP는 "참고용 카탈로그"로 역할 변경.</div>
     </div>
 
     <div class="gap-card">
@@ -582,8 +858,8 @@
         <div class="gap-num y">2</div>
         <div class="gap-title">필수 센서에 "진동, 온도"가 있었는데 실제로 없음</div>
       </div>
-      <div class="gap-desc">진동과 온도를 필수로 적어놨지만, 핵심 데이터(Kaggle Mill)에는 둘 다 없어요. 대신 전류·전압·전력·속도가 풍부.</div>
-      <div class="gap-fix">&rarr; 해결 완료: 실제 확보 센서 기준으로 문서 전면 재작성</div>
+      <div class="gap-desc">required-data-summary &sect;3.1에 필수 센서로 "진동, 전류, 온도, 주축 속도"를 적어놨지만, 핵심 데이터(Kaggle Mill)에는 진동과 온도가 없습니다. 대신 전류(CurrentFeedback, OutputCurrent), 전압(DCBusVoltage, OutputVoltage), 전력(OutputPower), 위치, 속도, 가속도가 X/Y/Z/S 축별로 풍부하게 있습니다.</div>
+      <div class="gap-fix">&rarr; 해결 완료: required-data-summary &sect;3.1을 실제 확보 센서 기준으로 전면 재작성. "확보되지 않은 센서" 섹션 별도 추가.</div>
     </div>
 
     <div class="gap-card">
@@ -591,8 +867,8 @@
         <div class="gap-num y">3</div>
         <div class="gap-title">timestamp와 equipment_id가 모든 데이터셋에 없음</div>
       </div>
-      <div class="gap-desc">설계 원칙 1번 "모든 데이터는 equipment_id + timestamp 기준 연결"인데, 4개 전부 없어요. 공개 학술 데이터의 한계.</div>
-      <div class="gap-fix">&rarr; Phase 1 EDA 첫 번째 과제로 등록: 합성 규칙 설계</div>
+      <div class="gap-desc">설계 원칙 1번 "모든 데이터는 equipment_id + timestamp 기준으로 연결"인데, 확보한 4개 데이터셋 전부에 이 두 컬럼이 없습니다. 공개 학술 데이터의 한계로, Kaggle CNC Mill은 sequence 번호(행 순서)와 experiment 번호(실험 ID)만 있습니다.</div>
+      <div class="gap-fix">&rarr; Phase 1 EDA 첫 번째 과제로 등록: sequence &times; 100ms &rarr; datetime / experiment_01 &rarr; CNC-001 합성 규칙 설계. open-items #1도 업데이트 완료.</div>
     </div>
 
     <div class="gap-card">
@@ -600,9 +876,164 @@
         <div class="gap-num g">4</div>
         <div class="gap-title">보조 데이터 2종이 합성 데이터로 의심됨</div>
       </div>
-      <div class="gap-desc">Multi-Sensor와 Milling RUL이 너무 완벽한 분포를 보여서 합성 데이터일 가능성 높음.</div>
-      <div class="gap-fix">&rarr; 해결 완료: "참고용" 명시. 핵심 분석은 Kaggle Mill 기준</div>
+      <div class="gap-desc">Multi-Sensor CNC는 센서값이 완벽한 균등분포를 보이고 마모량에 음수 값이 존재합니다. Milling RUL은 진동이 표준정규분포이고 RUL이 완벽한 선형 감소를 보입니다. 둘 다 실제 센서가 아닌 인위적으로 생성된 데이터일 가능성이 높습니다.</div>
+      <div class="gap-fix">&rarr; 해결 완료: 두 데이터셋을 "참고용"으로 명시. 핵심 분석은 Kaggle Mill 기준으로 진행.</div>
     </div>
+  </div>
+
+  <h3>크로스 검증 과정에서 수정된 오류 2건</h3>
+  <div class="gap-list">
+    <div class="gap-card">
+      <div class="gap-head">
+        <div class="gap-num y">A</div>
+        <div class="gap-title">"Z축 주의" 표현이 너무 넓었음</div>
+      </div>
+      <div class="gap-desc">처음 분석에서 "Z축 전체에 주의 필요"라고 적었는데, 검증 결과 Z축 전기 피드백 4컬럼(CurrentFeedback, DCBusVoltage, OutputCurrent, OutputVoltage)만 0값이고, Z축의 위치/속도/가속도 6컬럼은 완전히 정상이었습니다.</div>
+      <div class="gap-fix">&rarr; 수정 완료: "Z축 전기 피드백 4컬럼"으로 범위를 좁혀서 기술.</div>
+    </div>
+
+    <div class="gap-card">
+      <div class="gap-head">
+        <div class="gap-num y">B</div>
+        <div class="gap-title">"미완료 실험 = 비정상 중단" 잘못된 해석</div>
+      </div>
+      <div class="gap-desc">처음에 미완료 실험 4건(실험 4, 5, 7, 16)을 "비정상 중단"으로 해석하고 이상탐지에 활용 가능하다고 적었는데, 검증 결과 4건 전부 Machining_Process 컬럼이 "End"로 정상 종료되어 있었습니다. 의도적으로 짧게 설계된 실험이지, 비정상 중단이 아닙니다.</div>
+      <div class="gap-fix">&rarr; 수정 완료: "의도적으로 짧게 종료된 실험"으로 정정.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 6: 미결 사항 (Open Items) -->
+<!-- =============================== -->
+<div class="page" id="p6">
+<div class="inner">
+  <div class="page-title">미결 사항 (Open Items)</div>
+  <p class="page-sub">PRD v1.0 시점에서 아직 결정되지 않은 항목들. 각 항목은 해당 Phase 진입 시 ADR로 기록하며 확정합니다. 최종 수정일: 2026-03-10</p>
+
+  <h3>A. 데이터 관련 (Phase 1에서 결정)</h3>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#1</div>
+      <div class="oi-title"><s>KAMP 데이터 실체 확인</s> &rarr; timestamp/equipment_id 합성 설계</div>
+    </div>
+    <div class="oi-desc">KAMP는 카탈로그만 확보, Kaggle CNC Mill이 핵심 데이터로 확정. 단, 전 데이터셋에 timestamp와 equipment_id가 없어 합성 규칙 설계 필요 (sequence&times;100ms&rarr;datetime, experiment&rarr;CNC-ID 매핑)</div>
+    <div class="oi-meta">결정 시점: EDA 첫 번째 과제 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#2</div>
+      <div class="oi-title">정비 매뉴얼 데이터 확보 방안</div>
+    </div>
+    <div class="oi-desc">공개 문서 수집 vs 합성 작성 vs 혼합, 미정</div>
+    <div class="oi-meta">결정 시점: EDA 후 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#3</div>
+      <div class="oi-title">온톨로지 스키마 설계 방향</div>
+    </div>
+    <div class="oi-desc">설비-고장코드-부품-매뉴얼 관계 기준 미정</div>
+    <div class="oi-meta">결정 시점: EDA 후 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#4</div>
+      <div class="oi-title">합성 데이터 시나리오 확정</div>
+    </div>
+    <div class="oi-desc">data-collection-strategy &sect;6.5의 S1~S4가 초안 상태</div>
+    <div class="oi-meta">결정 시점: 데이터 모델링 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <h3>A-1. 내부 표준 형식 관련 (Phase 1~2에서 구체화)</h3>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#5</div>
+      <div class="oi-title">내부 표준 형식(Canonical Model) 초안</div>
+    </div>
+    <div class="oi-desc">지금은 원칙만 확정했고, 실제 센서/이벤트 컬럼은 EDA 후 구체화해야 함</div>
+    <div class="oi-meta">결정 시점: EDA 후, 아키텍처 설계 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <h3>B. 모델링 관련 (Phase 1~2에서 결정)</h3>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#6</div>
+      <div class="oi-title">이상 탐지 모델 선택</div>
+    </div>
+    <div class="oi-desc">Isolation Forest vs AutoEncoder vs 기타 &mdash; 데이터 봐야 판단</div>
+    <div class="oi-meta">결정 시점: EDA 후 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#7</div>
+      <div class="oi-title">LSTM 예측 윈도우 크기</div>
+    </div>
+    <div class="oi-desc">"30분"은 가설, 데이터 패턴 봐야 검증</div>
+    <div class="oi-meta">결정 시점: 모델 실험 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#8</div>
+      <div class="oi-title">Anomaly Score 임계치 기준</div>
+    </div>
+    <div class="oi-desc">몇 점 이상을 "이상"으로 판정할지</div>
+    <div class="oi-meta">결정 시점: 모델 실험 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <h3>C. 시스템/인프라 관련 (Phase 2에서 결정)</h3>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#9</div>
+      <div class="oi-title">LLM 선택 (API vs 로컬)</div>
+    </div>
+    <div class="oi-desc">비용/성능 트레이드오프 미검토</div>
+    <div class="oi-meta">결정 시점: 아키텍처 설계 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#10</div>
+      <div class="oi-title">하이브리드 검색 점수 결합 방식</div>
+    </div>
+    <div class="oi-desc">BM25 + Vector 비율/방식 미정</div>
+    <div class="oi-meta">결정 시점: GraphRAG 구현 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#11</div>
+      <div class="oi-title">프론트엔드 MVP 전략</div>
+    </div>
+    <div class="oi-desc">Streamlit 선행 vs 바로 Next.js</div>
+    <div class="oi-meta">결정 시점: 아키텍처 설계 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <h3>D. 프로젝트 관리</h3>
+
+  <div class="oi-card">
+    <div class="oi-head">
+      <div class="oi-num">#12</div>
+      <div class="oi-title">Phase 3 이후 세부 마일스톤</div>
+    </div>
+    <div class="oi-desc">Phase 2 확정 후에야 이후 단계 정의 가능</div>
+    <div class="oi-meta">결정 시점: Phase 2 완료 후 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+  </div>
+
+  <div class="info" style="margin-top:32px;">
+    <p><strong>운영 규칙:</strong></p>
+    <p>&bull; 결정되면 상태를 <code>Decided</code>로 변경하고, 해당 ADR 번호를 기재</p>
+    <p>&bull; 불필요해지면 <code>Dropped</code>으로 변경하고 사유 기재</p>
   </div>
 </div>
 </div>
@@ -613,27 +1044,49 @@
 <div class="page" id="p7">
 <div class="inner">
   <div class="page-title">다음 단계</div>
-  <p class="page-sub">Phase 0(계획)은 완료. Phase 1(EDA)으로 넘어가요.</p>
+  <p class="page-sub">Phase 0(계획)은 완료. Phase 1(EDA)으로 넘어갑니다.</p>
 
+  <h3>Phase 1 우선순위</h3>
   <div class="steps">
     <div class="step-item">
-      <h4>1순위 &mdash; Kaggle CNC Mill 탐색적 분석</h4>
-      <p>18개 실험의 센서 분포, 이상/정상 차이, 가공 단계별 특성을 시각적으로 분석. timestamp·equipment_id 합성 규칙도 여기서 확정.</p>
+      <h4>1순위 &mdash; EDA 환경 세팅</h4>
+      <p>Python 가상환경(venv) + Jupyter Notebook + pandas, matplotlib, h5py 등 필요 패키지 설치. 분석 환경이 먼저 준비되어야 데이터를 볼 수 있습니다.</p>
     </div>
     <div class="step-item">
-      <h4>2순위 &mdash; Bosch CNC 구조 확인</h4>
-      <p>h5py 설치 후 HDF5 내부 구조 탐색. 진동 데이터가 어떤 형태인지 확인하고 결합 가능성 판단.</p>
+      <h4>2순위 &mdash; Kaggle CNC Mill 탐색적 분석</h4>
+      <p>18개 실험의 센서 분포를 시각적으로 분석합니다. 이상(worn) vs 정상(unworn) 실험 간 차이, 가공 단계별 센서 특성, 축별 센서 패턴을 확인합니다. timestamp 합성 규칙(sequence &times; 100ms &rarr; datetime)과 equipment_id 매핑(experiment_01 &rarr; CNC-001)도 이 단계에서 확정합니다.</p>
     </div>
     <div class="step-item">
-      <h4>3순위 &mdash; EDA 환경 세팅</h4>
-      <p>Python 가상환경(venv) + Jupyter Notebook + pandas, matplotlib, h5py 등 필요 패키지 설치.</p>
+      <h4>3순위 &mdash; Bosch CNC 구조 확인</h4>
+      <p>h5py 설치 후 HDF5 내부 구조를 탐색합니다. 진동 데이터가 어떤 형태(시계열? 스펙트럼? 피처?)인지 확인하고, Kaggle Mill과의 결합 가능성을 판단합니다.</p>
+    </div>
+    <div class="step-item">
+      <h4>4순위 &mdash; 전처리 파이프라인 설계</h4>
+      <p>EDA 결과를 바탕으로 F1 전처리 파이프라인(노이즈 제거, 정규화, Sliding Window 피처 추출)의 구체적인 설계를 시작합니다.</p>
     </div>
   </div>
 
-  <div class="info" style="margin-top:32px;">
-    <p><strong>Phase 0 완료 상태</strong></p>
-    <p style="margin-top:8px;">문서 6종 완성 · 데이터 4종 확보 · 크로스 리뷰 3회 · 갭 4건 모두 해결</p>
-    <p style="margin-top:8px;"><strong>Phase 1(EDA)로 진입할 준비가 완료됐어요.</strong></p>
+  <h3>현재까지의 현실적 우선순위 정리</h3>
+  <div class="info">
+    <p><strong>1.</strong> Kaggle CNC Mill 센서 데이터를 실제로 확보한다. &rarr; <span class="st st-done">완료</span></p>
+    <p><strong>2.</strong> EDA를 통해 실제 컬럼, 주기, 결측 현황을 확인한다. &rarr; <span class="st st-output">Phase 1</span></p>
+    <p><strong>3.</strong> 그 결과에 맞춰 MES/ERP 합성 스키마를 고정한다. &rarr; <span class="st st-plan">Phase 2</span></p>
+    <p><strong>4.</strong> 예지보전 해석용 이벤트 로그 최소 버전을 설계한다. &rarr; <span class="st st-plan">Phase 2</span></p>
+    <p><strong>5.</strong> 온톨로지와 정비 매뉴얼은 작은 범위로 혼합 구축한다. &rarr; <span class="st st-plan">Phase 3</span></p>
+  </div>
+
+  <h3>Phase 0 완료 요약</h3>
+  <div class="meta-grid">
+    <div class="meta-box"><div class="ml">문서</div><div class="mv">6종</div></div>
+    <div class="meta-box"><div class="ml">ADR</div><div class="mv">6건</div></div>
+    <div class="meta-box"><div class="ml">데이터셋</div><div class="mv">4종 확보</div></div>
+    <div class="meta-box"><div class="ml">크로스 리뷰</div><div class="mv">3회</div></div>
+    <div class="meta-box"><div class="ml">갭 발견/해결</div><div class="mv">4건</div></div>
+    <div class="meta-box"><div class="ml">Open Items</div><div class="mv">12건</div></div>
+  </div>
+
+  <div class="info" style="margin-top:24px;">
+    <p><strong>Phase 1(EDA)로 진입할 준비가 완료되었습니다.</strong></p>
   </div>
 </div>
 </div>
@@ -643,7 +1096,6 @@
 <script>
 const pages=document.getElementById('pages');
 const navLinks=document.querySelectorAll('.topnav a');
-const pageEls=document.querySelectorAll('.page');
 
 // Click nav → scroll to page
 navLinks.forEach(a=>{
@@ -663,7 +1115,6 @@ const updateNav=()=>{
 };
 pages.addEventListener('scroll',updateNav);
 window.addEventListener('resize',()=>{
-  // Re-snap on resize
   const idx=Math.round(pages.scrollLeft/window.innerWidth);
   pages.scrollLeft=idx*window.innerWidth;
 });
