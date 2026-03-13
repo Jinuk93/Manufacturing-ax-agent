@@ -26,6 +26,8 @@ docs/
 ├── future/                        # 향후 제품화/확장 비전
 │   └── customer-onboarding-ontology-strategy.md
 ├── 1-data-exploration/            # Phase 1: Kaggle/Bosch 기반 데이터 탐색 (EDA)
+│   ├── README.md                  #   Phase 1 개요 및 핵심 질문
+│   └── eda-current-summary.md     #   EDA 현재 진행 요약
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
 └── adr/                           # ADR 템플릿
     └── 000-template.md

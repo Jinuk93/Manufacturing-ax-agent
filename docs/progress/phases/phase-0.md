@@ -128,3 +128,33 @@
 - Phase 1(EDA) 진입: Kaggle CNC Mill 데이터 탐색적 분석 시작
 - EDA 첫 번째 과제: timestamp 합성 규칙 + equipment_id 매핑 설계
 - EDA 환경 세팅 (Python venv, Jupyter, pandas, h5py 등)
+
+---
+
+## Phase 0 완료 (2026-03-10)
+
+Phase 0의 목표였던 **프로젝트 범위 확정, 데이터 전략 수립, 핵심 기술 의사결정**이 모두 완료되었습니다.
+
+### 완료 산출물
+
+| 산출물 | 문서 |
+|--------|------|
+| PRD v1.0 | [prd-v1.0.md](../../0-project-definition/prd-v1.0.md) |
+| 데이터 수집 전략 | [data-collection-strategy.md](../../0-project-definition/data-collection-strategy.md) |
+| 필요 데이터 정리표 | [required-data-summary.md](../../0-project-definition/required-data-summary.md) |
+| 미결 사항 추적 (12건) | [open-items.md](../../0-project-definition/open-items.md) |
+| ADR 6건 (ADR-000 ~ 005) | [adr-summary.md](../adr-summary.md) |
+| 핵심 제약사항 + 범위 정의 | [constraints.md](../constraints.md) |
+| 향후 제품화 비전 | [customer-onboarding-ontology-strategy.md](../../future/customer-onboarding-ontology-strategy.md) |
+| 외부 데이터셋 4종 확보 | `data/raw/` (kaggle-cnc-mill, bosch-cnc, multi-sensor-cnc, milling-rul) |
+
+### 핵심 의사결정 요약
+
+- ADR-000: CNC 단일 도메인
+- ADR-001: Forecasting 기반 (RUL 포기)
+- ADR-002: MES/ERP 합성 생성
+- ADR-003: PostgreSQL 통합 + Neo4j = 2개 DB
+- ADR-004: 5초 폴링 방식
+- ADR-005: 대시보드 MVP 앞당김
+
+> Phase 1(Data Exploration)으로 이동합니다.
