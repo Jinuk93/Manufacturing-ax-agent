@@ -539,8 +539,11 @@
     .journey-detail-links{grid-template-columns:1fr;}
     .agile-context-grid{grid-template-columns:1fr;}
   }
-  /* ===== EDA Section (p3) ===== */
-  .eda-section{margin-top:40px;border-top:1px solid rgba(255,255,255,0.08);padding-top:32px;}
+
+  #p11{background:#111;}
+  #p11 .page-title{color:#e8770e;}
+  #p11 .page-sub{color:#999;}
+  /* ===== EDA Section ===== */
   .eda-layout{display:flex;gap:20px;align-items:flex-start;min-height:600px;}
   .eda-tabs{display:flex;flex-direction:column;gap:6px;flex-shrink:0;width:160px;}
   .eda-tab{appearance:none;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;background:linear-gradient(180deg,#333 0%,#262626 100%);cursor:pointer;transition:all .2s;text-align:left;font:inherit;color:inherit;width:100%;box-shadow:0 2px 6px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.05);}
@@ -596,22 +599,23 @@
     <a href="#p0" class="active" data-idx="0">개요</a>
     <a href="#p1" data-idx="1">목표</a>
     <a href="#p2" data-idx="2">구현 설계</a>
-    <a href="#p4" data-idx="4">애자일 목표</a>
+    <a href="#p4" data-idx="5">애자일 목표</a>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section">
     <span class="nav-section-label">Phase별 진행</span>
-    <a href="#p10" data-idx="5">한눈에 보기</a>
-    <a href="#p5" data-idx="6">프로젝트 정의</a>
+    <a href="#p10" data-idx="6">한눈에 보기</a>
+    <a href="#p5" data-idx="7">프로젝트 정의</a>
     <a href="#p3" data-idx="3">데이터 수집</a>
-    <a href="#p6" data-idx="7">갭 분석</a>
+    <a href="#p11" data-idx="4">데이터 탐색</a>
+    <a href="#p6" data-idx="8">갭 분석</a>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section">
     <span class="nav-section-label">관리</span>
-    <a href="#p9" data-idx="10">ADR</a>
-    <a href="#p7" data-idx="8">미결 사항</a>
-    <a href="#p8" data-idx="9">다음 단계</a>
+    <a href="#p9" data-idx="11">ADR</a>
+    <a href="#p7" data-idx="9">미결 사항</a>
+    <a href="#p8" data-idx="10">다음 단계</a>
   </div>
 </nav>
 
@@ -1214,29 +1218,32 @@
       <li><strong>진동 센서 :</strong> &nbsp;Kaggle CNC Mill에 미포함. Bosch CNC(2kHz 진동)로 보완, Multi-Sensor CNC는 패턴 참고만</li>
     </ul>
   </div>
-  <!-- ===== EDA 섹션 ===== -->
-  <div class="eda-section">
-    <div class="page-title" style="font-size:22px;">EDA : 데이터 탐색 분석</div>
-    <p class="page-sub" style="margin-bottom:20px;">Kaggle CNC Mill 데이터를 6가지 관점에서 시각적으로 탐색합니다.</p>
-    <div class="eda-layout">
-      <div class="eda-tabs" id="eda-tabs">
-        <button class="eda-tab active" data-eda="overview"><span class="eda-tab-num">01</span><span class="eda-tab-name">데이터 개요</span></button>
-        <button class="eda-tab" data-eda="distribution"><span class="eda-tab-num">02</span><span class="eda-tab-name">센서 분포</span></button>
-        <button class="eda-tab" data-eda="timeseries"><span class="eda-tab-num">03</span><span class="eda-tab-name">시계열 패턴</span></button>
-        <button class="eda-tab" data-eda="worn"><span class="eda-tab-num">04</span><span class="eda-tab-name">Worn vs Unworn</span></button>
-        <button class="eda-tab" data-eda="correlation"><span class="eda-tab-num">05</span><span class="eda-tab-name">상관관계</span></button>
-        <button class="eda-tab" data-eda="process"><span class="eda-tab-num">06</span><span class="eda-tab-name">공정 단계</span></button>
-      </div>
-      <div class="eda-content" id="eda-content">
-        <!-- JS가 렌더링 -->
-      </div>
-    </div>
-  </div>
-
 </div>
 </div>
 
 <!-- =============================== -->
+<!-- PAGE 11: 데이터 탐색 (EDA) -->
+<!-- =============================== -->
+<div class="page" id="p11">
+<div class="inner" style="max-width:1020px;">
+  <div class="page-title">Phase 1 : 데이터 탐색 (EDA)</div>
+  <p class="page-sub">Kaggle CNC Mill 데이터를 6가지 관점에서 시각적으로 탐색합니다.</p>
+  <div class="eda-layout">
+    <div class="eda-tabs" id="eda-tabs">
+      <button class="eda-tab active" data-eda="overview"><span class="eda-tab-num">01</span><span class="eda-tab-name">데이터 개요</span></button>
+      <button class="eda-tab" data-eda="distribution"><span class="eda-tab-num">02</span><span class="eda-tab-name">센서 분포</span></button>
+      <button class="eda-tab" data-eda="timeseries"><span class="eda-tab-num">03</span><span class="eda-tab-name">시계열 패턴</span></button>
+      <button class="eda-tab" data-eda="worn"><span class="eda-tab-num">04</span><span class="eda-tab-name">Worn vs Unworn</span></button>
+      <button class="eda-tab" data-eda="correlation"><span class="eda-tab-num">05</span><span class="eda-tab-name">상관관계</span></button>
+      <button class="eda-tab" data-eda="process"><span class="eda-tab-num">06</span><span class="eda-tab-name">공정 단계</span></button>
+    </div>
+    <div class="eda-content" id="eda-content">
+      <!-- JS가 렌더링 -->
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- PAGE 4: 애자일 목표 -->
 <!-- =============================== -->
 <div class="page" id="p4">
