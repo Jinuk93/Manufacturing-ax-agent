@@ -58,9 +58,9 @@ F5(LLM):  "감속 운전 + 긴급 발주 권고"
 
 | 데이터 | 용도 | 상태 | 비고 |
 |--------|------|------|------|
-| MES 작업지시 (work_order, due_date, priority) | 알람 시점의 업무 맥락 | **없음** | Phase 2 합성 (ADR-002) |
-| ERP 부품 재고 (part_id, stock, lead_time) | 즉시 교체 가능 여부 판단 | **없음** | Phase 2 합성 (ADR-002) |
-| 정비/고장 이벤트 로그 (failure_code, maintenance_time) | 이상 신호와 실제 고장 연결 | **없음** | Phase 2 합성 |
+| MES 작업지시 (work_order, due_date, priority) | 알람 시점의 업무 맥락 | **확보** | Phase 1에서 합성 완료 (`data/processed/it-data/`) |
+| ERP 부품 재고 (part_id, stock, lead_time) | 즉시 교체 가능 여부 판단 | **확보** | Phase 1에서 합성 완료 (`data/processed/it-data/`) |
+| 정비/고장 이벤트 로그 (failure_code, maintenance_time) | 이상 신호와 실제 고장 연결 | **확보** | Phase 1에서 합성 완료 (`data/processed/it-data/`) |
 
 ### 2.3. 지식 (온톨로지) — F4
 
@@ -88,12 +88,12 @@ F5(LLM):  "감속 운전 + 긴급 발주 권고"
 - [x] EDA로 유효 42컬럼 검증 및 확정 (이상치 분석 완료, [outlier-analysis.md](outlier-analysis.md) 참고)
 - [x] `equipment_id` 매핑: 순번 기반 3대 분산 (CNC-001~003, 편중 문서화)
 
-### Phase 2 (설계+합성)
+### Phase 1에서 선행 완료 (원래 Phase 2 계획)
 
-- [ ] MES 작업지시 합성 (work_order_id, due_date, priority, status 등)
-- [ ] ERP 부품 재고 합성 (part_id, stock_quantity, lead_time_days 등)
-- [ ] 정비/고장 이벤트 로그 합성 (failure_code, maintenance_time 등)
-- [ ] IT/OT 합성 시나리오 설계 (구체적 시나리오는 Phase 2 초기에 정의 예정)
+- [x] MES 작업지시 합성 (18건, `data/processed/it-data/mes_work_orders.csv`)
+- [x] ERP 부품 재고 스냅샷 합성 (7주 × 5부품, `data/processed/it-data/erp_inventory_snapshots.csv`)
+- [x] 정비/고장 이벤트 로그 합성 (39건, `data/processed/it-data/maintenance_events.csv`)
+- [x] IT/OT 합성 시나리오 설계 ([it-data-synthesis-schema.md](it-data-synthesis-schema.md) 참고)
 
 ### Phase 3 (온톨로지 구축)
 
