@@ -225,7 +225,7 @@ for friday in fridays:
             "event_type": "preventive",
             "timestamp": mt_time.isoformat(),
             "failure_code": "COOLANT_LOW_001",
-            "description": "Weekly coolant refill",
+            "description": "Weekly coolant replenishment from warehouse",
             "duration_min": 15,
             "technician_id": "TECH-01",
             "parts_used": "P003",
@@ -301,7 +301,7 @@ for monday in mondays:
     week_cons = weekly_consumption.get(monday, {})
 
     for pid, info in PARTS.items():
-        consumed = int(week_cons.get(pid, 0))
+        consumed = round(week_cons.get(pid, 0))
         stock[pid] = max(0, stock[pid] - consumed)
         reorder = stock[pid] <= info["reorder_point"]
 

@@ -32,8 +32,8 @@ Phase 1 진입 시점에서 "실제로 갖고 있는 것", "필요한데 없는 
 | 진동 센서 | 핵심에 없는 센서 보완 | **확보** | Bosch CNC (보조) |
 | 공구 라벨 (worn/unworn) | F2 모델 성능 검증용 정답지 | **확보** | 이상탐지 입력이 아닌 검증용 |
 | 육안검사 결과 (passed_visual_inspection) | 마모 vs 품질 관계 분석 | **확보** | yes/no/NaN. worn이지만 통과한 실험(#13,#14,#15,#18) 존재 — F2 검증 시 중요 |
-| `timestamp` | 시계열 정렬 기준 | **없음** | Phase 1에서 합성 (sequence × 100ms → datetime) |
-| `equipment_id` | 설비 단위 구분 키 | **없음** | Phase 1에서 매핑 (experiment_01 → CNC-001) |
+| `timestamp` | 시계열 정렬 기준 | **확보 (합성 완료)** | sequence × 100ms → datetime (`data/processed/`) |
+| `equipment_id` | 설비 단위 구분 키 | **확보 (합성 완료)** | experiment_01~06 → CNC-001, 07~12 → CNC-002, 13~18 → CNC-003 |
 | 온도 센서 | 과열 감지 | **없음** | Phase 1 EDA에서 전류/전력의 간접 대체 가능성 검증 예정 |
 
 **참고: 공구 라벨의 역할**
