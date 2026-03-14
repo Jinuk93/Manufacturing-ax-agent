@@ -50,7 +50,7 @@ AI가 **자동으로 순회 → 분석 → 조치를 제안**하는 에이전트
 ### 1. 상시 동작 레이어
 
 ```
-[KAMP CNC 센서] ──> [F1: 센서 수집/전처리] ──> [F2: 이상탐지 + 예측]
+[Kaggle CNC Mill] ──> [F1: 센서 수집/전처리] ──> [F2: 이상탐지 + 예측]
                                                         |
                                                   Anomaly Score
                                                         |
@@ -112,6 +112,6 @@ AI가 **자동으로 순회 → 분석 → 조치를 제안**하는 에이전트
 
 | Phase | 이름 | 상태 |
 |-------|------|------|
-| 0 | Project Definition | **진행중** |
-| 1 | Data Exploration | 대기 |
+| 0 | Project Definition | ✅ 완료 |
+| 1 | Data Exploration | **진행중** |
 | 2 | Architecture | 대기 |

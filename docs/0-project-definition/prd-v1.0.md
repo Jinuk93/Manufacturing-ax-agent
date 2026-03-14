@@ -2,7 +2,7 @@
 
 **프로젝트명:** 예측 기반 자율 조치 에이전트 관제 시스템 (`manufacturing-ax-agent`)
 **문서 버전:** v1.0
-**최종 수정일:** 2026-03-08
+**최종 수정일:** 2026-03-10
 **상태:** Draft (검토 중)
 
 ---
@@ -36,7 +36,8 @@
 
 ### F1. 실시간 시계열 데이터 수집 및 전처리
 
-- 1초 단위의 원시 센서 데이터(KAMP CNC)를 수집하여 결측치 및 이상치를 통계적으로 제거
+- 현재 확보한 **Kaggle CNC Mill Tool Wear 원시 센서 데이터(100ms 샘플링, experiment 단위)**를 기준으로 결측치 및 이상치를 통계적으로 제거
+- Phase 1에서 `sequence -> timestamp`, `experiment -> equipment_id` 규칙을 정의하여 내부 표준 시계열 형식으로 정규화
 - 지정된 윈도우(Sliding Window) 크기로 이동 평균, 분산 등 파생 변수(Feature) 추출
 
 ### F2. 사전 위험 예측 및 이상 탐지 (Forecasting & Anomaly Detection)
@@ -108,7 +109,8 @@
 
 ### 4.2. 데이터 제약
 
-- SCADA 센서 데이터: KAMP의 실제 공공 데이터 사용
+- SCADA 센서 데이터: **Kaggle CNC Mill Tool Wear를 핵심 실데이터로 사용**, Bosch CNC는 진동 보조 데이터로 참고
+- KAMP 데이터: 현재는 카탈로그/메타데이터만 확보되어 참고용으로 유지
 - MES(작업 지시) 및 ERP(부품 재고): CNC 도메인에 맞춰 Python 스크립트로 합성(Synthetic) 생성 (ADR-002)
 - 정비 매뉴얼: 확보 방안 미정 (ADR 필요)
 
@@ -135,7 +137,7 @@ PRD v1.0 시점의 미결 항목입니다.
 | 7 | 합성 데이터 시나리오 설계 기준 | F3, F5 | 어떤 비즈니스 시나리오를 커버할 것인가 |
 | 8 | 세부 마일스톤 정의 | 전체 | 데이터 탐색 이후 구체화 |
 
-> **Note:** PRD v1.0 이후 추가된 미결 항목(KAMP 데이터 실체 확인, Canonical Model 초안 등)은
+> **Note:** PRD v1.0 이후 추가된 미결 항목(timestamp/equipment_id 합성 설계, Canonical Model 초안 등)은
 > [open-items.md](open-items.md)에서 관리합니다.
 
 ---
