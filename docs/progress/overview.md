@@ -8,7 +8,7 @@
 
 | Phase | 이름 | 상태 | 기간 | 핵심 산출물 |
 |-------|------|------|------|------------|
-| 0 | [Project Definition](../0-project-definition/) | ✅ 완료 | 2026-03-08 ~ 03-10 | PRD, 데이터셋 전략, ADR 6건, 미결사항 정리 |
+| 0 | [Project Definition](../0-project-definition/) | ✅ 완료 | 2026-03-08 ~ 2026-03-10 | PRD, 데이터셋 전략, ADR 6건, 미결사항 정리 |
 | 1 | [Data Exploration](../1-data-exploration/) | **진행중** | 2026-03-10 ~ | Kaggle CNC Mill/Bosch EDA, 센서 분석 |
 | 2 | [Architecture](../2-architecture/) | 대기 | - | 세부 파이프라인, DB 스키마 설계 |
 | 3+ | *Phase 2 완료 후 정의* | - | - | - |
