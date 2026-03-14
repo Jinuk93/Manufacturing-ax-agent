@@ -81,6 +81,7 @@ for _, r in train_df.iterrows():
         "tool_condition": r["tool_condition"],
         "rows": int(len(exp_data)),
         "finalized": r.get("machining_finalized", "yes"),
+        "visual_inspection": str(r.get("passed_visual_inspection", "N/A")),
     })
 
 # 공구 상태 분포
