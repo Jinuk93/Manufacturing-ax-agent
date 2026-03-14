@@ -14,7 +14,7 @@ Phase 1 진입 시점에서 "실제로 갖고 있는 것", "필요한데 없는 
 | 데이터 | 위치 | 판정 | 사유 |
 |--------|------|------|------|
 | Kaggle CNC Mill (18실험 CSV) | `data/raw/kaggle-cnc-mill/` | **유지 — 핵심** | F1, F2의 핵심 입력. 42유효컬럼, 100ms 샘플링. ⚠ experiment_12 raw는 CR-only 줄바꿈(wc -l이 0으로 오인), 실제 2,276행 존재 |
-| Bosch CNC (1,702 H5) | `data/raw/bosch-cnc/` | **유지 — 보조** | 핵심 데이터에 없는 진동 센서 유일 보완 |
+| Bosch CNC (1,702 H5) | `data/raw/bosch-cnc/` | **유지 — 보조** | 3축 가속도(2kHz), good/bad 라벨. Kaggle과 조인 불가(별도 독립 데이터셋). 보관 근거: F1 멀티 소스 테스트 또는 Bosch 단독 진동 이상 탐지 모델용. Phase 2+에서 활용 여부 판단 |
 | Multi-Sensor CNC | `data/raw/multi-sensor-cnc/` | **삭제** | 합성 데이터 의심, Kaggle+Bosch로 충분 |
 | Milling Tool Wear & RUL | `data/raw/milling-rul/` | **삭제** | ADR-001로 RUL 포기. RUL 라벨이 핵심인 데이터셋이라 용도 없음 |
 | KAMP 50종 카탈로그 | `data/raw/kamp/` | **삭제** | 메타데이터(목록)만 보유. 실제 센서 데이터 아님 |

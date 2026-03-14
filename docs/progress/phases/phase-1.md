@@ -87,7 +87,7 @@
 - [x] `timestamp` 합성 (data/processed/)
 - [x] EDA 이상치 분석 — README 경고 3조건 전수 조사, 42유효컬럼 확정 (원본 48컬럼 유지 중, 5개 제거는 F1 전처리에서)
 - [x] `equipment_id` 매핑 — 순번 기반 3대 분산 완료
-- [ ] Bosch CNC 데이터 탐색 (H5 포맷, 진동 센서 구조 파악)
+- [x] Bosch CNC 데이터 탐색 완료 — 3축 가속도(2kHz), 3대 기계, 1,702 H5 파일, good/bad 라벨. Kaggle과 조인 불가(별도 독립 데이터셋). 보관 유지, Phase 2+ 활용 판단
 
 #### equipment_id 분배 특성
 
