@@ -912,7 +912,8 @@
   <div class="page-title">Phase 1 : 데이터 수집</div>
   <p class="page-sub">데이터 현황과 확보 전략을 이 페이지에서 관리합니다.</p>
 
-  <h3>현재 보유 데이터셋 (5종)</h3>
+  <h3>현재 보유 데이터셋 (2종)</h3>
+  <p style="color:#888;font-size:13px;">Phase 1에서 불필요 데이터 3종 삭제 완료 (Multi-Sensor CNC, Milling RUL, KAMP)</p>
   <div class="ds-list">
     <div class="ds-item">
       <div class="ds-icon main">1</div>
@@ -934,32 +935,29 @@
       </div>
       <span class="st st-output">보조</span>
     </div>
-    <div class="ds-item">
+    <div class="ds-item" style="opacity:0.35;text-decoration:line-through;">
       <div class="ds-icon ref">3</div>
       <div class="ds-body">
-        <h4>Multi-Sensor CNC Tool Wear</h4>
-        <div class="ds-desc">Kaggle | 2,000행 &times; 17컬럼<br>절삭력 + 진동 + 음향방출 피처 | 3단계 마모 분류</div>
-        <div class="ds-tags"><span class="ds-tag">절삭력 5개</span><span class="ds-tag">진동 5개</span><span class="ds-tag">음향방출 5개</span><span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span></div>
+        <h4>Multi-Sensor CNC Tool Wear <span style="color:#ff4d4f;text-decoration:none;">[삭제됨]</span></h4>
+        <div class="ds-desc">합성 데이터 의심 &mdash; Kaggle+Bosch로 충분</div>
       </div>
-      <span class="st st-synth">참고</span>
+      <span class="st" style="background:#555;text-decoration:none;">삭제</span>
     </div>
-    <div class="ds-item">
+    <div class="ds-item" style="opacity:0.35;text-decoration:line-through;">
       <div class="ds-icon ref">4</div>
       <div class="ds-body">
-        <h4>Milling Tool Wear & RUL</h4>
-        <div class="ds-desc">Kaggle | 1,400행 &times; 10컬럼<br>진동 3축 + 음향 + 공정 파라미터</div>
-        <div class="ds-tags"><span class="ds-tag">vibration x/y/z</span><span class="ds-tag">acoustic_rms</span><span class="ds-tag" style="color:#ff4d4f;">RUL 미사용 (ADR-001)</span><span class="ds-tag" style="color:#d48806;">합성 데이터 의심</span></div>
+        <h4>Milling Tool Wear & RUL <span style="color:#ff4d4f;text-decoration:none;">[삭제됨]</span></h4>
+        <div class="ds-desc">ADR-001 RUL 포기로 용도 없음</div>
       </div>
-      <span class="st st-synth">참고</span>
+      <span class="st" style="background:#555;text-decoration:none;">삭제</span>
     </div>
-    <div class="ds-item" style="opacity:0.55;">
+    <div class="ds-item" style="opacity:0.35;text-decoration:line-through;">
       <div class="ds-icon meta">5</div>
       <div class="ds-body">
-        <h4>KAMP 제조AI 50종 카탈로그</h4>
-        <div class="ds-desc">공공데이터포털 | 50개 데이터셋 목록(메타데이터)<br>실제 센서 데이터 아님</div>
-        <div class="ds-tags"><span class="ds-tag">목록만 보유</span><span class="ds-tag">Kaggle로 대체</span></div>
+        <h4>KAMP 제조AI 50종 카탈로그 <span style="color:#ff4d4f;text-decoration:none;">[삭제됨]</span></h4>
+        <div class="ds-desc">메타데이터만 보유, 실제 센서 데이터 아님</div>
       </div>
-      <span class="st st-plan">카탈로그</span>
+      <span class="st" style="background:#555;text-decoration:none;">삭제</span>
     </div>
   </div>
 
@@ -990,7 +988,7 @@
 
   <h4>확보되지 않은 센서</h4>
   <ul style="margin-bottom:0;">
-    <li><strong>진동</strong> &rarr; Bosch CNC(보조)와 Multi-Sensor(참고)로 보완</li>
+    <li><strong>진동</strong> &rarr; Bosch CNC(보조)로 보완</li>
     <li><strong>온도</strong> &rarr; 현 데이터셋으로 불가. 전류·전력 기반으로 대체 설계</li>
     <li><strong>timestamp</strong> &rarr; Phase 1에서 합성 (sequence &times; 100ms &rarr; datetime)</li>
     <li><strong>equipment_id</strong> &rarr; Phase 1에서 매핑 (experiment_01 &rarr; CNC-001)</li>
@@ -1020,12 +1018,14 @@
   </div>
   </div>
 
-  <h3>참고 데이터 : Multi-Sensor CNC / Milling RUL</h3>
-  <div class="goal-note">
-  <p>둘 다 참고용입니다. 핵심 분석에는 쓰지 않습니다.</p>
-  <div class="warn" style="margin-bottom:0;">
-    <strong>합성 데이터 의심:</strong> Multi-Sensor는 센서값이 너무 균등한 분포를 보이고<br>마모량에 음수 값이 존재합니다. Milling RUL은 진동이 표준정규분포이고<br>RUL이 선형 감소합니다. 실제 센서 데이터가 아닌 인위적으로 생성된 데이터일 가능성이 높습니다.<br>Milling RUL의 RUL 컬럼은 ADR-001에 의해 미사용하며, 센서 패턴만 참고합니다.
-  </div>
+  <h3>삭제된 데이터셋 (3종)</h3>
+  <div class="goal-note" style="opacity:0.6;">
+  <p>Phase 1에서 아래 3종을 삭제했습니다. (총 ~848KB)</p>
+  <ul style="margin-bottom:0;">
+    <li><strong>Multi-Sensor CNC Tool Wear</strong> &mdash; 합성 데이터 의심 (균등분포, 음수 마모량)</li>
+    <li><strong>Milling Tool Wear & RUL</strong> &mdash; ADR-001 RUL 포기로 용도 없음</li>
+    <li><strong>KAMP 제조AI 50종 카탈로그</strong> &mdash; 메타데이터(목록)만 보유, 실제 센서 데이터 아님</li>
+  </ul>
   </div>
 
   <h3>기능별 필요 데이터 상세 매핑</h3>
@@ -1215,7 +1215,7 @@
     <h4 style="margin-top:0;color:#f59e0b;">대체 설계 &mdash; 센서 한계 보완</h4>
     <ul>
       <li><strong>온도 센서 :</strong> &nbsp;Kaggle CNC Mill에 미포함. 전류·전력 변화량으로 간접 추정 설계 (전류 급증 &rarr; 발열 의심)</li>
-      <li><strong>진동 센서 :</strong> &nbsp;Kaggle CNC Mill에 미포함. Bosch CNC(2kHz 진동)로 보완, Multi-Sensor CNC는 패턴 참고만</li>
+      <li><strong>진동 센서 :</strong> &nbsp;Kaggle CNC Mill에 미포함. Bosch CNC(2kHz 진동)로 보완</li>
     </ul>
   </div>
 </div>
@@ -1527,7 +1527,7 @@
       <div class="impl-num" style="font-size:10px;font-weight:800;color:#e8770e;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">의사결정 + 데이터</div>
       <ul>
         <li><strong>ADR-000~005</strong> &mdash; 핵심 기술 의사결정 6건</li>
-        <li><strong>data/raw/</strong> &mdash; 외부 데이터셋 4종 + KAMP 카탈로그</li>
+        <li><strong>data/raw/</strong> &mdash; 외부 데이터셋 2종 (Kaggle CNC Mill + Bosch CNC)</li>
         <li><strong>갭 분석 4건</strong> &mdash; 전략 vs 실제 불일치 발견/해결</li>
         <li><strong>비전 문서</strong> &mdash; Palantir 스타일 온보딩 전략</li>
       </ul>
@@ -1548,7 +1548,7 @@
         <h4>프로젝트 정의 및 핵심 의사결정</h4>
         <ul>
           <li><strong>PRD v1.0 작성</strong> &mdash; Problem &rarr; Solution &rarr; 6개 Feature Pipeline + System Pipeline 구조</li>
-          <li><strong>데이터셋 전략 초안</strong> &mdash; 5종 데이터셋 정의, 기능별 필수/중요/보강 분류</li>
+          <li><strong>데이터셋 전략 초안</strong> &mdash; 5종 데이터셋 정의, 기능별 필수/중요/보강 분류 <span style="color:#888;font-size:12px;">(이후 Phase 1에서 2종으로 정리)</span></li>
           <li><strong>ADR 5건 확정</strong> &mdash; 단일 도메인, Forecasting, 합성 MES/ERP, PostgreSQL 통합, 5초 폴링</li>
           <li><strong>미결사항 11건 정리</strong></li>
         </ul>
@@ -1564,7 +1564,7 @@
       <div class="p0-day-body">
         <h4>데이터 전략 고도화 및 설계 원칙 확립</h4>
         <ul>
-          <li><strong>데이터 전략 크로스 리뷰</strong> &mdash; 6개 품질 이슈 수정, 중복 섹션 통합, 전통적 데이터 맵 5종 추가</li>
+          <li><strong>데이터 전략 크로스 리뷰</strong> &mdash; 6개 품질 이슈 수정, 중복 섹션 통합, 데이터 맵 5종 추가</li>
           <li><strong>설계 원칙 5번째 추가</strong> &mdash; 내부 표준 형식(Canonical Model), 고객사 확장 시 Onboarding Layer만 추가</li>
           <li><strong>제품화 비전 논의</strong> &mdash; Palantir 스타일 자동 프로파일링 &rarr; 온톨로지 인스턴스 생성 흐름</li>
           <li><strong>ADR-005</strong> &mdash; 대시보드 MVP 조기 착수 결정</li>
@@ -1581,7 +1581,7 @@
       <div class="p0-day-body">
         <h4>데이터셋 수집 완료 및 정합성 검증</h4>
         <ul>
-          <li><strong>외부 데이터셋 4종 수집</strong> &mdash; Kaggle CNC Mill, Bosch CNC, Multi-Sensor, Milling RUL + KAMP 카탈로그</li>
+          <li><strong>외부 데이터셋 4종 수집</strong> &mdash; Kaggle CNC Mill, Bosch CNC, Multi-Sensor, Milling RUL + KAMP 카탈로그 <span style="color:#888;font-size:12px;">(이후 3종 삭제)</span></li>
           <li><strong>크로스 리뷰 4건</strong> &mdash; ZIP 정리, KAMP 실체 확인, HDF5 포맷 메모, RUL 미사용 반영</li>
           <li><strong>갭 분석 3회</strong> &mdash; timestamp/equipment_id 부재, 진동/온도 미포함, 합성 데이터 의심 발견</li>
           <li><strong>문서 수정</strong> &mdash; KAMP &rarr; Kaggle 핵심 변경, 센서 목록 전면 재작성, open-items 업데이트</li>
@@ -1621,7 +1621,7 @@
         <div class="gap-title">전략 문서에 "KAMP가 핵심"이라고 적혀 있었음</div>
       </div>
       <div class="gap-desc">data-collection-strategy &sect;2 표에서 F1/F2 데이터를 "KAMP 공공 데이터"로 적어놨는데,<br>실제로 KAMP에서 확보한 것은 50종 데이터셋의 카탈로그(목록)뿐이었습니다.<br>실제 센서 데이터는 kamp-ai.kr에서 회원가입 후 개별 신청이 필요하며,<br>현재는 Kaggle CNC Mill이 핵심 데이터로 확정되었습니다.</div>
-      <div class="gap-fix">&rarr; 해결 완료: data-collection-strategy &sect;2 표를 "Kaggle CNC Mill (핵심) + Bosch CNC (보조)"로 수정. KAMP는 "참고용 카탈로그"로 역할 변경.</div>
+      <div class="gap-fix">&rarr; 해결 완료: Kaggle CNC Mill (핵심) + Bosch CNC (보조) 2종으로 확정. KAMP 포함 3종은 Phase 1에서 삭제.</div>
     </div>
 
     <div class="gap-card">
@@ -1648,7 +1648,7 @@
         <div class="gap-title">보조 데이터 2종이 합성 데이터로 의심됨</div>
       </div>
       <div class="gap-desc">Multi-Sensor CNC는 센서값이 완벽한 균등분포를 보이고<br>마모량에 음수 값이 존재합니다.<br>Milling RUL은 진동이 표준정규분포이고 RUL이 완벽한 선형 감소를 보입니다.<br>둘 다 실제 센서가 아닌 인위적으로 생성된 데이터일 가능성이 높습니다.</div>
-      <div class="gap-fix">&rarr; 해결 완료: 두 데이터셋을 "참고용"으로 명시. 핵심 분석은 Kaggle Mill 기준으로 진행.</div>
+      <div class="gap-fix">&rarr; 해결 완료: 두 데이터셋 모두 Phase 1에서 삭제. 핵심 분석은 Kaggle Mill + Bosch CNC(보조) 2종으로 진행.</div>
     </div>
   </div>
 
@@ -1690,8 +1690,8 @@
       <div class="oi-num">#1</div>
       <div class="oi-title"><s>KAMP 데이터 실체 확인</s> &rarr; timestamp/equipment_id 합성 설계</div>
     </div>
-    <div class="oi-desc">KAMP는 카탈로그만 확보했고, Kaggle CNC Mill이 핵심 데이터로 확정됐습니다.<br>단, 전 데이터셋에 timestamp와 equipment_id가 없어<br>합성 규칙 설계가 필요합니다.<br>(sequence&times;100ms&rarr;datetime, experiment&rarr;CNC-ID 매핑)</div>
-    <div class="oi-meta">결정 시점: EDA 첫 번째 과제 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+    <div class="oi-desc">KAMP는 카탈로그만 확보 → Phase 1에서 삭제. Kaggle CNC Mill이 핵심 데이터로 확정.<br>timestamp: sequence×100ms→datetime 합성 완료. equipment_id: exp01~06→CNC-001, 07~12→CNC-002, 13~18→CNC-003 매핑 완료.<br>출력: <code>data/processed/kaggle-cnc-mill/</code></div>
+    <div class="oi-meta">결정 시점: Phase 1 Day 5 &nbsp;|&nbsp; <span class="st st-done">Decided</span></div>
   </div>
 
   <div class="oi-card">
@@ -2059,7 +2059,7 @@ const phaseDetails={
     ],
     outputs:[
       {text:'PRD v1.0',detail:'제품 요구사항 정의서 — 문제, 솔루션, 6개 Feature Pipeline 구조'},
-      {text:'data-collection-strategy.md',detail:'데이터 수집 전략 — 5종 데이터셋, 기능별 매핑, 설계 원칙'},
+      {text:'data-collection-strategy.md',detail:'데이터 수집 전략 — 데이터셋 기능별 매핑, 설계 원칙 (현재 2종으로 정리)'},
       {text:'required-data-summary.md',detail:'F1~F6 기능별 필요 데이터 상세 매핑표'},
       {text:'ADR-000~005',detail:'핵심 기술 의사결정 6건 (도메인, 예측, 합성, DB, 폴링, 대시보드)'},
       {text:'open-items.md',detail:'미결사항 11건 — Phase 1에서 우선 해결할 과제 목록'}
@@ -2172,13 +2172,13 @@ const phaseOverlayData={
   phase0:{
     log:[
       {date:'2026-03-08 (Day 1)',goal:'프로젝트 정의 및 핵심 의사결정',
-       items:['<strong>PRD v1.0 작성</strong> — Problem → Solution → 6개 Feature Pipeline 정의','<strong>데이터셋 전략 초안 작성</strong> — 5종 데이터셋 정의, 기능별 필요 데이터 분류','<strong>핵심 기술 의사결정 5건</strong> — ADR-000~004 확정','<strong>미결사항(Open Items) 11건 정리</strong>'],
+       items:['<strong>PRD v1.0 작성</strong> — Problem → Solution → 6개 Feature Pipeline 정의','<strong>데이터셋 전략 초안 작성</strong> — 5종 데이터셋 정의 (이후 Phase 1에서 2종으로 정리)','<strong>핵심 기술 의사결정 5건</strong> — ADR-000~004 확정','<strong>미결사항(Open Items) 11건 정리</strong>'],
        outputs:'prd-v1.0.md, data-collection-strategy.md (초안), open-items.md'},
       {date:'2026-03-09 (Day 2)',goal:'데이터 전략 고도화 및 설계 원칙 확립',
        items:['<strong>data-collection-strategy.md 크로스 리뷰</strong> — 6개 품질 이슈 수정, 중복 섹션 통합','<strong>5번째 설계 원칙 추가</strong> — 내부 표준 형식(Canonical Model)','<strong>향후 제품화 비전 논의</strong> — Palantir 스타일 고객 온보딩 전략','<strong>ADR-005</strong> — 대시보드 MVP 앞당김 결정'],
        outputs:'data-collection-strategy.md (v2), customer-onboarding-ontology-strategy.md'},
       {date:'2026-03-10 (Day 3)',goal:'데이터셋 수집 완료 및 정합성 검증',
-       items:['<strong>외부 데이터셋 4종 다운로드</strong> — Kaggle CNC Mill, Bosch CNC, Multi-Sensor, Milling RUL','<strong>크로스 리뷰 4건</strong> — ZIP 정리, KAMP 카탈로그 확인, HDF5 포맷 확인, RUL 미사용 반영','<strong>데이터 갭 분석 3회</strong> — timestamp 부재, 진동/온도 미포함, 합성 데이터 의심, 미완료 실험 해석 수정'],
+       items:['<strong>외부 데이터셋 4종 다운로드</strong> — Kaggle CNC Mill, Bosch CNC, Multi-Sensor, Milling RUL (이후 2종만 보존)','<strong>크로스 리뷰 4건</strong> — ZIP 정리, KAMP 카탈로그 확인, HDF5 포맷 확인, RUL 미사용 반영','<strong>데이터 갭 분석 3회</strong> — timestamp 부재, 진동/온도 미포함, 합성 데이터 의심, 미완료 실험 해석 수정'],
        outputs:'.gitignore, required-data-summary.md, constraints.md, data/raw/ 5개 폴더'}
     ],
     adr:[
@@ -2190,10 +2190,10 @@ const phaseOverlayData={
       {num:'ADR-005',title:'대시보드 MVP 조기 착수',decision:'파이프라인 완성 전에도 대시보드를 먼저 구축',reason:'시각적 결과물 없이는 방향 검증 불가',constraint:'초기 대시보드는 정적 데이터 기반'}
     ],
     gap:[
-      {num:'1',cls:'r',title:'전략 문서에 "KAMP가 핵심"이라고 적혀 있었음',desc:'실제로 KAMP에서 확보한 것은 카탈로그(목록)뿐. Kaggle CNC Mill이 핵심으로 확정.',fix:'해결 완료: data-collection-strategy §2 표 수정'},
+      {num:'1',cls:'r',title:'전략 문서에 "KAMP가 핵심"이라고 적혀 있었음',desc:'실제로 KAMP에서 확보한 것은 카탈로그(목록)뿐. Kaggle CNC Mill이 핵심으로 확정.',fix:'해결 완료: KAMP 포함 3종 삭제, 2종(Kaggle+Bosch)으로 확정'},
       {num:'2',cls:'y',title:'필수 센서에 "진동, 온도"가 있었는데 실제로 없음',desc:'핵심 데이터(Kaggle Mill)에는 진동과 온도 미포함. 대신 전류/전압/전력/위치/속도/가속도가 풍부.',fix:'해결 완료: required-data-summary §3.1 전면 재작성'},
       {num:'3',cls:'y',title:'timestamp와 equipment_id가 모든 데이터셋에 없음',desc:'설계 원칙 1번과 불일치. 공개 학술 데이터의 한계.',fix:'Phase 1 EDA 첫 과제로 합성 규칙 설계 등록'},
-      {num:'4',cls:'g',title:'보조 데이터 2종이 합성 데이터로 의심됨',desc:'Multi-Sensor CNC는 완벽한 균등분포, Milling RUL은 완벽한 선형 감소.',fix:'해결 완료: "참고용"으로 명시, 핵심 분석은 Kaggle Mill'}
+      {num:'4',cls:'g',title:'보조 데이터 2종이 합성 데이터로 의심됨',desc:'Multi-Sensor CNC는 완벽한 균등분포, Milling RUL은 완벽한 선형 감소.',fix:'해결 완료: Phase 1에서 두 데이터셋 모두 삭제'}
     ]
   },
   phase1:{log:[],adr:[],gap:[]},
