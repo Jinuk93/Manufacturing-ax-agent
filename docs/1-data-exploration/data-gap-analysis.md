@@ -34,7 +34,7 @@ Phase 1 진입 시점에서 "실제로 갖고 있는 것", "필요한데 없는 
 | 육안검사 결과 (passed_visual_inspection) | 마모 vs 품질 관계 분석 | **확보** | yes/no/NaN. worn이지만 통과한 실험(#13,#14,#15,#18) 존재 — F2 검증 시 중요 |
 | `timestamp` | 시계열 정렬 기준 | **확보 (합성 완료)** | sequence × 100ms → datetime (`data/processed/`) |
 | `equipment_id` | 설비 단위 구분 키 | **확보 (합성 완료)** | experiment_01~06 → CNC-001, 07~12 → CNC-002, 13~18 → CNC-003 |
-| 온도 센서 | 과열 감지 | **없음** | Phase 1 EDA에서 전류/전력의 간접 대체 가능성 검증 예정 |
+| 온도 센서 | 과열 감지 | **없음** | Phase 2 모델링에서 전류/전력 기반 과열 징후 감지 검증 (SPINDLE_OVERHEAT_001 failure_code로 대응 가능) |
 
 **참고: 공구 라벨의 역할**
 
