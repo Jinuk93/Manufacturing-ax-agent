@@ -1,7 +1,7 @@
 # 필요한 데이터 정리표
 
-**상태:** Draft (검토 중)
-**최종 수정일:** 2026-03-10
+**상태:** 업데이트 완료
+**최종 수정일:** 2026-03-15
 
 이 문서는 현재 프로젝트에서 필요한 데이터를
 "실제로 수집할 것", "합성으로 만들 것", "미정 또는 혼합 방식으로 갈 것"으로 나누어 정리합니다.
@@ -77,7 +77,7 @@
 | 기능 | 기능명 | 필요한 데이터 | 확보 방식 | 데이터셋 출처 |
 |------|--------|--------------|-----------|--------------|
 | F1 | 센서 전처리 | CNC 센서 시계열 (위치, 속도, 전류, 전력 등) | 실제 수집 | [Kaggle CNC Mill Tool Wear](https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill) (48컬럼, 18실험) |
-| F1 | 센서 전처리 | 보조 CNC 센서 (진동, 전류) | 실제 수집 | [KAMP 공공데이터](https://www.data.go.kr/data/15089213/fileData.do) / [Bosch CNC](https://github.com/boschresearch/CNC_Machining) |
+| F1 | 센서 전처리 | 보조 CNC 센서 (진동) | 실제 수집 | [Bosch CNC](https://github.com/boschresearch/CNC_Machining) (3축 가속도, 2kHz) |
 | F2 | 이상탐지 + Forecasting | F1 전처리 결과 (정규화된 센서 시계열) | F1 출력 | ← F1에서 전처리된 데이터 |
 | F2 | 이상탐지 + Forecasting | 공구 상태 라벨 (unworn/worn) | 실제 수집 | [Kaggle CNC Mill Tool Wear](https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill) (tool_condition) |
 | F2 | 이상탐지 + Forecasting | 정비/고장 이벤트 로그 | 합성 생성 | Python 합성 (equipment_id, failure_code, maintenance_time) |
@@ -93,11 +93,13 @@
 
 | 데이터셋 | 출처 | 용도 | 비고 |
 |----------|------|------|------|
-| CNC Mill Tool Wear | [Kaggle](https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill) | F1, F2 핵심 입력 | 48컬럼, 18실험, 100ms 샘플링, tool_condition 라벨 |
-| KAMP 제조 AI 데이터셋 | [공공데이터포털](https://www.data.go.kr/data/15089213/fileData.do) | 참고용 카탈로그 | 50종 목록(메타데이터)만 보유, 실제 센서 데이터는 kamp-ai.kr 회원가입 필요. Kaggle CNC Mill로 대체 |
-| Bosch CNC Machining | [GitHub](https://github.com/boschresearch/CNC_Machining) | F1 보조 데이터 | 실제 산업 진동 데이터, HDF5(.h5) 포맷 — EDA 시 h5py 필요 |
-| Milling Tool Wear & RUL | [Kaggle](https://www.kaggle.com/datasets/programmer3/milling-tool-wear-and-rul-dataset) | F2 참고 | 센서 패턴(vibration, acoustic_rms 등)만 참고. RUL 컬럼은 ADR-001에 의해 미사용 |
-| Multi-Sensor CNC Tool Wear | [Kaggle](https://www.kaggle.com/datasets/ziya07/multi-sensor-cnc-tool-wear-dataset/data) | F2 참고 | 다중 센서 데이터 |
+| CNC Mill Tool Wear | [Kaggle](https://www.kaggle.com/datasets/shasun/tool-wear-detection-in-cnc-mill) | F1, F2 핵심 입력 | 42유효컬럼(원본 48), 18실험, 100ms 샘플링, tool_condition 라벨 |
+| Bosch CNC Machining | [GitHub](https://github.com/boschresearch/CNC_Machining) | F1 보조 데이터 | 실제 산업 진동 데이터, H5 포맷, 3축 가속도(2kHz), 3대 기계 |
+
+**Phase 1에서 제외된 데이터셋:**
+- ~~KAMP 제조 AI 데이터셋~~ — 메타데이터(목록)만 보유, 삭제
+- ~~Milling Tool Wear & RUL~~ — ADR-001 RUL 포기, 삭제
+- ~~Multi-Sensor CNC Tool Wear~~ — 합성 데이터 의심, 삭제
 
 > **핵심:** 직접 확보해야 하는 것은 딱 2가지입니다.
 > 1. **Kaggle CNC Mill Tool Wear** → F1, F2의 핵심 입력
@@ -132,7 +134,7 @@
 
 확보되지 않은 센서:
 
-- ~~진동~~ → Bosch CNC(보조)와 Multi-Sensor(참고)로 보완
+- ~~진동~~ → Bosch CNC(보조)로 보완
 - ~~온도~~ → 현 데이터셋으로 불가. 전류·전력 기반으로 대체 설계
 - `timestamp` → Phase 1에서 합성 (sequence × 100ms → datetime)
 - `equipment_id` → Phase 1에서 매핑 (experiment_01 → CNC-001)

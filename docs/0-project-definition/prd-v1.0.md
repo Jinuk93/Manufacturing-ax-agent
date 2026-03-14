@@ -110,9 +110,10 @@
 ### 4.2. 데이터 제약
 
 - SCADA 센서 데이터: **Kaggle CNC Mill Tool Wear를 핵심 실데이터로 사용**, Bosch CNC는 진동 보조 데이터로 참고
-- KAMP 데이터: 현재는 카탈로그/메타데이터만 확보되어 참고용으로 유지
-- MES(작업 지시) 및 ERP(부품 재고): CNC 도메인에 맞춰 Python 스크립트로 합성(Synthetic) 생성 (ADR-002)
-- 정비 매뉴얼: 확보 방안 미정 (ADR 필요)
+- ~~KAMP 데이터~~: 카탈로그/메타데이터만이었으므로 Phase 1에서 삭제 (Kaggle CNC Mill로 대체)
+- MES(작업 지시) 및 ERP(부품 재고): CNC 도메인에 맞춰 Python 스크립트로 합성 완료 (ADR-002, Phase 1)
+- 정비/고장 이벤트 로그: failure_code 4종 기반으로 합성 완료 (Phase 1)
+- 정비 매뉴얼: 확보 방안 미정 (Phase 3에서 결정)
 
 ### 4.3. 인프라 제약
 
