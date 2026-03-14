@@ -83,10 +83,10 @@ F5(LLM):  "감속 운전 + 긴급 발주 권고"
 
 ### Phase 1 (지금)
 
-- [ ] 불필요 데이터 삭제: `multi-sensor-cnc/`, `milling-rul/`
-- [ ] `timestamp` 합성 규칙 설계: sequence × 100ms → datetime
-- [ ] `equipment_id` 매핑 규칙 설계: experiment_01 → CNC-001
-- [ ] EDA로 유효 42컬럼 검증 및 확정
+- [x] 불필요 데이터 삭제: `multi-sensor-cnc/`, `milling-rul/`, `kamp/`
+- [x] `timestamp` 합성: sequence × 100ms → datetime (`data/processed/`)
+- [x] EDA로 유효 42컬럼 검증 및 확정 (이상치 분석 완료, [outlier-analysis.md](outlier-analysis.md) 참고)
+- [x] `equipment_id` 매핑: 순번 기반 3대 분산 (CNC-001~003, 편중 문서화)
 
 ### Phase 2 (설계+합성)
 
