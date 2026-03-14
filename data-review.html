@@ -553,6 +553,9 @@
   .eda-tab.active .eda-tab-num{color:#e8770e;}
   .eda-tab-name{display:block;font-size:12px;font-weight:600;color:#ccc;margin-top:2px;}
   .eda-tab.active .eda-tab-name{color:#f5f5f5;}
+  .eda-tab[data-eda="conclusion"]{border-color:#e8770e;background:linear-gradient(180deg,#3d3020 0%,#2a2218 100%);box-shadow:0 0 0 1px #e8770e,0 4px 12px rgba(232,119,14,0.15),inset 0 1px 0 rgba(255,255,255,0.06);}
+  .eda-tab[data-eda="conclusion"] .eda-tab-num{color:#e8770e;}
+  .eda-tab[data-eda="conclusion"] .eda-tab-name{color:#f5f5f5;}
   .eda-content{flex:1;min-width:0;background:#1a1a1a;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;min-height:600px;}
   .eda-content h3{color:#e8770e;margin:0 0 16px;font-size:18px;}
   .eda-content h4{color:#ddd;margin:20px 0 10px;font-size:15px;}
@@ -608,14 +611,6 @@
     <a href="#p5" data-idx="7">프로젝트 정의</a>
     <a href="#p3" data-idx="3">데이터 수집</a>
     <a href="#p11" data-idx="4">데이터 탐색</a>
-    <a href="#p6" data-idx="8">갭 분석</a>
-  </div>
-  <div class="nav-divider"></div>
-  <div class="nav-section">
-    <span class="nav-section-label">관리</span>
-    <a href="#p9" data-idx="11">ADR</a>
-    <a href="#p7" data-idx="9">미결 사항</a>
-    <a href="#p8" data-idx="10">다음 단계</a>
   </div>
 </nav>
 
@@ -3123,19 +3118,20 @@ function renderProcess(el){
 
 // ── Tab 7: 전체 결론 ──
 function renderConclusion(el){
+  const ccard='background:linear-gradient(180deg,#333 0%,#282828 100%);box-shadow:0 2px 8px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.06);';
   let h='<h3>EDA 전체 결론</h3>';
   h+='<p>6개 탭의 분석 결과를 종합하여, 이 데이터로 무엇을 할 수 있고 어떻게 해야 하는지 정리합니다.</p>';
 
   // ── 데이터 품질 판정 ──
   h+='<h4>1. 데이터 품질 판정</h4>';
-  h+='<div class="eda-info" style="border-top:2px solid #22c55e;">';
-  h+='<strong style="color:#22c55e;font-size:15px;">결론: 이 데이터는 예지보전 모델 학습에 사용할 수 있습니다.</strong><br><br>';
-  h+='<strong>긍정적 요소:</strong><br>';
+  h+='<div class="eda-info" style="'+ccard+'">';
+  h+='<strong style="color:#22c55e;font-size:15px;">결론 : 이 데이터는 예지보전 모델 학습에 사용할 수 있습니다.</strong><br><br>';
+  h+='<strong>긍정적 요소 :</strong><br>';
   h+='• <strong>결측값 0건</strong> — 18개 실험, 25,286행 전체에서 NaN이 없습니다. 전처리 부담이 매우 낮습니다.<br>';
   h+='• <strong>42개 유효 센서</strong> — 원본 48개 중 6개(상수/0값/순번)만 제외하면 모두 분석 가능합니다.<br>';
   h+='• <strong>라벨 품질 양호</strong> — worn 10개 / unworn 8개로 큰 불균형 없이 지도학습 검증이 가능합니다.<br>';
   h+='• <strong>100ms 샘플링</strong> — 초당 10회 기록으로 시계열 예측에 충분한 해상도입니다.<br><br>';
-  h+='<strong>주의할 한계:</strong><br>';
+  h+='<strong>주의할 한계 :</strong><br>';
   h+='• <strong>실험 수 18개</strong> — 딥러닝에는 적습니다. 실험 단위 교차검증이나 데이터 증강이 필요합니다.<br>';
   h+='• <strong>단일 소재(wax)</strong> — 실제 공장의 다양한 소재(철강, 알루미늄 등)에는 일반화가 어렵습니다.<br>';
   h+='• <strong>온도/진동 센서 없음</strong> — 과열, 공진 같은 이상 유형은 직접 감지할 수 없고 전류/전력으로 간접 추정해야 합니다.';
@@ -3143,34 +3139,34 @@ function renderConclusion(el){
 
   // ── 핵심 피처 후보 ──
   h+='<h4>2. 핵심 피처 후보 (F1 전처리 입력)</h4>';
-  h+='<div class="eda-info" style="border-top:2px solid #e8770e;">';
-  h+='EDA 결과를 종합하면, 마모 감지에 가장 유력한 센서 그룹의 우선순위는 다음과 같습니다:<br><br>';
+  h+='<div class="eda-info" style="'+ccard+'">';
+  h+='EDA 결과를 종합하면, 마모 감지에 가장 유력한 센서 그룹의 우선순위는 다음과 같습니다 :<br><br>';
 
-  h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:8px 0;">';
+  h+='<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px auto;max-width:560px;">';
 
-  h+='<div style="background:rgba(239,68,68,0.1);border-radius:8px;padding:12px;">';
-  h+='<strong style="color:#ef4444;">1순위: 전류/전력</strong><br>';
+  h+='<div style="border:1px solid rgba(239,68,68,0.25);border-radius:10px;padding:14px;background:linear-gradient(180deg,rgba(239,68,68,0.08) 0%,rgba(239,68,68,0.02) 100%);box-shadow:0 2px 6px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.04);">';
+  h+='<strong style="color:#ef4444;">1순위 : 전류/전력</strong><br>';
   h+='<span style="font-size:12px;">CurrentFeedback, OutputPower<br>';
   h+='Worn에서 전류 -47%, 전력 +36% 차이<br>';
   h+='마모된 공구 → 절삭 저항 증가 → 모터 부하 증가</span>';
   h+='</div>';
 
-  h+='<div style="background:rgba(59,130,246,0.1);border-radius:8px;padding:12px;">';
-  h+='<strong style="color:#3b82f6;">2순위: 속도</strong><br>';
+  h+='<div style="border:1px solid rgba(59,130,246,0.25);border-radius:10px;padding:14px;background:linear-gradient(180deg,rgba(59,130,246,0.08) 0%,rgba(59,130,246,0.02) 100%);box-shadow:0 2px 6px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.04);">';
+  h+='<strong style="color:#3b82f6;">2순위 : 속도</strong><br>';
   h+='<span style="font-size:12px;">ActualVelocity, CommandVelocity<br>';
   h+='Worn에서 40~48% 차이<br>';
   h+='절삭 저항으로 실제 속도가 느려짐</span>';
   h+='</div>';
 
-  h+='<div style="background:rgba(168,85,247,0.1);border-radius:8px;padding:12px;">';
-  h+='<strong style="color:#a855f7;">3순위: 파생 변수</strong><br>';
+  h+='<div style="border:1px solid rgba(168,85,247,0.25);border-radius:10px;padding:14px;background:linear-gradient(180deg,rgba(168,85,247,0.08) 0%,rgba(168,85,247,0.02) 100%);box-shadow:0 2px 6px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.04);">';
+  h+='<strong style="color:#a855f7;">3순위 : 파생 변수</strong><br>';
   h+='<span style="font-size:12px;">Actual - Command (추종 오차)<br>';
   h+='Position/Velocity/Acceleration 각각<br>';
   h+='정상이면 ≈0, 이상 시 차이 증가</span>';
   h+='</div>';
 
-  h+='<div style="background:rgba(34,197,94,0.1);border-radius:8px;padding:12px;">';
-  h+='<strong style="color:#22c55e;">보조: 공정 컨텍스트</strong><br>';
+  h+='<div style="border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:14px;background:linear-gradient(180deg,rgba(34,197,94,0.08) 0%,rgba(34,197,94,0.02) 100%);box-shadow:0 2px 6px rgba(0,0,0,0.15),inset 0 1px 0 rgba(255,255,255,0.04);">';
+  h+='<strong style="color:#22c55e;">보조 : 공정 컨텍스트</strong><br>';
   h+='<span style="font-size:12px;">Machining_Process (10단계)<br>';
   h+='절삭 구간에서만 센서값이 의미 있음<br>';
   h+='단계별 분리 분석의 기준 변수</span>';
@@ -3178,14 +3174,15 @@ function renderConclusion(el){
 
   h+='</div>';
 
-  h+='<br><strong>차원 축소 가능:</strong> Position Actual≈Command(r=1.0), Velocity도 r=0.99 → 하나만 남기거나 차이로 대체. ';
+  h+='<br><strong>차원 축소 가능 :</strong><br>';
+  h+='Position Actual≈Command(r=1.0), Velocity도 r=0.99 → 하나만 남기거나 차이로 대체. ';
   h+='S축 21개 강한 상관 쌍 → PCA 적용 고려.';
   h+='</div>';
 
   // ── F1~F6 파이프라인 연결 ──
   h+='<h4>3. EDA 결과 → 파이프라인 연결</h4>';
-  h+='<div class="eda-info" style="border-top:2px solid #3b82f6;">';
-  h+='이 EDA 결과가 F1~F6 각 기능에 어떻게 입력되는지 정리합니다:<br><br>';
+  h+='<div class="eda-info" style="'+ccard+'">';
+  h+='이 EDA 결과가 F1~F6 각 기능에 어떻게 입력되는지 정리합니다 :<br><br>';
 
   h+='<table class="eda-tbl" style="font-size:13px;">';
   h+='<thead><tr><th style="width:50px;">기능</th><th>EDA에서 확인된 것</th><th>Phase 2에서 할 일</th></tr></thead>';
@@ -3213,22 +3210,22 @@ function renderConclusion(el){
 
   // ── 최종 결론 ──
   h+='<h4>4. 최종 결론</h4>';
-  h+='<div class="eda-info" style="border-top:2px solid #f59e0b;background:#1a1a1a;">';
-  h+='<strong style="color:#f59e0b;font-size:16px;">Phase 1 EDA 결론: 데이터 준비 완료, Phase 2 진입 가능</strong><br><br>';
+  h+='<div class="eda-info" style="background:linear-gradient(180deg,#302818 0%,#231e14 100%);box-shadow:0 2px 10px rgba(232,119,14,0.12),inset 0 1px 0 rgba(255,255,255,0.05);border:1px solid rgba(232,119,14,0.2);">';
+  h+='<strong style="color:#f59e0b;font-size:16px;">Phase 1 EDA 결론 : 데이터 준비 완료, Phase 2 진입 가능</strong><br><br>';
 
-  h+='<strong>확정된 사실:</strong><br>';
+  h+='<strong>확정된 사실 :</strong><br>';
   h+='• Kaggle CNC Mill 데이터는 예지보전 모델의 <strong>핵심 입력으로 적합</strong>합니다.<br>';
   h+='• <strong>전류(CurrentFeedback)와 전력(OutputPower)</strong>이 마모 감지의 가장 유력한 피처입니다.<br>';
   h+='• <strong>공정 단계(Machining_Process)별 분리 분석</strong>이 필수입니다. 뭉쳐서 분석하면 패턴이 상쇄됩니다.<br>';
   h+='• Actual vs Command <strong>추종 오차</strong>를 파생 변수로 만들면 추가적인 마모 신호를 포착할 수 있습니다.<br>';
   h+='• IT 데이터(MES 18건, Maintenance 39건, ERP 35건) 합성 완료로 <strong>F3 IT/OT 동기화가 가능</strong>합니다.<br><br>';
 
-  h+='<strong>Phase 2에서 결정할 것:</strong><br>';
-  h+='• 이상탐지 모델: Isolation Forest vs AutoEncoder (Open Item #6)<br>';
-  h+='• LSTM 예측 윈도우: "30분"은 가설, 실험 필요 (Open Item #7)<br>';
-  h+='• Anomaly Score 임계치: 몇 점 이상을 "이상"으로 볼지 (Open Item #8)<br>';
-  h+='• DB 스키마: 42센서 + IT 3종을 PostgreSQL에 어떻게 담을지<br>';
-  h+='• LLM 선택: API(Claude/GPT) vs 로컬 모델 (Open Item #9)';
+  h+='<strong>Phase 2에서 결정할 것 :</strong><br>';
+  h+='• 이상탐지 모델 : Isolation Forest vs AutoEncoder (Open Item #6)<br>';
+  h+='• LSTM 예측 윈도우 : "30분"은 가설, 실험 필요 (Open Item #7)<br>';
+  h+='• Anomaly Score 임계치 : 몇 점 이상을 "이상"으로 볼지 (Open Item #8)<br>';
+  h+='• DB 스키마 : 42센서 + IT 3종을 PostgreSQL에 어떻게 담을지<br>';
+  h+='• LLM 선택 : API(Claude/GPT) vs 로컬 모델 (Open Item #9)';
   h+='</div>';
 
   el.innerHTML=h;
