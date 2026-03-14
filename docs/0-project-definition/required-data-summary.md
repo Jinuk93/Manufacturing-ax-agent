@@ -65,12 +65,13 @@
 
 ### F1, F2에서 구분해서 봐야 할 것
 
-| 구분 | 현재 확보 | 목표 표준 |
-|------|-----------|-----------|
-| 시간축 | `sequence` 기반 순서 정보 | `timestamp` |
-| 설비 식별 | `experiment` 단위 파일 구분 | `equipment_id` |
-| 핵심 센서 | 전류, 전력, 속도, 위치, 가속도 | 전류, 전력, 속도 중심 + 필요 시 진동/온도 보강 |
-| 부족한 항목 | 온도, 실제 정비 이벤트 | 합성 이벤트 로그, 보강 센서 |
+| 구분 | Phase 0 시점 | Phase 1 완료 후 |
+|------|-------------|----------------|
+| 시간축 | `sequence` 기반 순서 정보 | ✅ `timestamp` 합성 완료 (sequence × 100ms → datetime) |
+| 설비 식별 | `experiment` 단위 파일 구분 | ✅ `equipment_id` 매핑 완료 (exp→CNC-001~003) |
+| 핵심 센서 | 전류, 전력, 속도, 위치, 가속도 | ✅ 42 분석컬럼 확정 (원본 48 - Z축전기 4 - 상수 1 - 행순서번호 1) |
+| 정비 이벤트 | 없음 | ✅ 합성 완료 (39건, corrective 12 + preventive 27) |
+| 부족한 항목 | 온도 | Phase 2에서 전류/전력 기반 과열 징후 감지 검증 |
 
 ### 기능별 필요 데이터셋 상세 매핑
 
@@ -136,8 +137,8 @@
 
 - ~~진동~~ → Bosch CNC(보조)로 보완
 - ~~온도~~ → 현 데이터셋으로 불가. 전류·전력 기반으로 대체 설계
-- `timestamp` → Phase 1에서 합성 (sequence × 100ms → datetime)
-- `equipment_id` → Phase 1에서 매핑 (experiment_01 → CNC-001)
+- ~~`timestamp`~~ → ✅ Phase 1 합성 완료 (`data/processed/kaggle-cnc-mill/`)
+- ~~`equipment_id`~~ → ✅ Phase 1 매핑 완료 (exp01~06→CNC-001, 07~12→CNC-002, 13~18→CNC-003)
 
 참고: Z축 전기 피드백 4개 컬럼(CurrentFeedback, DCBusVoltage, OutputCurrent, OutputVoltage)은 전 실험에서 0값 — 제거 대상.
 상수 컬럼 2개(S1_SystemInertia=12.0, M1_CURRENT_PROGRAM_NUMBER=1.0)도 제거 대상.

@@ -9,8 +9,8 @@
 | Phase | 이름 | 상태 | 기간 | 핵심 산출물 |
 |-------|------|------|------|------------|
 | 0 | [Project Definition](../0-project-definition/) | ✅ 완료 | 2026-03-08 ~ 2026-03-10 | PRD, 데이터셋 전략, ADR 6건, 미결사항 정리 |
-| 1 | [Data Exploration](../1-data-exploration/) | **진행중** | 2026-03-10 ~ | Kaggle CNC Mill/Bosch EDA, 센서 분석 |
-| 2 | [Architecture](../2-architecture/) | 대기 | - | 세부 파이프라인, DB 스키마 설계 |
+| 1 | [Data Exploration](../1-data-exploration/) | ✅ 완료 | 2026-03-10 ~ 2026-03-15 | EDA 42컬럼 확정, timestamp/equipment_id 합성, IT 데이터 합성 (MES/ERP/Maintenance), 이상치 분석 |
+| 2 | [Architecture](../2-architecture/) | **다음** | - | 세부 파이프라인, DB 스키마 설계 |
 | 3+ | *Phase 2 완료 후 정의* | - | - | - |
 
 **Phase별 상세 로그:** [phases/](phases/)
@@ -61,7 +61,8 @@ docs/
 │   ├── adr-summary.md             #   ADR 의사결정 요약 표
 │   ├── constraints.md             #   Key Constraints
 │   └── phases/                    #   Phase별 날짜별 로그
-│       └── phase-0.md             #     Phase 0 진행 기록
+│       ├── phase-0.md             #     Phase 0 진행 기록
+│       └── phase-1.md             #     Phase 1 진행 기록
 ├── 0-project-definition/          # Phase 0: 프로젝트 정의
 │   ├── prd-v1.0.md                #   PRD (제품 요구사항 정의서)
 │   ├── data-collection-strategy.md #   데이터 수집 전략 기준 문서
@@ -70,8 +71,10 @@ docs/
 ├── future/                        # 향후 제품화/확장 비전
 │   └── customer-onboarding-ontology-strategy.md
 ├── 1-data-exploration/            # Phase 1: 데이터 탐색 (EDA)
-│   ├── README.md                  #   Phase 1 개요 및 핵심 질문
-│   └── eda-current-summary.md     #   EDA 현재 진행 요약
+│   ├── README.md                  #   Phase 1 개요 및 완료 요약
+│   ├── data-gap-analysis.md       #   데이터 갭 분석 (보유 vs 필요)
+│   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
+│   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
 └── adr/                           # ADR 템플릿
     └── 000-template.md

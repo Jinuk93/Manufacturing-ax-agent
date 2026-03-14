@@ -2,8 +2,8 @@
 
 **프로젝트명:** 예측 기반 자율 조치 에이전트 관제 시스템 (`manufacturing-ax-agent`)
 **문서 버전:** v1.0
-**최종 수정일:** 2026-03-10
-**상태:** Draft (검토 중)
+**최종 수정일:** 2026-03-15
+**상태:** 확정 (Phase 0 완료, Phase 1 EDA 반영)
 
 ---
 
@@ -37,7 +37,7 @@
 ### F1. 실시간 시계열 데이터 수집 및 전처리
 
 - 현재 확보한 **Kaggle CNC Mill Tool Wear 원시 센서 데이터(100ms 샘플링, experiment 단위)**를 기준으로 결측치 및 이상치를 통계적으로 제거
-- Phase 1에서 `sequence -> timestamp`, `experiment -> equipment_id` 규칙을 정의하여 내부 표준 시계열 형식으로 정규화
+- Phase 1에서 `sequence -> timestamp`, `experiment -> equipment_id` 규칙을 정의하여 내부 표준 시계열 형식으로 정규화 (✅ 합성 완료)
 - 지정된 윈도우(Sliding Window) 크기로 이동 평균, 분산 등 파생 변수(Feature) 추출
 
 ### F2. 사전 위험 예측 및 이상 탐지 (Forecasting & Anomaly Detection)
