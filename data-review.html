@@ -13,22 +13,160 @@
   /* ===== Top Nav ===== */
   .topnav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid #eee;padding:0 24px;display:flex;align-items:center;height:56px;overflow-x:auto;overflow-y:visible;gap:4px;-webkit-overflow-scrolling:touch;}
   .topnav::-webkit-scrollbar{display:none;}
-  .topnav a{white-space:nowrap;text-decoration:none;font-size:13px;font-weight:600;color:#999;padding:8px 14px;border-radius:8px;transition:all .15s;flex-shrink:0;}
-  .topnav a:hover{color:#222;background:#f5f5f5;}
-  .topnav a.active{color:#222;background:#f0f0f0;}
-  .nav-divider{width:1px;height:24px;background:#e0e0e0;flex-shrink:0;margin:0 8px;}
-  .nav-group{position:relative;display:flex;align-items:center;flex-shrink:0;}
-  .nav-submenu{position:absolute;top:48px;left:0;display:none;min-width:190px;padding:8px;background:rgba(255,255,255,0.98);border:1px solid #eee;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,0.08);backdrop-filter:blur(12px);}
-  .nav-group:hover .nav-submenu{display:flex;flex-direction:column;gap:4px;}
-  .nav-submenu a{padding:10px 12px;border-radius:10px;background:transparent;color:#666;}
-  .nav-submenu a:hover{background:#f6f6f6;color:#222;}
+  .topnav a{white-space:nowrap;text-decoration:none;font-size:13px;font-weight:600;color:#777;padding:8px 14px;border-radius:8px;transition:all .15s;flex-shrink:0;}
+  .topnav a:hover{color:#e8770e;background:#f5f5f5;}
+  .topnav a.active{color:#e8770e;background:#e8e8e8;}
+  .nav-section{display:flex;align-items:center;gap:2px;flex-shrink:0;}
+  .nav-section-label{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:0.5px;padding:0 8px 0 4px;white-space:nowrap;user-select:none;}
+  .nav-divider{width:1px;height:24px;background:#e0e0e0;margin:0 8px;flex-shrink:0;}
+
+  .adr-card{border:1px solid #e8e8e8;border-radius:12px;margin-bottom:20px;overflow:hidden;}
+  .adr-head{display:flex;align-items:center;gap:12px;padding:14px 20px;background:#f8f9fa;border-bottom:1px solid #e8e8e8;}
+  .adr-num{font-size:13px;font-weight:700;color:#2563eb;white-space:nowrap;}
+  .adr-title{font-size:15px;font-weight:600;color:#222;flex:1;}
+  .adr-phase{font-size:11px;font-weight:600;color:#888;background:#f0f0f0;padding:3px 10px;border-radius:6px;white-space:nowrap;}
+  .adr-body{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .adr-section{min-width:0;}
+  .adr-label{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px;}
+  .adr-section p{font-size:14px;color:#444;line-height:1.6;margin:0;}
+  @media(max-width:640px){.adr-body{grid-template-columns:1fr;}}
+
+  /* ===== Goal Row (목표 페이지) ===== */
+  .goal-row{display:flex;align-items:stretch;gap:0;margin-bottom:20px;border-radius:14px;overflow:hidden;background:#2d2d2d;}
+  .goal-left{flex:1;display:flex;gap:16px;padding:20px;}
+  .goal-num{font-size:28px;font-weight:800;color:#f59e0b;line-height:1;flex-shrink:0;padding-top:4px;}
+  .goal-content{flex:1;}
+  .goal-content h3{margin:0 0 8px;font-size:16px;color:#f5f5f5;}
+  .goal-content p{margin:0 0 6px;font-size:14px;color:#ccc;line-height:1.6;}
+  .goal-example{font-size:13px;color:#aaa;margin-top:8px !important;padding:8px 12px;background:rgba(255,255,255,0.06);border-radius:8px;}
+  .goal-arrow{display:flex;align-items:center;padding:0 16px;font-size:24px;color:#666;flex-shrink:0;}
+  .goal-right{flex:0 0 300px;padding:20px;display:flex;flex-direction:column;gap:8px;justify-content:center;background:rgba(255,255,255,0.04);}
+  .goal-fn{font-size:13px;color:#ddd;padding:10px 12px;background:rgba(255,255,255,0.06);border-radius:8px;}
+  .goal-fn-desc{display:block;font-size:12px;color:#999;margin-top:4px;}
+  .goal-fid{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:#f59e0b;padding:2px 7px;border-radius:4px;margin-right:6px;}
+  .goal-note{background:#2d2d2d;border-radius:12px;padding:20px;color:#ccc;font-size:14px;line-height:1.6;margin-bottom:16px;}
+  .goal-note p{margin:0 0 6px;color:#ccc;}
+  .goal-note strong{color:#f5f5f5;}
+  .goal-note li{color:#bbb;line-height:1.7;}
+  @media(max-width:640px){
+    .goal-row{flex-direction:column;}
+    .goal-left{border-bottom:1px solid rgba(255,255,255,0.1);}
+    .goal-arrow{padding:8px 0;justify-content:center;transform:rotate(90deg);}
+    .goal-right{flex:none;}
+  }
+
+  /* ===== Impl Grid (구현 설계 페이지) ===== */
+  .impl-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+  .impl-card{border-radius:12px;padding:20px;background:#2d2d2d;}
+  .impl-head{font-size:15px;font-weight:600;color:#f5f5f5;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.1);}
+  .impl-fid{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:#f59e0b;padding:3px 8px;border-radius:5px;margin-right:8px;}
+  .impl-card p{font-size:13px;color:#ccc;line-height:1.6;margin:0 0 8px;}
+  .impl-card ul{margin:0;padding-left:16px;}
+  .impl-card li{font-size:13px;color:#bbb;line-height:1.7;}
+  .impl-card li strong{color:#ddd;}
+  @media(max-width:640px){.impl-grid{grid-template-columns:1fr;}}
+  .tbl-card{background:#f0f0f0;border-radius:12px;padding:16px;margin-bottom:20px;}
 
   /* ===== Page Container ===== */
   .pages{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
   .pages::-webkit-scrollbar{display:none;}
-  .page{flex:0 0 100vw;width:100vw;min-height:calc(100vh - 56px);scroll-snap-align:start;overflow-y:auto;padding:40px 24px 80px;}
+  .page{flex:0 0 100vw;width:100vw;height:calc(100vh - 56px);scroll-snap-align:start;overflow-y:auto;padding:40px 24px 80px;box-sizing:border-box;}
   .inner{max-width:820px;margin:0 auto;}
-  #p4 .inner{max-width:min(1380px,calc(100vw - 72px));}
+  #p4 .inner{max-width:820px;}
+  #p10 .inner{max-width:min(1380px,calc(100vw - 72px));}
+
+  /* ===== Dark Page (개요, 목표, 구현설계) ===== */
+  #p0{background:#111;}
+  #p0 .page-title{color:#e8770e;}
+  #p0 .page-sub{color:#999;}
+  #p0 h3{color:#e8770e;}
+  #p0 p{color:#bbb;}
+  #p0 ul{color:#bbb;}
+  #p0 li strong{color:#e0e0e0;}
+  #p0 .fn{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.12);}
+  #p0 .fn:hover{border-color:#e8770e;}
+  #p0 .fn .fname{color:#ddd;}
+  #p0 .fn .fsub{color:#888;}
+  #p0 .farr{color:#555;}
+
+  #p1{background:#111;}
+  #p1 .page-title{color:#e8770e;}
+  #p1 .page-sub{color:#999;}
+  #p1 h3{color:#e8770e;}
+  #p1 p{color:#bbb;}
+  #p1 ul{color:#bbb;}
+  #p1 li strong{color:#e0e0e0;}
+
+  #p2{background:#111;}
+  #p2 .page-title{color:#e8770e;}
+  #p2 .page-sub{color:#999;}
+  #p2 h3{color:#e8770e;}
+  #p2 p{color:#bbb;}
+  #p2 ul{color:#bbb;}
+  #p2 li strong{color:#e0e0e0;}
+  #p2 .fn{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.12);}
+  #p2 .fn:hover{border-color:#e8770e;}
+  #p2 .fn .fname{color:#ddd;}
+  #p2 .fn .fsub{color:#888;}
+  #p2 .farr{color:#555;}
+  #p2 .tbl-card{background:rgba(255,255,255,0.06);}
+  #p2 .tbl-card table{border-collapse:collapse;}
+  #p2 .tbl-card th{background:rgba(255,255,255,0.08);color:#ccc;border-color:rgba(255,255,255,0.1);}
+  #p2 .tbl-card td{color:#bbb;border-color:rgba(255,255,255,0.08);}
+  #p2 .tbl-card .td-fn{color:#f59e0b;}
+
+  #p3{background:#111;}
+  #p3 .page-title{color:#e8770e;}
+  #p3 .page-sub{color:#999;}
+  #p3 h3{color:#e8770e;}
+  #p3 h4{color:#ddd;}
+  #p3 p{color:#bbb;}
+  #p3 ul{color:#bbb;}
+  #p3 li strong{color:#e0e0e0;}
+  #p3 .ds-item{background:#2d2d2d;border-color:rgba(255,255,255,0.1);}
+  #p3 .ds-item:hover{border-color:#e8770e;}
+  #p3 .ds-body h4{color:#f5f5f5;}
+  #p3 .ds-body .ds-desc{color:#999;}
+  #p3 .ds-tag{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);color:#bbb;}
+  #p3 .st{border:none;}
+  #p3 .st-done{background:rgba(0,168,84,0.15);color:#4ade80;}
+  #p3 .st-output{background:rgba(49,130,246,0.15);color:#60a5fa;}
+  #p3 .st-synth{background:rgba(212,136,6,0.15);color:#fbbf24;}
+  #p3 .st-plan{background:rgba(255,255,255,0.08);color:#888;}
+  #p3 .meta-grid .meta-box{background:rgba(255,255,255,0.06);}
+  #p3 .meta-box .ml{color:#888;}
+  #p3 .meta-box .mv{color:#f5f5f5;}
+  #p3 .info{background:#2d2d2d;border:none;}
+  #p3 .info p{color:#ccc;}
+  #p3 .info strong{color:#f5f5f5;}
+  #p3 .warn{background:rgba(255,251,230,0.06);border-color:rgba(255,241,184,0.15);color:#fbbf24;}
+  #p3 .warn strong{color:#f59e0b;}
+  #p3 .tbl-wrap{border-color:rgba(255,255,255,0.1);}
+  #p3 table th{background:rgba(255,255,255,0.08);color:#ccc;border-color:rgba(255,255,255,0.1);}
+  #p3 table td{color:#bbb;border-color:rgba(255,255,255,0.08);}
+  #p3 .td-purpose{color:#f5f5f5;}
+  #p3 .td-fn{color:#f59e0b;}
+  #p3 .td-why{color:#888;}
+  #p3 .prog-label{color:#ccc;}
+  #p3 .prog-bar{background:rgba(255,255,255,0.08);}
+  #p3 .prog-fill{background:#f59e0b;}
+  #p3 .prog-pct{color:#f5f5f5;}
+  #p3 .prog-note{color:#888;}
+  #p3 .goal-note .meta-box{background:rgba(255,255,255,0.08);}
+  #p3 .goal-note .warn{background:rgba(212,136,6,0.08);border-color:rgba(212,136,6,0.2);}
+  #p3 .goal-note h4{color:#e8770e;margin-top:0;}
+
+  #p4{background:#111;}
+  #p4 .page-title{color:#e8770e;}
+  #p4 .page-sub{color:#999;}
+  #p4 h3{color:#e8770e;}
+  #p4 p{color:#bbb;}
+  #p4 ul{color:#bbb;}
+  #p4 li strong{color:#e0e0e0;}
+  #p4 .loop-card{background:#2d2d2d;border-color:rgba(255,255,255,0.1);}
+  #p4 .loop-step{color:#f59e0b;}
+  #p4 .loop-title{color:#f5f5f5;}
+  #p4 .loop-desc{color:#999;}
 
   /* ===== Typography ===== */
   .page-title{font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
@@ -89,11 +227,11 @@
   .st-output{background:#e8f3ff;color:#3182f6;}
 
   /* ===== Flow ===== */
-  .flow{display:flex;gap:6px;margin:20px 0 32px;overflow-x:auto;padding-bottom:4px;}
+  .flow{display:flex;gap:6px;margin:20px 0 32px;overflow-x:auto;padding:4px 2px;flex-wrap:wrap;}
   .flow::-webkit-scrollbar{display:none;}
-  .fn{border:1.5px solid #eee;border-radius:14px;padding:16px 14px;min-width:110px;text-align:center;flex-shrink:0;transition:border-color .15s;}
+  .fn{border:1.5px solid #e0e0e0;border-radius:14px;padding:16px 14px;min-width:100px;flex:1 1 100px;text-align:center;transition:border-color .15s;background:#f3f3f3;}
   .fn:hover{border-color:#3182f6;}
-  .fn .fid{font-size:20px;font-weight:800;color:#3182f6;}
+  .fn .fid{font-size:20px;font-weight:800;color:#f59e0b;}
   .fn .fname{font-size:12px;font-weight:600;color:#444;margin-top:2px;}
   .fn .fsub{font-size:11px;color:#aaa;margin-top:6px;line-height:1.4;}
   .farr{display:flex;align-items:center;color:#ddd;font-size:18px;flex-shrink:0;}
@@ -241,7 +379,7 @@
     .page{padding:28px 16px 60px;}
     .page-title{font-size:22px;}
     .meta-grid{grid-template-columns:1fr 1fr;}
-    .flow{flex-wrap:nowrap;}
+    .flow{flex-wrap:wrap;}
     #p4 .inner{max-width:100%;}
     .journey-layout{grid-template-columns:1fr;}
     .journey-panel{position:static;}
@@ -258,19 +396,27 @@
 <body>
 
 <nav class="topnav" id="nav">
-  <a href="#p0" class="active" data-idx="0">프로젝트 개요</a>
-  <a href="#p1" data-idx="1">해결할 문제</a>
-  <a href="#p2" data-idx="2">6가지 기능</a>
-  <a href="#p3" data-idx="3">데이터 전략</a>
-  <div class="nav-group">
-    <a href="#p4" data-idx="4">애자일 진행</a>
-    <div class="nav-submenu">
-      <a href="#p4" data-idx="4">구조 보기</a>
-      <a href="#p4" data-idx="4" data-phase-target="phase0">Phase 0</a>
-      <a href="#p4" data-idx="4" data-phase-target="phase1">Phase 1</a>
-      <a href="#p4" data-idx="4" data-phase-target="phase2">Phase 2</a>
-      <a href="#p4" data-idx="4" data-phase-target="phase3">Phase 3+</a>
-    </div>
+  <div class="nav-section">
+    <span class="nav-section-label">프로젝트 정의</span>
+    <a href="#p0" class="active" data-idx="0">개요</a>
+    <a href="#p1" data-idx="1">목표</a>
+    <a href="#p2" data-idx="2">구현 설계</a>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section">
+    <span class="nav-section-label">Phase별 진행</span>
+    <a href="#p4" data-idx="4">애자일 목표</a>
+    <a href="#p10" data-idx="5">한눈에 보기</a>
+    <a href="#p5" data-idx="6">Phase 0</a>
+    <a href="#p3" data-idx="3">Phase 1</a>
+    <a href="#p6" data-idx="7">갭 분석</a>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section">
+    <span class="nav-section-label">관리</span>
+    <a href="#p9" data-idx="10">ADR</a>
+    <a href="#p7" data-idx="8">미결 사항</a>
+    <a href="#p8" data-idx="9">다음 단계</a>
   </div>
 </nav>
 
@@ -284,17 +430,18 @@
   <div class="page-title">Manufacturing AX Agent</div>
   <p class="page-sub">CNC 설비의 예지보전 + 온톨로지 + LLM 자율 판단 관제 시스템</p>
 
-  <div class="divider-note">Introduction</div>
-  <p class="page-sub" style="margin-bottom:20px;">이 앞부분은 프로젝트의 큰 그림을<br>위에서 아래로 설명하는 소개 영역입니다.<br>뒤쪽으로 갈수록 실제 진행 과정과 검증 기록이 이어집니다.</p>
+  <div class="goal-note">
+    <h3 style="color:#f5f5f5;margin-top:0;">배경 및 문제 정의</h3>
+    <p>제조 현장의 설비 데이터(SCADA), 생산 맥락(MES), 자원 상태(ERP), 정비 지식(매뉴얼)이<br>각각 독립적인 시스템(Silo)에 분산되어 저장 및 관리되고 있습니다.</p>
+    <p>설비 이상 발생 시, 작업자가 3~4개의 시스템을 수동으로 순회하며 상황을 대조하고 판단해야 합니다.<br>이로 인해 의사결정이 지연되고, 설비의 평균 수리 시간(MTTR)과 비가동 시간(Downtime)이<br>불필요하게 증가하여 생산 원가 손실이 발생합니다.</p>
+  </div>
 
-  <h3>배경 및 문제 정의</h3>
-  <p>제조 현장의 설비 데이터(SCADA), 생산 맥락(MES), 자원 상태(ERP),<br>정비 지식(매뉴얼)이 각각 독립적인 시스템(Silo)에<br>분산되어 저장 및 관리되고 있습니다.</p>
-  <p>설비 이상 발생 시, 작업자가 3~4개의 시스템을 수동으로 순회하며<br>상황을 대조하고 판단해야 합니다.<br>이로 인해 의사결정이 지연되고, 결과적으로 설비의 평균 수리 시간(MTTR)과<br>비가동 시간(Downtime)이 불필요하게 증가하여 생산 원가 손실이 발생합니다.</p>
+  <div class="goal-note">
+    <h3 style="color:#f5f5f5;margin-top:0;">프로젝트 목표</h3>
+    <p>기존의 분절된 IT/OT 데이터를 데이터베이스 스키마 단위에서 통합하고,<br><strong>센서 수치 예측(Forecasting)</strong>과 LLM(대형 언어 모델)을 결합하여<br><strong>설비 정지 전 선제적 알람과 비즈니스 맥락이 반영된 자율 조치 지시서를 즉각적으로 제공하는<br>AI 에이전트 시스템</strong>을 구축합니다.</p>
+  </div>
 
-  <h3>프로젝트 목표</h3>
-  <p>기존의 분절된 IT/OT 데이터를 데이터베이스 스키마 단위에서 통합하고,<br><strong>센서 수치 예측(Forecasting)</strong>과 LLM(대형 언어 모델)을 결합하여<br><strong>설비 정지 전 선제적 알람과 비즈니스 맥락이 반영된 자율 조치 지시서를<br>즉각적으로 제공하는 AI 에이전트 시스템</strong>을 구축합니다.</p>
-
-  <div class="flow" style="margin:24px 0 28px;">
+  <div class="flow" style="margin:24px 0 28px;justify-content:center;">
     <div class="fn">
       <div class="fid" style="font-size:16px;">1</div>
       <div class="fname">이상 감지</div>
@@ -326,123 +473,139 @@
     </div>
   </div>
 
-  <h3>프로젝트 범위 (Scope)</h3>
-  <p>본 프로젝트는 <strong>데이터가 도착한 이후의 분석/판단/관제 레이어(F1~F6)</strong>를<br>구축하는 것이 목표입니다.<br>실제 장비에 IoT 센서를 부착하거나, FOCAS/OPC UA 같은 제조사 폐쇄 프로토콜을<br>연결하는 데이터 수집 레이어는 범위 밖입니다.</p>
-  <div class="info">
-    <p><strong>범위 안:</strong> 센서 데이터 전처리(F1) → 이상탐지/예측(F2) → IT/OT 동기화(F3) → GraphRAG 검색(F4) → LLM 자율 판단(F5) → 대시보드(F6)</p>
-    <p><strong>범위 밖:</strong> IoT 센서 부착, 프로토콜 브릿지(FOCAS, OPC UA), 엣지 게이트웨이, 공장 네트워크 접근</p>
-    <p style="color:#888;font-size:13px;">수집된 데이터를 온톨로지 + GraphRAG + LLM으로 자율 판단까지 연결하는 것이 차별화 포인트입니다.</p>
+  <div class="goal-note">
+    <h3 style="color:#f5f5f5;margin-top:0;">프로젝트 범위 (Scope)</h3>
+    <p>본 프로젝트는 <strong>데이터가 도착한 이후의 분석/판단/관제 레이어(F1~F6)</strong>를 구축하는 것이 목표입니다.<br>실제 장비에 IoT 센서를 부착하거나, FOCAS/OPC UA 같은 제조사 폐쇄 프로토콜을 연결하는<br>데이터 수집 레이어는 범위 밖입니다.</p>
+    <p style="margin-top:12px;"><strong>범위 안 :</strong><br>센서 데이터 전처리(F1) &rarr; 이상탐지/예측(F2) &rarr; IT/OT 동기화(F3) &rarr; GraphRAG 검색(F4) &rarr; LLM 자율 판단(F5) &rarr; 대시보드(F6)</p>
+    <p><strong>범위 밖 :</strong><br>IoT 센서 부착, 프로토콜 브릿지(FOCAS, OPC UA), 엣지 게이트웨이, 공장 네트워크 접근</p>
+    <p style="color:#999;font-size:13px;">수집된 데이터를 온톨로지 + GraphRAG + LLM으로 자율 판단까지 연결하는 것이 차별화 포인트입니다.</p>
   </div>
 
-  <h3>핵심 기술 스택</h3>
-  <div class="meta-grid">
-    <div class="meta-box"><div class="ml">도메인</div><div class="mv sm">CNC 밀링</div></div>
-    <div class="meta-box"><div class="ml">예측 방식</div><div class="mv sm">Forecasting</div></div>
-    <div class="meta-box"><div class="ml">지식 그래프</div><div class="mv sm">Neo4j</div></div>
-    <div class="meta-box"><div class="ml">검색</div><div class="mv sm">GraphRAG</div></div>
-    <div class="meta-box"><div class="ml">DB</div><div class="mv sm">PostgreSQL + Neo4j</div></div>
-    <div class="meta-box"><div class="ml">판단</div><div class="mv sm">LLM Agent</div></div>
+  <div class="goal-note">
+    <h3 style="color:#f5f5f5;margin-top:0;">핵심 구성</h3>
+    <div class="meta-grid">
+      <div class="meta-box" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);"><div class="ml" style="color:#999;">예측 방식</div><div class="mv sm" style="color:#f5f5f5;">Forecasting</div></div>
+      <div class="meta-box" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);"><div class="ml" style="color:#999;">지식 그래프</div><div class="mv sm" style="color:#f5f5f5;">Neo4j</div></div>
+      <div class="meta-box" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);"><div class="ml" style="color:#999;">검색</div><div class="mv sm" style="color:#f5f5f5;">GraphRAG</div></div>
+      <div class="meta-box" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);"><div class="ml" style="color:#999;">DB</div><div class="mv sm" style="color:#f5f5f5;">PostgreSQL + Neo4j</div></div>
+      <div class="meta-box" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);"><div class="ml" style="color:#999;">판단</div><div class="mv sm" style="color:#f5f5f5;">LLM Agent</div></div>
+    </div>
   </div>
 
-  <h3>핵심 의사결정 (ADR)</h3>
-  <div class="tbl-wrap">
-  <table>
-    <thead><tr><th>ADR</th><th>결정</th><th>결정 근거</th></tr></thead>
-    <tbody>
-      <tr><td style="white-space:nowrap;font-weight:700;">ADR-000</td><td>CNC 단일 도메인</td><td>다중 도메인(NASA 등) 혼합 시 데이터 조인 키 충돌 및 LLM 환각 발생. 하나의 도메인에서 깊게 파는 것이 MVP에 적합</td></tr>
-      <tr><td style="white-space:nowrap;font-weight:700;">ADR-001</td><td>RUL 포기, Forecasting</td><td>가상의 잔여수명(RUL) 합성 → 모델 신뢰성 평가 불가. 실제 센서값의 미래를 예측하고 임계치 돌파 여부로 판단하는 방식이 더 신뢰할 수 있음</td></tr>
-      <tr><td style="white-space:nowrap;font-weight:700;">ADR-002</td><td>MES/ERP 합성 생성</td><td>기업 IT 데이터는 비공개. 시나리오 기반으로 합성하여 F3 IT/OT 동기화 파이프라인을 구현</td></tr>
-      <tr><td style="white-space:nowrap;font-weight:700;">ADR-003</td><td>PostgreSQL + Neo4j</td><td>1인 개발, DB 2개로 제한. PostgreSQL에 TimescaleDB(시계열) + pgvector(벡터) 확장으로 3역할 통합, 온톨로지는 Neo4j 별도</td></tr>
-      <tr><td style="white-space:nowrap;font-weight:700;">ADR-004</td><td>5초 폴링</td><td>MVP에 Kafka/Flink 불필요. 5초 주기 조회로 실시간 모사. 단순 구조 우선</td></tr>
-      <tr><td style="white-space:nowrap;font-weight:700;">ADR-005</td><td>대시보드 조기 착수</td><td>파이프라인 완성 전에도 시각적 결과물로 방향 검증. Phase 1부터 점진 구축</td></tr>
-    </tbody>
-  </table>
+  <div class="goal-note">
+    <h3 style="color:#f5f5f5;margin-top:0;">설계 원칙 (5가지)</h3>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>원칙 1 :</strong> &nbsp;모든 데이터는 <code style="background:rgba(255,255,255,0.1);color:#ddd;">equipment_id</code>와 <code style="background:rgba(255,255,255,0.1);color:#ddd;">timestamp</code> 기준으로 연결</li>
+      <li><strong>원칙 2 :</strong> &nbsp;센서만으로 가능한 기능 vs 이벤트 필요 기능 구분</li>
+      <li><strong>원칙 3 :</strong> &nbsp;온톨로지는 Entity/Relation 먼저 정의</li>
+      <li><strong>원칙 4 :</strong> &nbsp;합성 데이터는 LLM 판단이 달라지는 시나리오 설계</li>
+      <li><strong>원칙 5 :</strong> &nbsp;내부 표준 형식(Canonical Model) 기준 설계 &mdash; 원본 데이터 형식이 아닌<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;내부 표준 형식으로 정규화. 향후 고객사 확장 시 Onboarding Layer 추가만으로 대응 가능</li>
+    </ul>
   </div>
 
-  <h3>설계 원칙 (5가지)</h3>
-  <ul>
-    <li><strong>원칙 1:</strong> 모든 데이터는 <code>equipment_id</code>와 <code>timestamp</code> 기준으로 연결</li>
-    <li><strong>원칙 2:</strong> 센서만으로 가능한 기능 vs 이벤트 필요 기능 구분</li>
-    <li><strong>원칙 3:</strong> 온톨로지는 Entity/Relation 먼저 정의</li>
-    <li><strong>원칙 4:</strong> 합성 데이터는 LLM 판단이 달라지는 시나리오 설계</li>
-    <li><strong>원칙 5:</strong> 내부 표준 형식(Canonical Model) 기준 설계 — 원본 데이터 형식이 아닌 내부 표준 형식으로 정규화. 향후 고객사 확장 시 Onboarding Layer 추가만으로 대응 가능</li>
-  </ul>
-
-  <h3>제약사항</h3>
-  <div class="tbl-wrap">
-  <table>
-    <thead><tr><th>제약</th><th>결정 근거</th><th>관련 ADR</th></tr></thead>
-    <tbody>
-      <tr><td style="font-weight:600;">CNC 단일 도메인</td><td>도메인 혼합 시 데이터 조인 키 충돌 및 LLM 환각 방지</td><td>ADR-000</td></tr>
-      <tr><td style="font-weight:600;">RUL 대신 Forecasting</td><td>합성 타겟 변수로는 모델 신뢰성 평가 불가</td><td>ADR-001</td></tr>
-      <tr><td style="font-weight:600;">합성 MES/ERP</td><td>기업 데이터 비공개, Kaggle 타임라인에 맞춰 합성</td><td>ADR-002</td></tr>
-      <tr><td style="font-weight:600;">DB 2개로 제한</td><td>1인 개발, PostgreSQL 확장으로 3역할 통합</td><td>ADR-003</td></tr>
-      <tr><td style="font-weight:600;">폴링 방식</td><td>Kafka/Flink 없이 5초 주기 조회로 실시간 모사</td><td>ADR-004</td></tr>
-      <tr><td style="font-weight:600;">데이터 수집 레이어 범위 밖</td><td>실제 장비/IoT/프로토콜 연결 없이 공공 데이터 + 합성으로 대체</td><td>&mdash;</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <h3>현재 위치</h3>
-  <div class="info">
-    <p><strong>현재 기준:</strong> Project Definition 단계를 마무리하면서, Data Exploration 진입 조건을 정리하는 중입니다.</p>
-    <p>이 대시보드는 먼저 프로젝트의 큰 그림을 보여주고,<br>뒤쪽에서 실제 로그, 갭 분석, 미결 사항을 통해<br>애자일하게 어떻게 좁혀 가는지 보여줍니다.</p>
-    <p style="margin-top:8px;color:#888;font-size:13px;">즉, 앞쪽은 "무엇을 만들고 왜 이렇게 설계했는가", 뒤쪽은 "어떻게 단계별로 검증하며 진행했는가"에 초점을 둡니다.</p>
+  <div class="goal-note">
+    <h3 style="color:#f5f5f5;margin-top:0;">제약사항</h3>
+    <p style="color:#999;font-size:13px;margin-bottom:12px;">각 제약의 상세 배경과 검토된 대안은 ADR 페이지에서 확인할 수 있습니다.</p>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>CNC 단일 도메인</strong> &mdash; 도메인 혼합 시 조인 키 충돌 및 LLM 환각 방지 <span style="color:#777;font-size:12px;">(ADR-000)</span></li>
+      <li><strong>RUL 대신 Forecasting</strong> &mdash; 합성 타겟 변수로는 모델 신뢰성 평가 불가 <span style="color:#777;font-size:12px;">(ADR-001)</span></li>
+      <li><strong>합성 MES/ERP</strong> &mdash; 기업 데이터 비공개, Kaggle 타임라인에 맞춰 합성 <span style="color:#777;font-size:12px;">(ADR-002)</span></li>
+      <li><strong>DB 2개로 제한</strong> &mdash; 1인 개발, PostgreSQL 확장으로 3역할 통합 <span style="color:#777;font-size:12px;">(ADR-003)</span></li>
+      <li><strong>폴링 방식</strong> &mdash; Kafka/Flink 없이 5초 주기 조회로 실시간 모사 <span style="color:#777;font-size:12px;">(ADR-004)</span></li>
+      <li><strong>데이터 수집 레이어 범위 밖</strong> &mdash; 실제 장비/IoT/프로토콜 연결 없이 공공 데이터 + 합성으로 대체</li>
+    </ul>
   </div>
 </div>
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 1: 해결할 문제 -->
+<!-- PAGE 1: 목표 -->
 <!-- =============================== -->
 <div class="page" id="p1">
-<div class="inner">
-  <div class="page-title">우리가 해결하려는 문제</div>
-  <p class="page-sub">CNC 공장에서 실제로 겪는 3가지 문제. 이걸 해결하려면 데이터가 필요합니다.</p>
+<div class="inner" style="max-width:960px;">
+  <div class="page-title">이 프로젝트가 도달하려는 목표</div>
+  <p class="page-sub">제조 현장에서 해결해야 할 3가지 핵심 과제와, 각 과제를 풀기 위해 구현하는 기능입니다.<br>오른쪽 "구현 설계" 탭에서 각 기능의 상세를 볼 수 있습니다.</p>
 
-  <h3>1. 이상탐지</h3>
-  <p>장비 센서가 평소와 달라지고 있는데, 사람이 눈치채기 전에 시스템이 먼저 감지해야 합니다.</p>
-  <p>예를 들어 X축 전류가 평소 0.08A인데 갑자기 0.3A로 튀면<br>"뭔가 이상하다"고 자동으로 알려주는 것입니다.<br>비지도 학습 모델(Isolation Forest, AutoEncoder 등)로<br>현재 센서 수치의 이상 상태(Anomaly Score)를 판별합니다.</p>
-
-  <h3>2. 예지보전 (Forecasting)</h3>
-  <p>이상이 감지되면, "앞으로 어떻게 될지" 예측해서 <strong>지금 멈춰야 하는지, 감속하면 되는지, 다음 정비 때 하면 되는지</strong> 판단해야 합니다.</p>
-  <p>단순히 "이상하다"를 넘어서,<br>"30분 뒤에 위험해진다" 같은 미래 예측이 핵심입니다.<br>시계열 예측 딥러닝 모델(LSTM 등)을 통해 미래 센서값을 예측하고,<br>위험 임계치 돌파 여부를 선제적으로 알립니다.</p>
-  <div class="info">
-    <p><strong>왜 RUL(잔여수명)이 아닌 Forecasting인가? (ADR-001)</strong></p>
-    <p>RUL은 "이 부품이 몇 시간 뒤에 고장난다"를 직접 예측하는 방식이지만,<br>신뢰할 수 있는 RUL 타겟 변수를 합성하기 어렵습니다.<br>대신 실제 센서값의 미래를 예측하고, 그 예측값이 임계치를 돌파하는지로<br>"언제 위험해지는가"를 판단하는 Forecasting 방식을 채택했습니다.</p>
+  <!-- 목표 1: 이상탐지 -->
+  <div class="goal-row">
+    <div class="goal-left">
+      <div class="goal-num">1</div>
+      <div class="goal-content">
+        <h3>이상 탐지</h3>
+        <p>CNC 설비가 평소와 다르게 동작하고 있는지를 실시간으로 감지합니다.</p>
+        <p class="goal-example">예 : &nbsp;X축 전류가 평소 0.08A인데 갑자기 0.3A로 튀면<br>"뭔가 이상하다"고 자동으로 알려주는 것</p>
+      </div>
+    </div>
+    <div class="goal-arrow">&rarr;</div>
+    <div class="goal-right">
+      <div class="goal-fn"><span class="goal-fid">F1</span> 센서 전처리<span class="goal-fn-desc">원시 데이터를 깨끗하게 정리</span></div>
+      <div class="goal-fn"><span class="goal-fid">F2</span> 이상탐지<span class="goal-fn-desc">Anomaly Score로 이상 여부 판별</span></div>
+    </div>
   </div>
 
-  <h3>3. 지식 구조화 (온톨로지)</h3>
-  <p>"이 고장코드가 뜨면 → 이 부품을 교체하고 → 매뉴얼 3장을 참고해"</p>
-  <p>이런 정비 지식이 지금은 숙련공 머릿속에만 있습니다.<br>이걸 그래프(온톨로지)로 구조화해서 AI가 검색하고 활용할 수 있게 해야 합니다.<br>Neo4j에 '설비 → 고장 코드 → 필요 부품 → 조치 매뉴얼'의 관계망을 구축하고,<br>에러 키워드(BM25)와 증상 설명(Vector Search)을 결합한 하이브리드 검색으로 관련 지식을 찾습니다.</p>
-
-  <h3>예지보전은 하나의 데이터가 아니다</h3>
-  <div class="info">
-    <p>이 프로젝트에서 "예지보전 데이터"라는 단일 테이블이<br>따로 있는 것이 아닙니다.<br>예지보전은 아래 데이터가 합쳐져서 만들어집니다:</p>
-    <p style="margin-top:8px;"><strong>예지보전 = 센서 신호 + 이벤트 근거 + 운영 맥락 + 자원 맥락 + 정비 지식</strong></p>
-    <p style="margin-top:8px;">그래서 지금 해야 할 일은 "예지보전 데이터셋 하나를 찾는 것"이 아니라, <strong>어떤 데이터를 어떻게 연결해서 예지보전 판단을 만들지</strong> 정리하는 것입니다.</p>
+  <!-- 목표 2: 예지보전 -->
+  <div class="goal-row">
+    <div class="goal-left">
+      <div class="goal-num">2</div>
+      <div class="goal-content">
+        <h3>예지보전</h3>
+        <p>이상이 감지되면 "앞으로 어떻게 될지" 예측해서<br><strong>지금 멈출지, 감속할지, 다음 정비 때 할지</strong> 판단합니다.</p>
+        <p class="goal-example">예 : &nbsp;"30분 뒤 전류가 임계치를 넘을 가능성 높음" &rarr; 선제 대응</p>
+      </div>
+    </div>
+    <div class="goal-arrow">&rarr;</div>
+    <div class="goal-right">
+      <div class="goal-fn"><span class="goal-fid">F2</span> Forecasting<span class="goal-fn-desc">LSTM으로 미래 센서값 예측</span></div>
+      <div class="goal-fn"><span class="goal-fid">F3</span> IT/OT 동기화<span class="goal-fn-desc">센서 + 작업지시 + 재고를 하나로</span></div>
+    </div>
   </div>
 
-  <h4>예지보전을 구성하는 5가지 데이터</h4>
-  <ul>
-    <li><strong>센서 신호</strong> — 전류, 전압, 전력, 속도, 가속도 → 이상탐지, Forecasting, 위험 신호 포착</li>
-    <li><strong>이벤트 근거</strong> — 알람 발생, 정비 시점, 부품 교체, 고장 시점 → 센서 패턴의 의미 해석, 전조와 실제 이벤트 연결</li>
-    <li><strong>운영 맥락</strong> — 현재 작업지시, 납기 긴급도, 생산 잔량 → 지금 멈출지, 감속할지, 계획 정비로 넘길지 판단</li>
-    <li><strong>자원 맥락</strong> — 부품 재고, 리드타임, 최근 교체 이력 → 실제 조치 가능성 판단</li>
-    <li><strong>정비 지식</strong> — 고장 코드, 조치 절차, 매뉴얼 문서 → GraphRAG 검색, LLM 조치 리포트 근거</li>
-  </ul>
+  <!-- 목표 3: 지식 구조화 -->
+  <div class="goal-row">
+    <div class="goal-left">
+      <div class="goal-num">3</div>
+      <div class="goal-content">
+        <h3>지식 구조화</h3>
+        <p>"이 고장코드 &rarr; 이 부품 교체 &rarr; 매뉴얼 3장 참고"<br>숙련공 머릿속에만 있는 정비 지식을 AI가 활용할 수 있게 구조화합니다.</p>
+        <p class="goal-example">예 : &nbsp;Neo4j 그래프에서 관련 매뉴얼을 GraphRAG로 검색</p>
+      </div>
+    </div>
+    <div class="goal-arrow">&rarr;</div>
+    <div class="goal-right">
+      <div class="goal-fn"><span class="goal-fid">F4</span> GraphRAG<span class="goal-fn-desc">온톨로지에서 관련 지식 검색</span></div>
+      <div class="goal-fn"><span class="goal-fid">F5</span> LLM 자율 판단<span class="goal-fn-desc">조치 보고서 자동 생성</span></div>
+      <div class="goal-fn"><span class="goal-fid">F6</span> 대시보드<span class="goal-fn-desc">전체를 한눈에 관제</span></div>
+    </div>
+  </div>
+
+  <div class="goal-note" style="margin-top:32px;">
+    <p><strong>왜 RUL(잔여수명)이 아닌 Forecasting인가?</strong> <span style="color:#777;font-size:12px;">(ADR-001)</span></p>
+    <p>RUL은 "이 부품이 몇 시간 뒤에 고장난다"를 직접 예측하지만,<br>신뢰할 수 있는 타겟 변수를 합성하기 어렵습니다.<br>대신 실제 센서값의 미래를 예측하고, 임계치 돌파 여부로 판단하는 Forecasting을 택했습니다.</p>
+  </div>
+
+  <div class="goal-note" style="margin-top:20px;">
+    <p style="margin-bottom:12px;"><strong>예지보전을 구성하는 5가지 데이터</strong></p>
+    <p style="font-size:13px;color:#999;margin-bottom:12px;">"예지보전 데이터"라는 단일 테이블이 있는 것이 아닙니다. 아래 데이터가 합쳐져서 만들어집니다.</p>
+    <ul style="margin:0;padding-left:18px;">
+      <li><strong>센서 신호</strong> &mdash; 전류, 전압, 전력, 속도, 가속도 &rarr; 이상탐지, Forecasting</li>
+      <li><strong>이벤트 근거</strong> &mdash; 알람 발생, 정비 시점, 고장 시점 &rarr; 전조와 실제 이벤트 연결</li>
+      <li><strong>운영 맥락</strong> &mdash; 작업지시, 납기 긴급도, 생산 잔량 &rarr; 멈출지/감속할지 판단</li>
+      <li><strong>자원 맥락</strong> &mdash; 부품 재고, 리드타임, 교체 이력 &rarr; 실제 조치 가능성 판단</li>
+      <li><strong>정비 지식</strong> &mdash; 고장 코드, 조치 절차, 매뉴얼 &rarr; GraphRAG 검색 근거</li>
+    </ul>
+  </div>
 </div>
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 2: 6가지 기능 -->
+<!-- PAGE 2: 구현 설계 -->
 <!-- =============================== -->
 <div class="page" id="p2">
 <div class="inner">
-  <div class="page-title">그래서 6가지 기능을 만듭니다</div>
-  <p class="page-sub">앞 기능의 출력이 뒷 기능의 입력이 됩니다. 순서대로 만들어요.</p>
+  <div class="page-title">구현 설계 : &nbsp;F1~F6 파이프라인</div>
+  <p class="page-sub">앞 기능의 출력이 뒷 기능의 입력이 됩니다.<br>목표 탭의 F1~F6이 실제로 무엇을 하는지 상세입니다.</p>
 
-  <div class="flow">
+  <div class="flow" style="justify-content:center;">
     <div class="fn"><div class="fid">F1</div><div class="fname">센서 전처리</div><div class="fsub">원시 데이터를<br>깨끗하게 정리</div></div>
     <div class="farr">&rarr;</div>
     <div class="fn"><div class="fid">F2</div><div class="fname">이상탐지 + 예측</div><div class="fsub">"이상한가?" +<br>"앞으로 어떻게 되나?"</div></div>
@@ -456,49 +619,68 @@
     <div class="fn"><div class="fid">F6</div><div class="fname">대시보드</div><div class="fsub">전체를<br>한눈에</div></div>
   </div>
 
-  <h3>F1. 실시간 시계열 데이터 수집 및 전처리</h3>
-  <p>원시 센서 데이터(CNC Mill)를 수집하여 결측치 및 이상치를 통계적으로 제거합니다.<br>지정된 윈도우(Sliding Window) 크기로 이동 평균, 분산 등<br>파생 변수(Feature)를 추출합니다.</p>
-  <ul>
-    <li><strong>입력:</strong> CNC 센서 CSV (48컬럼, 100ms 샘플링)</li>
-    <li><strong>출력:</strong> 깨끗한 시계열 데이터 (정규화, 결측 처리, 파생 변수 추가)</li>
-    <li><strong>데이터:</strong> Kaggle CNC Mill (핵심) + Bosch CNC (보조, 진동)</li>
-    <li><strong>확보 방식:</strong> 실제 수집 완료</li>
-  </ul>
+  <div class="impl-grid">
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">F1</span> 실시간 시계열 데이터 수집 및 전처리</div>
+      <p>원시 센서 데이터(CNC Mill)를 수집하여 결측치 및 이상치를 통계적으로 제거합니다.<br>Sliding Window 크기로 이동 평균, 분산 등 파생 변수(Feature)를 추출합니다.</p>
+      <ul>
+        <li><strong>입력 :</strong> &nbsp;CNC 센서 CSV (48컬럼, 100ms 샘플링)</li>
+        <li><strong>출력 :</strong> &nbsp;깨끗한 시계열 데이터 (정규화, 결측 처리, 파생 변수)</li>
+        <li><strong>데이터 :</strong> &nbsp;Kaggle CNC Mill (핵심) + Bosch CNC (보조, 진동)</li>
+      </ul>
+    </div>
 
-  <h3>F2. 사전 위험 예측 및 이상 탐지</h3>
-  <p>비지도 학습 모델로 현재 센서 수치의 이상 상태(Anomaly Score)를 판별합니다.<br>시계열 예측 딥러닝 모델(LSTM 등)로 미래 센서값을 예측하고<br>위험 임계치 돌파 여부를 선제적으로 알림(Trigger)합니다.</p>
-  <ul>
-    <li><strong>입력:</strong> F1 전처리 출력 + 공구 상태 라벨(worn/unworn)</li>
-    <li><strong>출력:</strong> 이상 점수(Anomaly Score) + 미래 예측값</li>
-    <li><strong>데이터:</strong> F1 출력 + 정비/고장 이벤트 로그(합성)</li>
-    <li><strong>확보 방식:</strong> F1 출력(자동) + 이벤트 로그(Phase 2 합성)</li>
-  </ul>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">F2</span> 사전 위험 예측 및 이상 탐지</div>
+      <p>비지도 학습 모델로 Anomaly Score를 판별하고,<br>LSTM 등 시계열 모델로 미래 센서값을 예측하여 임계치 돌파 여부를 선제 알림합니다.</p>
+      <ul>
+        <li><strong>입력 :</strong> &nbsp;F1 전처리 출력 + 공구 상태 라벨(worn/unworn)</li>
+        <li><strong>출력 :</strong> &nbsp;이상 점수(Anomaly Score) + 미래 예측값</li>
+        <li><strong>데이터 :</strong> &nbsp;F1 출력 + 정비/고장 이벤트 로그(Phase 2 합성)</li>
+      </ul>
+    </div>
 
-  <h3>F3. IT/OT 데이터 타임라인 동기화</h3>
-  <p>F2에서 알람이 발생한 정확한 시점을 기준으로 RDBMS에 쿼리를 실행합니다.<br>해당 시점의 작업 지시 내역 및 납기 중요도(MES),<br>필수 교체 부품의 현재 창고 재고량(ERP)을 조회하여<br>단일 JSON 형태로 병합합니다.</p>
-  <ul>
-    <li><strong>입력:</strong> F1 출력(OT) + MES 작업지시(IT) + ERP 부품 재고(IT)</li>
-    <li><strong>출력:</strong> 통합 운영 맥락 JSON</li>
-    <li><strong>데이터:</strong> MES(work_order_id, due_date, priority) + ERP(part_id, stock_quantity, lead_time_days)</li>
-    <li><strong>확보 방식:</strong> 합성 생성 (ADR-002)</li>
-  </ul>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">F3</span> IT/OT 데이터 타임라인 동기화</div>
+      <p>F2 알람 시점 기준으로 MES 작업지시(납기/우선순위)와<br>ERP 부품재고(재고량/리드타임)를 조회하여 단일 JSON으로 병합합니다.</p>
+      <ul>
+        <li><strong>입력 :</strong> &nbsp;F1 출력(OT) + MES(IT) + ERP(IT)</li>
+        <li><strong>출력 :</strong> &nbsp;통합 운영 맥락 JSON</li>
+        <li><strong>데이터 :</strong> &nbsp;합성 생성 <span style="color:#999;font-size:12px;">(ADR-002)</span></li>
+      </ul>
+    </div>
 
-  <h3>F4. 지식그래프 연동 하이브리드 검색 (GraphRAG)</h3>
-  <p>Neo4j에 구축된 온톨로지 지식그래프를 순회하여<br>'설비 → 고장 코드 → 필요 부품 → 조치 매뉴얼'의 관계망을 식별합니다.<br>에러 키워드(BM25)와 증상 설명(Vector Search)을 결합한<br>하이브리드 검색으로 관련 정비 지식을 찾습니다.</p>
-  <ul>
-    <li><strong>입력:</strong> Neo4j 온톨로지 + 정비 매뉴얼 텍스트</li>
-    <li><strong>출력:</strong> 관련 매뉴얼·부품·고장 이력 검색 결과</li>
-    <li><strong>데이터:</strong> 온톨로지 관계(직접 설계) + 매뉴얼(수집+합성) + 고장코드 체계(직접 설계)</li>
-    <li><strong>확보 방식:</strong> Phase 3에서 구축</li>
-  </ul>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">F4</span> 지식그래프 하이브리드 검색 (GraphRAG)</div>
+      <p>Neo4j 온톨로지에서 '설비 &rarr; 고장 코드 &rarr; 부품 &rarr; 매뉴얼' 관계망을 순회합니다.<br>BM25(키워드) + Vector Search(증상 설명)를 결합한 하이브리드 검색입니다.</p>
+      <ul>
+        <li><strong>입력 :</strong> &nbsp;Neo4j 온톨로지 + 정비 매뉴얼 텍스트</li>
+        <li><strong>출력 :</strong> &nbsp;관련 매뉴얼, 부품, 고장 이력 검색 결과</li>
+        <li><strong>데이터 :</strong> &nbsp;온톨로지(직접 설계) + 매뉴얼(수집+합성) + 고장코드(직접 설계)</li>
+      </ul>
+    </div>
 
-  <h3>F5. LLM 기반 자율 조치 판단</h3>
-  <p>F2(이상 점수) + F3(운영 맥락) + F4(정비 지식)의 결과를 LLM에 넘겨,<br>비즈니스 맥락이 반영된 조치 보고서를 자동 작성합니다.<br>별도 데이터 수집 필요 없이, 앞 기능의 출력을 조합합니다.</p>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">F5</span> LLM 기반 자율 조치 판단</div>
+      <p>F2(이상 점수) + F3(운영 맥락) + F4(정비 지식)의 결과를 LLM에 넘겨,<br>비즈니스 맥락이 반영된 조치 보고서를 자동 작성합니다.</p>
+      <ul>
+        <li><strong>입력 :</strong> &nbsp;F2 + F3 + F4 출력 조합</li>
+        <li><strong>출력 :</strong> &nbsp;자율 조치 지시서 (보고서)</li>
+      </ul>
+    </div>
 
-  <h3>F6. 대시보드 (관제 화면)</h3>
-  <p>F1~F5의 모든 결과를 한 화면에 시각화합니다. ADR-005에 의해 Phase 1부터 조기 착수하여, 기능이 추가될 때마다 시각적으로 검증합니다.</p>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">F6</span> 대시보드 (관제 화면)</div>
+      <p>F1~F5의 모든 결과를 한 화면에 시각화합니다.<br>ADR-005에 의해 Phase 1부터 조기 착수, 기능 추가 시마다 시각적으로 검증합니다.</p>
+      <ul>
+        <li><strong>입력 :</strong> &nbsp;F1~F5 전체 출력</li>
+        <li><strong>출력 :</strong> &nbsp;실시간 관제 대시보드</li>
+      </ul>
+    </div>
+  </div>
 
   <h3>기능별 데이터 확보 방식 요약</h3>
+  <div class="tbl-card">
   <div class="tbl-wrap">
   <table>
     <thead><tr><th>기능</th><th>실제 수집</th><th>합성 생성</th><th>직접 설계</th><th>앞 기능 출력</th></tr></thead>
@@ -512,23 +694,24 @@
     </tbody>
   </table>
   </div>
+  </div>
 
-  <div class="info">
-    <p><strong>핵심:</strong> 직접 확보해야 하는 것은 딱 2가지입니다.</p>
-    <p>1. <strong>Kaggle CNC Mill Tool Wear</strong> → F1, F2의 핵심 입력</p>
-    <p>2. <strong>공개 정비 매뉴얼</strong> → F4 GraphRAG의 텍스트 근거</p>
-    <p style="color:#888;font-size:13px;margin-top:4px;">나머지는 전부 합성하거나(F3 MES/ERP, F2 이벤트 로그), 직접 설계하거나(F4 온톨로지), 앞 기능의 출력을 이어받는 구조(F5, F6)입니다.</p>
+  <div class="goal-note">
+    <p><strong>핵심 :</strong> &nbsp;직접 확보해야 하는 것은 딱 2가지입니다.</p>
+    <p>1. <strong>Kaggle CNC Mill Tool Wear</strong> &rarr; F1, F2의 핵심 입력</p>
+    <p>2. <strong>공개 정비 매뉴얼</strong> &rarr; F4 GraphRAG의 텍스트 근거</p>
+    <p style="color:#999;font-size:13px;margin-top:4px;">나머지는 전부 합성하거나(F3 MES/ERP, F2 이벤트 로그), 직접 설계하거나(F4 온톨로지),<br>앞 기능의 출력을 이어받는 구조(F5, F6)입니다.</p>
   </div>
 </div>
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 3: 데이터 전략 -->
+<!-- PAGE 3: Phase 1 — Data Collection & EDA -->
 <!-- =============================== -->
 <div class="page" id="p3">
 <div class="inner">
-  <div class="page-title">데이터 전략</div>
-  <p class="page-sub">보유 데이터셋 5종 + 기능별 매핑 + 데이터셋 상세 분석을<br>한 페이지에서 봅니다.<br>이 페이지까지가 프로젝트 소개 영역입니다.</p>
+  <div class="page-title">Phase 1 : Data Collection & EDA</div>
+  <p class="page-sub">데이터 현황과 확보 전략, 그리고 EDA 결과를 이 페이지에서 관리합니다.</p>
 
   <h3>현재 보유 데이터셋 (5종)</h3>
   <div class="ds-list">
@@ -593,7 +776,8 @@
     <div class="meta-box"><div class="ml">쓰이는 기능</div><div class="mv sm" style="color:#3182f6;">F1, F2</div></div>
   </div>
 
-  <h4>실제 확보된 핵심 센서 (Kaggle CNC Mill 기준)</h4>
+  <div class="goal-note">
+  <h4 style="margin-top:0;">실제 확보된 핵심 센서 (Kaggle CNC Mill 기준)</h4>
   <ul>
     <li><strong>전류</strong> (CurrentFeedback, OutputCurrent) &mdash; X/Y/S축</li>
     <li><strong>전압</strong> (DCBusVoltage, OutputVoltage) &mdash; X/Y/S축</li>
@@ -606,12 +790,13 @@
   </ul>
 
   <h4>확보되지 않은 센서</h4>
-  <ul>
+  <ul style="margin-bottom:0;">
     <li><strong>진동</strong> &rarr; Bosch CNC(보조)와 Multi-Sensor(참고)로 보완</li>
     <li><strong>온도</strong> &rarr; 현 데이터셋으로 불가. 전류·전력 기반으로 대체 설계</li>
     <li><strong>timestamp</strong> &rarr; Phase 1에서 합성 (sequence &times; 100ms &rarr; datetime)</li>
     <li><strong>equipment_id</strong> &rarr; Phase 1에서 매핑 (experiment_01 &rarr; CNC-001)</li>
   </ul>
+  </div>
 
   <div class="info">
     <p><strong>"유효 42컬럼"의 의미</strong></p>
@@ -623,8 +808,9 @@
   </div>
 
   <h3>Bosch CNC Machining 상세</h3>
+  <div class="goal-note">
   <p>유일한 실제 산업 데이터이고, 핵심 데이터에 없는 <strong>진동 센서</strong>를 보완합니다.</p>
-  <div class="meta-grid">
+  <div class="meta-grid" style="margin-bottom:12px;">
     <div class="meta-box"><div class="ml">파일 수</div><div class="mv">1,702</div></div>
     <div class="meta-box"><div class="ml">설비</div><div class="mv sm">M01~M03</div></div>
     <div class="meta-box"><div class="ml">공정</div><div class="mv sm">OP00~OP14</div></div>
@@ -633,14 +819,18 @@
   <div class="warn">
     <strong>주의:</strong> CSV가 아닌 HDF5(.h5) 포맷이라 h5py 라이브러리 설치 필요. Phase 1 EDA에서 내부 구조 확인 예정.
   </div>
+  </div>
 
-  <h3>참고 데이터: Multi-Sensor CNC / Milling RUL</h3>
+  <h3>참고 데이터 : Multi-Sensor CNC / Milling RUL</h3>
+  <div class="goal-note">
   <p>둘 다 참고용입니다. 핵심 분석에는 쓰지 않습니다.</p>
-  <div class="warn">
+  <div class="warn" style="margin-bottom:0;">
     <strong>합성 데이터 의심:</strong> Multi-Sensor는 센서값이 너무 균등한 분포를 보이고<br>마모량에 음수 값이 존재합니다. Milling RUL은 진동이 표준정규분포이고<br>RUL이 선형 감소합니다. 실제 센서 데이터가 아닌 인위적으로 생성된 데이터일 가능성이 높습니다.<br>Milling RUL의 RUL 컬럼은 ADR-001에 의해 미사용하며, 센서 패턴만 참고합니다.
+  </div>
   </div>
 
   <h3>기능별 필요 데이터 상세 매핑</h3>
+  <div class="goal-note">
   <p>목적 &rarr; 기능 &rarr; 어떤 데이터가 필요한지 &rarr; 왜 &rarr; 언제 &rarr; 지금 있는지를 한 표에서 봅니다.</p>
   <div class="tbl-wrap">
   <table>
@@ -656,7 +846,7 @@
     </thead>
     <tbody>
       <tr>
-        <td class="td-purpose" rowspan="5">이상탐지</td>
+        <td class="td-purpose" rowspan="5">이상<br>탐지</td>
         <td class="td-fn" rowspan="3">F1</td>
         <td><strong>CNC 센서 시계열</strong><br><span style="font-size:11px;color:#999;">전류, 전압, 전력, 위치, 속도, 가속도</span></td>
         <td>이상탐지의 출발점. "평소 패턴"을 학습하려면 정상 센서 데이터가 있어야 합니다.<div class="td-why">예: X축 전류가 평소 0.08A &rarr; 갑자기 0.3A = 이상 의심</div></td>
@@ -689,7 +879,7 @@
         <td><span class="st st-plan">합성</span></td>
       </tr>
       <tr>
-        <td class="td-purpose" rowspan="4">예지보전</td>
+        <td class="td-purpose" rowspan="4">예지<br>보전</td>
         <td class="td-fn">F2</td>
         <td><strong>전처리된 센서 시계열</strong><br><span style="font-size:11px;color:#999;">F1에서 정규화된 데이터</span></td>
         <td>"30분 뒤 전류가 어떻게 변할까?" 예측하려면 깨끗한 시계열 입력 필요.<div class="td-why">ADR-001: RUL 대신 Forecasting 방식 &mdash; 미래값 예측 후 임계치 돌파 여부 판단</div></td>
@@ -716,7 +906,7 @@
         <td><span class="st st-done">F1 출력</span></td>
       </tr>
       <tr>
-        <td class="td-purpose" rowspan="3">온톨로지</td>
+        <td class="td-purpose" rowspan="3">온톨<br>로지</td>
         <td class="td-fn" rowspan="3">F4</td>
         <td><strong>온톨로지 관계 데이터</strong><br><span style="font-size:11px;color:#999;">설비&rarr;고장코드&rarr;부품&rarr;매뉴얼</span></td>
         <td>지식 그래프의 뼈대. "이 고장 &rarr; 이 부품 &rarr; 이 매뉴얼" 관계를 Neo4j에 구축.</td>
@@ -736,7 +926,7 @@
         <td><span class="st st-plan">설계</span></td>
       </tr>
       <tr>
-        <td class="td-purpose">자율 판단</td>
+        <td class="td-purpose">자율<br>판단</td>
         <td class="td-fn">F5</td>
         <td><strong>F2 + F3 + F4 출력 조합</strong></td>
         <td>LLM이 보고서를 쓰려면: (1) 뭐가 이상? (F2) (2) 상황이 어떤가? (F3) (3) 과거 사례? (F4) &mdash; 별도 수집 불필요</td>
@@ -744,7 +934,7 @@
         <td><span class="st st-output">앞 기능 출력</span></td>
       </tr>
       <tr>
-        <td class="td-purpose">관제</td>
+        <td class="td-purpose">관제<br>&nbsp;</td>
         <td class="td-fn">F6</td>
         <td><strong>F1~F5 전체 출력</strong></td>
         <td>현장 관리자가 한 화면에서 전체 상황을 보려면 모든 결과가 시각화되어야 합니다.</td>
@@ -754,50 +944,193 @@
     </tbody>
   </table>
   </div>
+  </div>
 
   <h3>목적별 데이터 확보 진행도</h3>
+  <div class="goal-note">
   <div class="prog-list">
     <div class="prog-item">
       <div class="prog-label">이상탐지</div>
-      <div class="prog-bar"><div class="prog-fill" style="width:75%;"></div></div>
-      <div class="prog-pct">75%</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:60%;"></div></div>
+      <div class="prog-pct">60%</div>
     </div>
-    <div class="prog-note">센서 + 라벨 확보. 이벤트 로그·timestamp는 합성 예정</div>
+    <div class="prog-note">센서 42컬럼 + 가공 단계 + 공구 라벨 확보. timestamp·equipment_id 합성 규칙 초안 완료, 정비 이벤트 로그는 Phase 2 합성</div>
     <div class="prog-item">
       <div class="prog-label">예지보전</div>
-      <div class="prog-bar"><div class="prog-fill" style="width:40%;"></div></div>
-      <div class="prog-pct">40%</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:25%;"></div></div>
+      <div class="prog-pct">25%</div>
     </div>
-    <div class="prog-note">센서(F1 출력) 준비. MES·ERP는 Phase 2 합성</div>
+    <div class="prog-note">센서 원본(F1 입력) 확보. MES 작업지시·ERP 부품 재고는 시나리오(S1~S4) 초안만 있고 실제 합성 미착수</div>
     <div class="prog-item">
       <div class="prog-label">온톨로지</div>
-      <div class="prog-bar"><div class="prog-fill" style="width:5%;"></div></div>
-      <div class="prog-pct">5%</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:0%;"></div></div>
+      <div class="prog-pct">0%</div>
     </div>
-    <div class="prog-note">설계 원칙만 확정. 관계·매뉴얼·고장코드는 Phase 3</div>
+    <div class="prog-note">설비→고장코드→부품→매뉴얼 관계 구조 개념만 정의. 스키마·매뉴얼·고장코드 모두 미착수</div>
     <div class="prog-item">
       <div class="prog-label">자율 판단</div>
       <div class="prog-bar"><div class="prog-fill" style="width:0%;"></div></div>
       <div class="prog-pct">0%</div>
     </div>
-    <div class="prog-note">F2+F3+F4 완성 후 시작. 별도 수집 필요 없음</div>
+    <div class="prog-note">F2+F3+F4 출력 조합으로 동작. 별도 수집 불필요, 앞 기능 완성 대기</div>
     <div class="prog-item">
       <div class="prog-label">대시보드</div>
-      <div class="prog-bar"><div class="prog-fill" style="width:10%;"></div></div>
-      <div class="prog-pct">10%</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:5%;"></div></div>
+      <div class="prog-pct">5%</div>
     </div>
-    <div class="prog-note">ADR-005로 조기 시작 결정. Phase 1부터 점진 구축</div>
+    <div class="prog-note">ADR-005로 Phase 1부터 조기 착수 결정. 현재 프로젝트 리뷰 대시보드만 존재</div>
+  </div>
+  </div>
+
+  <h3>미확보 데이터 전략</h3>
+  <div class="goal-note">
+    <h4 style="margin-top:0;color:#f59e0b;">Phase 1에서 해결 &mdash; 합성 규칙 설계</h4>
+    <ul>
+      <li><strong>timestamp :</strong> &nbsp;sequence &times; 100ms &rarr; datetime 변환. 18개 실험을 시간축으로 정렬 가능하게 합성</li>
+      <li><strong>equipment_id :</strong> &nbsp;experiment_01~18 &rarr; CNC-001~018 매핑. 설비 단위 분석의 기준 키</li>
+    </ul>
+    <p style="color:#888;font-size:13px;">규칙 초안 완료 (EDA에서 검증 후 확정)</p>
+  </div>
+
+  <div class="goal-note">
+    <h4 style="margin-top:0;color:#f59e0b;">Phase 2에서 해결 &mdash; Python 합성 생성 (ADR-002)</h4>
+    <ul>
+      <li><strong>MES 작업지시 :</strong> &nbsp;work_order_id, due_date, priority, status 등. 센서 timestamp와 정렬되어야 하며, LLM 판단이 달라질 만큼 비즈니스 차이를 반영</li>
+      <li><strong>ERP 부품 재고 :</strong> &nbsp;part_id, stock_quantity, lead_time_days 등. 온톨로지 부품 정보와 일치해야 하며, 재고 충분/부족 시나리오 모두 포함</li>
+      <li><strong>정비/고장 이벤트 로그 :</strong> &nbsp;failure_code, maintenance_time 등. 센서 이상 시점과 실제 고장 사이의 연결고리</li>
+    </ul>
+    <p style="color:#888;font-size:13px;">비즈니스 시나리오 4종(S1~S4) 초안 완료 &mdash; 긴급/여유 납기 &times; 재고 충분/부족 조합</p>
+  </div>
+
+  <div class="goal-note">
+    <h4 style="margin-top:0;color:#f59e0b;">Phase 3에서 해결 &mdash; 직접 설계 + 수집</h4>
+    <ul>
+      <li><strong>온톨로지 관계 스키마 :</strong> &nbsp;설비 &rarr; 고장 코드 &rarr; 부품 &rarr; 매뉴얼 관계를 Neo4j에 직접 설계. CNC 단일 도메인이므로 최소 범위로 시작</li>
+      <li><strong>고장 코드 체계 :</strong> &nbsp;E-001 = 스핀들 과열처럼 코드와 의미를 정의. 산업 표준 참고하되 프로젝트 범위에 맞게 축소 설계</li>
+      <li><strong>정비 매뉴얼 텍스트 :</strong> &nbsp;CNC 제조사 공개 기술 문서 + 합성 보강. GraphRAG 벡터 검색의 텍스트 근거</li>
+    </ul>
+    <p style="color:#888;font-size:13px;">확보 방안 미확정 (Open Items #2, #3) &mdash; 대량 수집보다 작은 범위의 정확한 연결이 우선</p>
+  </div>
+
+  <div class="goal-note">
+    <h4 style="margin-top:0;color:#f59e0b;">대체 설계 &mdash; 센서 한계 보완</h4>
+    <ul>
+      <li><strong>온도 센서 :</strong> &nbsp;Kaggle CNC Mill에 미포함. 전류·전력 변화량으로 간접 추정 설계 (전류 급증 &rarr; 발열 의심)</li>
+      <li><strong>진동 센서 :</strong> &nbsp;Kaggle CNC Mill에 미포함. Bosch CNC(2kHz 진동)로 보완, Multi-Sensor CNC는 패턴 참고만</li>
+    </ul>
   </div>
 </div>
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 4: 애자일 진행 구조 -->
+<!-- PAGE 4: 애자일 목표 -->
 <!-- =============================== -->
 <div class="page" id="p4">
 <div class="inner">
-  <div class="page-title">애자일 진행</div>
-  <p class="page-sub">이 페이지는 애자일 진행의 메인 허브입니다.<br>왼쪽은 단계 선택과 바로가기,<br>오른쪽은 선택한 Phase의 설명과 진행 상태를 분리해서 보여줍니다.</p>
+  <div class="page-title">애자일 목표</div>
+  <p class="page-sub">이 프로젝트에서 애자일이 무엇이고, 왜 이 방식을 선택했으며, 어떻게 실천하는지 정리합니다.</p>
+
+  <h3>왜 애자일인가</h3>
+  <div class="goal-note">
+    <p><strong>1인 개발 + 입문자 수준 + 불확실한 기술 스택</strong>이라는 현실이 있습니다.</p>
+    <p>온톨로지, GraphRAG, LLM 자율 판단 같은 기술을 처음 다루기 때문에 처음부터 완벽한 설계를 할 수 없습니다. 대신 <strong>짧은 Phase 단위로 학습하고, 검증하고, 다음으로 넘기는 방식</strong>이 가장 현실적입니다.</p>
+    <ul>
+      <li><strong>리소스 한계 :</strong> &nbsp;1인이 운영 가능한 최소한으로 결정 (예 : DB 2개로 통합 &mdash; ADR-003)</li>
+      <li><strong>학습 병행 :</strong> &nbsp;완벽한 이해 없이 시작하되, 단계별로 구체화 (예 : 온톨로지는 Phase 0에서 원칙만, Phase 3에서 스키마)</li>
+      <li><strong>조기 검증 :</strong> &nbsp;끝까지 기다리지 않고 중간 결과물로 방향을 확인 (예 : 대시보드 MVP 앞당김 &mdash; ADR-005)</li>
+    </ul>
+  </div>
+
+  <h3>이 프로젝트의 애자일 사이클</h3>
+  <div class="loop-grid">
+    <div class="loop-card">
+      <div class="loop-step">STEP 1</div>
+      <div class="loop-title">가설과 범위를 먼저 고정</div>
+      <div class="loop-desc">이번 단계에서 무엇을 결정할지, 무엇은 아직 미결로 둘지 먼저 나눕니다. 과한 선행 구현을 막습니다.</div>
+    </div>
+    <div class="loop-card">
+      <div class="loop-step">STEP 2</div>
+      <div class="loop-title">실데이터와 실제 제약으로 검증</div>
+      <div class="loop-desc">문서 가설이 실제 데이터와 맞는지 대조합니다. 안 맞는 부분은 갭으로 기록한 뒤 수정합니다.</div>
+    </div>
+    <div class="loop-card">
+      <div class="loop-step">STEP 3</div>
+      <div class="loop-title">결정은 ADR로 남김</div>
+      <div class="loop-desc">왜 이 방향을 택했는지 근거와 대안을 기록합니다. 다음 단계에서 흔들리지 않기 위해서입니다.</div>
+    </div>
+    <div class="loop-card">
+      <div class="loop-step">STEP 4</div>
+      <div class="loop-title">산출물을 다음 단계 입력으로</div>
+      <div class="loop-desc">이번 단계의 산출물이 바로 다음 단계의 입력이 됩니다. Phase가 순차적으로 연결됩니다.</div>
+    </div>
+  </div>
+
+  <h3>실천 원칙 6가지</h3>
+  <div class="impl-grid">
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">01</span> 짧은 Phase, 빠른 사이클</div>
+      <p>Phase 0은 3일 만에 완주했습니다. 완벽하지 않아도 다음 단계로 이동하고, 미결 사항은 Open Items로 명시적으로 관리합니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">02</span> 의사결정은 ADR로 기록</div>
+      <p>"결정했다"만이 아니라 <strong>문제 상황 &rarr; 검토 대안 &rarr; 선택 이유 &rarr; 제약사항</strong>을 모두 남깁니다. 나중에 수정할 때 맥락이 있어야 하기 때문입니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">03</span> 갭 분석으로 가정을 검증</div>
+      <p>문서에 쓴 가정을 실제 데이터와 대조합니다. Phase 0에서만 3회 갭 분석을 실시하여 timestamp 부재, 진동 센서 미포함 등을 발견했습니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">04</span> 제약을 제약으로 받아들임</div>
+      <p>"최선"이 아니라 <strong>"지금 가능한 것"</strong>으로 결정합니다. Kafka 대신 5초 폴링(ADR-004), 다중 DB 대신 PostgreSQL 통합(ADR-003)이 그 예입니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">05</span> 조기 시각화</div>
+      <p>파이프라인 완성을 기다리지 않고 대시보드 MVP를 앞당겼습니다(ADR-005). 부분적 결과물이라도 눈에 보여야 방향이 맞는지 판단할 수 있습니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">06</span> 살아있는 문서</div>
+      <p>모든 문서는 일회성이 아닙니다. Phase가 진행되면 PRD, Open Items, README가 함께 업데이트됩니다. 문서와 코드의 괴리를 허용하지 않습니다.</p>
+    </div>
+  </div>
+
+  <h3>문서와 구현의 분리</h3>
+  <div class="goal-note">
+    <p>이 프로젝트는 <strong>단계별로 중심 활동이 다릅니다.</strong></p>
+    <ul>
+      <li><strong>Phase 0 (문서 중심) :</strong> &nbsp;PRD, 데이터 전략, ADR, 제약사항 등 의사결정 기록. 코드 없음</li>
+      <li><strong>Phase 1 (분석 중심) :</strong> &nbsp;EDA 노트북으로 실데이터 검증 + 새로운 ADR 작성</li>
+      <li><strong>Phase 2 (설계 중심) :</strong> &nbsp;DB 스키마, 파이프라인, 합성 데이터 모델 구체화</li>
+      <li><strong>Phase 3+ (구현 중심) :</strong> &nbsp;FastAPI, PostgreSQL, Neo4j, 대시보드 개발. 코드 규칙 적용</li>
+    </ul>
+    <p style="color:#888;font-size:13px;">코드 규칙(타입 힌트, 한국어 주석, Docker Compose 등)은 Phase 2 이후부터 적용됩니다.</p>
+  </div>
+
+  <h3>의사결정과 미결 관리 구조</h3>
+  <div class="goal-note">
+    <p><strong>ADR (Architecture Decision Record)</strong></p>
+    <p>기술 의사결정마다 "Context &rarr; Options &rarr; Decision &rarr; Reasoning &rarr; Consequences" 구조로 기록합니다. 현재까지 6건(ADR-000~005)이 확정되었고, Phase가 진행되면서 추가됩니다.</p>
+  </div>
+  <div class="goal-note">
+    <p><strong>Open Items (미결 사항)</strong></p>
+    <p>지금 결정할 수 없는 것은 Open Items로 명시적으로 분류합니다. 각 항목마다 "왜 미결인가"와 "언제 결정할 것인가"를 기록합니다.</p>
+    <ul>
+      <li><strong>A. 데이터 관련 :</strong> &nbsp;Phase 1 EDA에서 결정 (timestamp 규칙, 매뉴얼 확보 등)</li>
+      <li><strong>B. 모델링 :</strong> &nbsp;Phase 1~2에서 결정 (이상탐지 모델, LSTM 윈도우 등)</li>
+      <li><strong>C. 시스템 :</strong> &nbsp;Phase 2에서 결정 (LLM 선택, 프론트엔드 전략 등)</li>
+      <li><strong>D. 관리 :</strong> &nbsp;Phase 2 완료 후 정의 (장기 마일스톤)</li>
+    </ul>
+    <p style="color:#888;font-size:13px;">현재 12건 중 0건 해결. Phase 1 진입과 함께 순차 해결 예정</p>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 10: Phase 한눈에 보기 -->
+<!-- =============================== -->
+<div class="page" id="p10">
+<div class="inner">
+  <div class="page-title">Phase 한눈에 보기</div>
+  <p class="page-sub">각 Phase의 목표, 산출물, 진행 상태를 한 곳에서 확인합니다.</p>
 
   <div class="journey-layout">
   <div class="journey-panel">
@@ -912,72 +1245,35 @@
   </div>
   </div>
 
-  <div class="agile-context-grid">
-    <div class="agile-context-block">
-      <div class="agile-context-title">우리가 애자일하게 진행하는 방식</div>
-      <div class="agile-context-sub">설명 영역입니다.<br>이 프로젝트는 한 번에 완성하는 방식이 아니라,<br>기준을 먼저 세우고 실제 데이터와 제약으로 검증한 뒤<br>다음 단계 입력으로 넘기는 흐름으로 움직입니다.</div>
-      <div class="loop-grid" style="margin:0;">
-        <div class="loop-card">
-          <div class="loop-step">STEP 1</div>
-          <div class="loop-title">가설과 범위를 먼저 고정</div>
-          <div class="loop-desc">이번 단계에서 무엇을 결정할지, 무엇은 아직 미결로 둘지 먼저 나눕니다. 그래서 과한 선행 구현을 막습니다.</div>
-        </div>
-        <div class="loop-card">
-          <div class="loop-step">STEP 2</div>
-          <div class="loop-title">실데이터와 실제 제약으로 검증</div>
-          <div class="loop-desc">문서 가설이 실제 데이터와 맞는지 대조하고, 안 맞는 부분은 갭으로 기록한 뒤 수정합니다.</div>
-        </div>
-        <div class="loop-card">
-          <div class="loop-step">STEP 3</div>
-          <div class="loop-title">결정은 ADR로 남김</div>
-          <div class="loop-desc">왜 이 방향을 택했는지 근거와 대안을 남겨 다음 단계에서 흔들리지 않게 합니다.</div>
-        </div>
-        <div class="loop-card">
-          <div class="loop-step">STEP 4</div>
-          <div class="loop-title">다음 단계 입력으로 넘김</div>
-          <div class="loop-desc">이번 단계 산출물은 바로 다음 단계의 입력이 됩니다. 그래서 Phase가 순차적으로 연결됩니다.</div>
-        </div>
-      </div>
+  <h3>Phase별 진행 구조</h3>
+  <div class="phase-progress-list">
+    <div class="phase-progress-item">
+      <div class="phase-progress-top"><div class="phase-progress-phase">Phase 0</div><div class="phase-progress-state">현재 마무리 단계</div></div>
+      <div class="phase-progress-desc">문제 정의, 범위 확정, 데이터 전략, ADR, Open Items를 정리해 EDA 기준선을 만드는 단계입니다.</div>
     </div>
-
-    <div class="agile-context-block">
-      <div class="agile-context-title">Phase별 진행 구조</div>
-      <div class="agile-context-sub">진행상황 영역입니다.<br>각 Phase에서 풀어야 할 핵심 질문, 현재 상태,<br>다음 단계로 넘길 결과를 빠르게 읽을 수 있게 분리했습니다.</div>
-      <div class="phase-progress-list">
-        <div class="phase-progress-item">
-          <div class="phase-progress-top"><div class="phase-progress-phase">Phase 0</div><div class="phase-progress-state">현재 마무리 단계</div></div>
-          <div class="phase-progress-desc">문제 정의, 범위 확정, 데이터 전략, ADR, Open Items를 정리해 EDA 기준선을 만드는 단계입니다.</div>
-        </div>
-        <div class="phase-progress-item">
-          <div class="phase-progress-top"><div class="phase-progress-phase">Phase 1</div><div class="phase-progress-state">다음 단계</div></div>
-          <div class="phase-progress-desc">실데이터를 뜯어보며 유효 센서, timestamp 규칙, equipment_id 매핑을 실제 기준으로 확정합니다.</div>
-        </div>
-        <div class="phase-progress-item">
-          <div class="phase-progress-top"><div class="phase-progress-phase">Phase 2</div><div class="phase-progress-state">후속 단계</div></div>
-          <div class="phase-progress-desc">EDA 결과를 바탕으로 DB, 전처리, 합성 데이터, GraphRAG 연결 구조를 설계합니다.</div>
-        </div>
-        <div class="phase-progress-item">
-          <div class="phase-progress-top"><div class="phase-progress-phase">Phase 3+</div><div class="phase-progress-state">장기 단계</div></div>
-          <div class="phase-progress-desc">설계한 흐름을 실제 기능으로 연결하고 대시보드와 판단 결과까지 검증합니다.</div>
-        </div>
-      </div>
+    <div class="phase-progress-item">
+      <div class="phase-progress-top"><div class="phase-progress-phase">Phase 1</div><div class="phase-progress-state">다음 단계</div></div>
+      <div class="phase-progress-desc">실데이터를 뜯어보며 유효 센서, timestamp 규칙, equipment_id 매핑을 실제 기준으로 확정합니다.</div>
     </div>
-  </div>
-
-  <div class="info">
-    <p><strong>핵심 메시지:</strong> 이 프로젝트는 기능을 한 번에 다 만드는 방식이 아니라,<br><strong>단계별로 기준을 세우고, 실제 데이터로 검증하고,<br>결정과 미결을 분리하면서 다음 단계로 넘기는 방식</strong>으로 진행합니다.</p>
-    <p style="margin-top:8px;color:#888;font-size:13px;">아래부터는 이 구조가 실제로 어떻게 진행되었는지 보여주는 기록 영역입니다.</p>
+    <div class="phase-progress-item">
+      <div class="phase-progress-top"><div class="phase-progress-phase">Phase 2</div><div class="phase-progress-state">후속 단계</div></div>
+      <div class="phase-progress-desc">EDA 결과를 바탕으로 DB, 전처리, 합성 데이터, GraphRAG 연결 구조를 설계합니다.</div>
+    </div>
+    <div class="phase-progress-item">
+      <div class="phase-progress-top"><div class="phase-progress-phase">Phase 3+</div><div class="phase-progress-state">장기 단계</div></div>
+      <div class="phase-progress-desc">설계한 흐름을 실제 기능으로 연결하고 대시보드와 판단 결과까지 검증합니다.</div>
+    </div>
   </div>
 </div>
 </div>
 
 <!-- =============================== -->
-<!-- PAGE 5: Phase 0 로그 -->
+<!-- PAGE 5: Phase 0 -->
 <!-- =============================== -->
 <div class="page" id="p5">
 <div class="inner">
-  <div class="page-title">Phase 0: 프로젝트 정의 &mdash; 일일 로그</div>
-  <p class="page-sub">이제부터는 실제 진행 기록입니다. 각 날짜별로 무엇을 결정했고, 어떤 산출물이 생겼는지 순서대로 보여줍니다.</p>
+  <div class="page-title">Phase 0 : Project Definition</div>
+  <p class="page-sub">프로젝트를 정의한 단계입니다. 각 날짜별로 무엇을 결정했고, 어떤 산출물이 생겼는지 순서대로 보여줍니다.</p>
 
   <!-- Day 1 -->
   <div class="day-card">
@@ -1380,12 +1676,184 @@
 </div>
 </div>
 
+<!-- =============================== -->
+<!-- PAGE 9: ADR (의사결정 기록) -->
+<!-- =============================== -->
+<div class="page" id="p9">
+<div class="inner">
+  <div class="page-title">ADR &mdash; 의사결정 기록</div>
+  <p class="page-sub">프로젝트 전체에서 내린 핵심 의사결정을 기록합니다.<br>각 ADR은 어떤 선택지가 있었고, 왜 이 방향을 택했는지, 그로 인한 제약은 무엇인지를 남깁니다.</p>
+
+  <div class="adr-card">
+    <div class="adr-head">
+      <div class="adr-num">ADR-000</div>
+      <div class="adr-title">CNC 단일 도메인</div>
+      <div class="adr-phase">Phase 0</div>
+    </div>
+    <div class="adr-body">
+      <div class="adr-section">
+        <div class="adr-label">결정</div>
+        <p>CNC 밀링 단일 도메인으로 통일합니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">검토된 대안</div>
+        <p><strong>Option A :</strong> &nbsp;NASA + CNC + 반도체 등 다중 도메인 혼합<br>
+        <strong>Option B :</strong> &nbsp;CNC 밀링 단일 도메인 (선택)</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">선택 근거</div>
+        <p>다중 도메인 혼합 시 데이터 조인 키 충돌 및 LLM 환각이 발생합니다.<br>하나의 도메인에서 깊게 파는 것이 MVP에 적합합니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">이로 인한 제약</div>
+        <p>CNC 밀링 외 도메인(터빈, 반도체 등)은 MVP 범위에서 제외됩니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="adr-card">
+    <div class="adr-head">
+      <div class="adr-num">ADR-001</div>
+      <div class="adr-title">RUL 포기, Forecasting 방식 채택</div>
+      <div class="adr-phase">Phase 0</div>
+    </div>
+    <div class="adr-body">
+      <div class="adr-section">
+        <div class="adr-label">결정</div>
+        <p>잔여수명(RUL) 예측 대신, 센서값의 미래를 예측(Forecasting)하고<br>임계치 돌파 여부로 판단하는 방식을 택합니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">검토된 대안</div>
+        <p><strong>Option A :</strong> &nbsp;RUL 기반 &mdash; "남은 수명 몇 시간" 직접 예측<br>
+        <strong>Option B :</strong> &nbsp;Forecasting 기반 &mdash; 센서값 미래 예측 후 임계치 판단 (선택)</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">선택 근거</div>
+        <p>공개 데이터에 실제 고장 시점이 없어 가상의 RUL을 합성해야 하는데,<br>합성 타겟으로 학습한 모델의 신뢰성을 평가할 방법이 없습니다.<br>실제 센서값의 미래를 예측하는 방식이 검증 가능하고 더 신뢰할 수 있습니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">이로 인한 제약</div>
+        <p>"설비 수명이 몇 시간 남았습니다" 같은 직관적 출력은 불가합니다.<br>대신 "30분 뒤 전류가 임계치를 넘을 가능성 높음" 형태로 제공합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="adr-card">
+    <div class="adr-head">
+      <div class="adr-num">ADR-002</div>
+      <div class="adr-title">MES/ERP 합성 데이터 생성</div>
+      <div class="adr-phase">Phase 0</div>
+    </div>
+    <div class="adr-body">
+      <div class="adr-section">
+        <div class="adr-label">결정</div>
+        <p>MES(작업지시)와 ERP(부품재고) 데이터를 시나리오 기반으로 합성합니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">검토된 대안</div>
+        <p><strong>Option A :</strong> &nbsp;실제 기업 데이터 확보 시도<br>
+        <strong>Option B :</strong> &nbsp;시나리오 기반 합성 (선택)</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">선택 근거</div>
+        <p>기업 IT 데이터는 비공개이며 확보가 현실적으로 불가능합니다.<br>Kaggle 센서 타임라인에 맞춰 합성하면 F3 IT/OT 동기화 파이프라인을 구현할 수 있습니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">이로 인한 제약</div>
+        <p>합성 데이터이므로 실제 MES/ERP의 복잡한 비즈니스 로직은 반영하지 못합니다.<br>LLM 판단이 달라지는 핵심 시나리오 위주로 설계합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="adr-card">
+    <div class="adr-head">
+      <div class="adr-num">ADR-003</div>
+      <div class="adr-title">PostgreSQL + Neo4j (DB 2개)</div>
+      <div class="adr-phase">Phase 0</div>
+    </div>
+    <div class="adr-body">
+      <div class="adr-section">
+        <div class="adr-label">결정</div>
+        <p>PostgreSQL에 TimescaleDB(시계열) + pgvector(벡터) 확장으로 3역할 통합하고,<br>온톨로지는 Neo4j를 별도로 사용합니다. 총 DB 2개.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">검토된 대안</div>
+        <p><strong>Option A :</strong> &nbsp;역할별 DB 분리 (TimescaleDB + Weaviate + PostgreSQL + Neo4j = 4개)<br>
+        <strong>Option B :</strong> &nbsp;PostgreSQL 확장 통합 + Neo4j (선택)</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">선택 근거</div>
+        <p>1인 개발 환경에서 DB 4개를 운영하는 것은 비현실적입니다.<br>PostgreSQL 확장으로 시계열/벡터/관계형을 하나로 통합하면 운영 부담이 크게 줄어듭니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">이로 인한 제약</div>
+        <p>전용 시계열 DB(InfluxDB)나 전용 벡터 DB(Weaviate)에 비해 성능은 낮을 수 있습니다.<br>MVP 규모에서는 충분하며, 필요 시 Phase 3 이후 분리를 검토합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="adr-card">
+    <div class="adr-head">
+      <div class="adr-num">ADR-004</div>
+      <div class="adr-title">5초 폴링 방식</div>
+      <div class="adr-phase">Phase 0</div>
+    </div>
+    <div class="adr-body">
+      <div class="adr-section">
+        <div class="adr-label">결정</div>
+        <p>Kafka/Flink 없이 5초 주기 폴링으로 실시간을 모사합니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">검토된 대안</div>
+        <p><strong>Option A :</strong> &nbsp;Kafka + Flink 스트리밍 파이프라인<br>
+        <strong>Option B :</strong> &nbsp;5초 주기 폴링 (선택)</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">선택 근거</div>
+        <p>MVP에 Kafka/Flink는 과잉 설계입니다. 5초 주기 조회만으로도<br>실시간 관제 시나리오를 충분히 구현할 수 있습니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">이로 인한 제약</div>
+        <p>밀리초 단위의 실시간 반응은 불가합니다. 5초 지연은 허용 범위입니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="adr-card">
+    <div class="adr-head">
+      <div class="adr-num">ADR-005</div>
+      <div class="adr-title">대시보드 MVP 조기 착수</div>
+      <div class="adr-phase">Phase 0</div>
+    </div>
+    <div class="adr-body">
+      <div class="adr-section">
+        <div class="adr-label">결정</div>
+        <p>파이프라인 완성 전에도 대시보드를 먼저 만들어 방향을 검증합니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">검토된 대안</div>
+        <p><strong>Option A :</strong> &nbsp;파이프라인 완성 후 대시보드 구축<br>
+        <strong>Option B :</strong> &nbsp;Phase 1부터 점진적으로 대시보드 구축 (선택)</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">선택 근거</div>
+        <p>시각적 결과물이 있어야 방향이 맞는지 빠르게 확인할 수 있습니다.<br>파이프라인이 없어도 EDA 결과, 갭 분석 등을 대시보드로 보여줄 수 있습니다.</p>
+      </div>
+      <div class="adr-section">
+        <div class="adr-label">이로 인한 제약</div>
+        <p>초기 대시보드는 정적 데이터 기반이며, 실시간 연동은 Phase 3 이후입니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 </div><!-- /pages -->
 
 <script>
 const pages=document.getElementById('pages');
 const allNavLinks=document.querySelectorAll('.topnav a');
-const primaryNavLinks=document.querySelectorAll('.topnav > a, .topnav > .nav-group > a');
+const primaryNavLinks=document.querySelectorAll('.topnav .nav-section a');
 const journeyContainer=document.querySelector('.journey');
 const journeyCards=document.querySelectorAll('.journey-card[data-phase]');
 const journeyPrev=document.getElementById('journey-prev');
@@ -1586,6 +2054,12 @@ pages.addEventListener('scroll',updateNav);
 window.addEventListener('resize',()=>{
   const idx=Math.round(pages.scrollLeft/window.innerWidth);
   pages.scrollLeft=idx*window.innerWidth;
+});
+
+// 페이지 로드 시 항상 개요(p0)로 이동
+window.addEventListener('load',()=>{
+  pages.scrollLeft=0;
+  updateNav();
 });
 </script>
 
