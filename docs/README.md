@@ -17,7 +17,8 @@ docs/
 │   ├── adr-summary.md             #   ADR 의사결정 요약 표
 │   ├── constraints.md             #   Key Constraints + 설계 원칙
 │   └── phases/                    #   Phase별 날짜별 로그
-│       └── phase-0.md             #     Phase 0 진행 기록
+│       ├── phase-0.md             #     Phase 0 진행 기록
+│       └── phase-1.md             #     Phase 1 진행 기록
 ├── 0-project-definition/          # Phase 0: 프로젝트 정의
 │   ├── prd-v1.0.md                #   PRD (제품 요구사항 정의서)
 │   ├── data-collection-strategy.md #   데이터 수집 전략 기준 문서
@@ -25,9 +26,11 @@ docs/
 │   └── open-items.md              #   미결 사항 추적
 ├── future/                        # 향후 제품화/확장 비전
 │   └── customer-onboarding-ontology-strategy.md
-├── 1-data-exploration/            # Phase 1: Kaggle/Bosch 기반 데이터 탐색 (EDA)
-│   ├── README.md                  #   Phase 1 개요 및 핵심 질문
-│   └── eda-current-summary.md     #   EDA 현재 진행 요약
+├── 1-data-exploration/            # Phase 1: 데이터 탐색 (EDA) ✅ 완료
+│   ├── README.md                  #   Phase 1 개요 및 완료 요약
+│   ├── data-gap-analysis.md       #   데이터 갭 분석 (보유 vs 필요)
+│   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
+│   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
 └── adr/                           # ADR 템플릿
     └── 000-template.md

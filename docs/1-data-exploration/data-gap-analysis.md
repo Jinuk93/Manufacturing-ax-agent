@@ -32,9 +32,9 @@ Phase 1 진입 시점에서 "실제로 갖고 있는 것", "필요한데 없는 
 | 진동 센서 | 핵심에 없는 센서 보완 | **확보** | Bosch CNC (보조) |
 | 공구 라벨 (worn/unworn) | F2 모델 성능 검증용 정답지 | **확보** | 이상탐지 입력이 아닌 검증용 |
 | 육안검사 결과 (passed_visual_inspection) | 마모 vs 품질 관계 분석 | **확보** | yes/no/NaN. worn이지만 통과한 실험(#13,#14,#15,#18) 존재 — F2 검증 시 중요 |
-| `timestamp` | 시계열 정렬 기준 | **없음** | Phase 1에서 합성 (sequence × 100ms → datetime) |
-| `equipment_id` | 설비 단위 구분 키 | **없음** | Phase 1에서 매핑 (experiment_01 → CNC-001) |
-| 온도 센서 | 과열 감지 | **없음** | Phase 1 EDA에서 전류/전력의 간접 대체 가능성 검증 예정 |
+| `timestamp` | 시계열 정렬 기준 | **확보 (합성 완료)** | sequence × 100ms → datetime (`data/processed/`) |
+| `equipment_id` | 설비 단위 구분 키 | **확보 (합성 완료)** | experiment_01~06 → CNC-001, 07~12 → CNC-002, 13~18 → CNC-003 |
+| 온도 센서 | 과열 감지 | **없음** | Phase 2 모델링에서 전류/전력 기반 과열 징후 감지 검증 (SPINDLE_OVERHEAT_001 failure_code로 대응 가능) |
 
 **참고: 공구 라벨의 역할**
 
@@ -58,9 +58,9 @@ F5(LLM):  "감속 운전 + 긴급 발주 권고"
 
 | 데이터 | 용도 | 상태 | 비고 |
 |--------|------|------|------|
-| MES 작업지시 (work_order, due_date, priority) | 알람 시점의 업무 맥락 | **없음** | Phase 2 합성 (ADR-002) |
-| ERP 부품 재고 (part_id, stock, lead_time) | 즉시 교체 가능 여부 판단 | **없음** | Phase 2 합성 (ADR-002) |
-| 정비/고장 이벤트 로그 (failure_code, maintenance_time) | 이상 신호와 실제 고장 연결 | **없음** | Phase 2 합성 |
+| MES 작업지시 (work_order, due_date, priority) | 알람 시점의 업무 맥락 | **확보** | Phase 1에서 합성 완료 (`data/processed/it-data/`) |
+| ERP 부품 재고 (part_id, stock, lead_time) | 즉시 교체 가능 여부 판단 | **확보** | Phase 1에서 합성 완료 (`data/processed/it-data/`) |
+| 정비/고장 이벤트 로그 (failure_code, maintenance_time) | 이상 신호와 실제 고장 연결 | **확보** | Phase 1에서 합성 완료 (`data/processed/it-data/`) |
 
 ### 2.3. 지식 (온톨로지) — F4
 
@@ -88,12 +88,12 @@ F5(LLM):  "감속 운전 + 긴급 발주 권고"
 - [x] EDA로 유효 42컬럼 검증 및 확정 (이상치 분석 완료, [outlier-analysis.md](outlier-analysis.md) 참고)
 - [x] `equipment_id` 매핑: 순번 기반 3대 분산 (CNC-001~003, 편중 문서화)
 
-### Phase 2 (설계+합성)
+### Phase 1에서 선행 완료 (원래 Phase 2 계획)
 
-- [ ] MES 작업지시 합성 (work_order_id, due_date, priority, status 등)
-- [ ] ERP 부품 재고 합성 (part_id, stock_quantity, lead_time_days 등)
-- [ ] 정비/고장 이벤트 로그 합성 (failure_code, maintenance_time 등)
-- [ ] IT/OT 합성 시나리오 설계 (구체적 시나리오는 Phase 2 초기에 정의 예정)
+- [x] MES 작업지시 합성 (18건, `data/processed/it-data/mes_work_orders.csv`)
+- [x] ERP 부품 재고 스냅샷 합성 (7주 × 5부품, `data/processed/it-data/erp_inventory_snapshots.csv`)
+- [x] 정비/고장 이벤트 로그 합성 (39건, `data/processed/it-data/maintenance_events.csv`)
+- [x] IT/OT 합성 시나리오 설계 ([it-data-synthesis-schema.md](it-data-synthesis-schema.md) 참고)
 
 ### Phase 3 (온톨로지 구축)
 

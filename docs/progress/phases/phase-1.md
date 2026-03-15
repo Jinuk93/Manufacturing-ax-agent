@@ -85,7 +85,7 @@
 
 - [x] 불필요 데이터 삭제 (multi-sensor-cnc, milling-rul, kamp)
 - [x] `timestamp` 합성 (data/processed/)
-- [x] EDA 이상치 분석 — README 경고 3조건 전수 조사, 42유효컬럼 확정 (원본 48컬럼 유지 중, 5개 제거는 F1 전처리에서)
+- [x] EDA 이상치 분석 — README 경고 3조건 전수 조사, 42유효컬럼 확정 (원본 48컬럼 유지 중, 6개 제거는 F1 전처리에서)
 - [x] `equipment_id` 매핑 — 순번 기반 3대 분산 완료
 - [x] Bosch CNC 데이터 탐색 완료 — 3축 가속도(2kHz), 3대 기계, 1,702 H5 파일, good/bad 라벨. Kaggle과 조인 불가(별도 독립 데이터셋). 보관 유지, Phase 2+ 활용 판단
 
@@ -98,5 +98,51 @@
 | CNC-003 (exp 13~18) | 1 | 5 | 1 (16) | {3, 6, 20} | 오래된 공구 위주, 저속 중심 |
 
 편중은 의도적 — 실제 공장에서도 설비별 공구 교체 주기가 다르므로 현실적 시나리오임.
+
+---
+
+## 2026-03-15 (Day 5 continued)
+
+**목표:** IT 데이터 합성 (MES/ERP/Maintenance) — Phase 2 계획을 Phase 1에서 선행 완료
+
+### 진행 내용
+
+- **IT 합성 스키마 설계** (`docs/1-data-exploration/it-data-synthesis-schema.md`)
+  - failure_code 분류 체계: TOOL_WEAR_001, SPINDLE_OVERHEAT_001, CLAMP_PRESSURE_001, COOLANT_LOW_001
+  - 중단 실험 4건 수동 매핑 (조건 겹침 방지): exp04,05→CLAMP, exp07,16→SPINDLE
+  - 부품 5종 정의 (P001~P005) + 소비 규칙
+  - 조인 키 다이어그램: OT↔MES↔Maintenance→failure_code→Parts→ERP
+
+- **다른 인스턴스 크로스 리뷰 반영** (4건)
+  1. failure_code 조건 겹침 → 수동 매핑으로 해결
+  2. 부품 소비 규칙: 엔드밀은 TOOL_WEAR_001에서만, 스핀들 베어링 5주간 1건만, 냉각수는 중단 실험도 소비
+  3. ERP 스냅샷 월요일 정렬 (2024-01-15이 월요일이라 자연 정렬)
+  4. Maintenance→failure_code→Parts→ERP 흐름을 조인 다이어그램에 추가
+
+- **IT 데이터 합성 실행** (`scripts/synthesize_it_data.py`)
+  - MES 작업지시: 18건 (priority: normal/urgent/critical)
+  - Maintenance 정비 이벤트: 39건 (corrective 12건 + preventive 27건)
+  - ERP 부품 재고 스냅샷: 35건 (7주 × 5부품)
+
+### 산출물
+
+- `docs/1-data-exploration/it-data-synthesis-schema.md` — IT 합성 스키마 설계서
+- `scripts/synthesize_it_data.py` — IT 데이터 합성 스크립트
+- `data/processed/it-data/mes_work_orders.csv` — MES 작업지시 (18행)
+- `data/processed/it-data/maintenance_events.csv` — 정비 이벤트 (39행)
+- `data/processed/it-data/erp_inventory_snapshots.csv` — ERP 재고 스냅샷 (35행)
+- `data-gap-analysis.md` — IT 데이터 상태 "확보"로 업데이트
+
+### Phase 1 체크리스트 (업데이트)
+
+- [x] 불필요 데이터 삭제 (multi-sensor-cnc, milling-rul, kamp)
+- [x] `timestamp` 합성 (data/processed/)
+- [x] EDA 이상치 분석 — 42유효컬럼 확정
+- [x] `equipment_id` 매핑 — 3대 분산
+- [x] Bosch CNC 데이터 탐색 완료
+- [x] IT 데이터 합성: MES 작업지시 (18건)
+- [x] IT 데이터 합성: Maintenance 정비 이벤트 (39건)
+- [x] IT 데이터 합성: ERP 부품 재고 스냅샷 (35건)
+- [x] IT 합성 스키마 문서화
 
 ---

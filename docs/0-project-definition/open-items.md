@@ -1,7 +1,7 @@
 # 미결 사항 (Open Items)
 
 **상태:** 관리 중
-**최종 수정일:** 2026-03-10
+**최종 수정일:** 2026-03-15
 
 PRD v1.0 시점에서 아직 결정되지 않은 항목들을 추적합니다.
 각 항목은 해당 Phase 진입 시 ADR로 기록하며 확정합니다.
@@ -12,16 +12,16 @@ PRD v1.0 시점에서 아직 결정되지 않은 항목들을 추적합니다.
 
 | # | 항목 | 왜 미결인가 | 결정 시점 | 상태 |
 |---|------|------------|-----------|------|
-| 1 | ~~KAMP 데이터 실체 확인~~ → **timestamp/equipment_id 합성 설계** | KAMP는 카탈로그만 확보, Kaggle CNC Mill이 핵심 데이터로 확정. 단, 전 데이터셋에 timestamp와 equipment_id가 없어 합성 규칙 설계 필요 (sequence×100ms→datetime, experiment→CNC-ID 매핑) | EDA 첫 번째 과제 | Open |
-| 2 | 정비 매뉴얼 데이터 확보 방안 | 공개 문서 수집 vs 합성 작성 vs 혼합, 미정 | EDA 후 | Open |
-| 3 | 온톨로지 스키마 설계 방향 | 설비-고장코드-부품-매뉴얼 관계 기준 미정 | EDA 후 | Open |
-| 4 | 합성 데이터 시나리오 확정 | data-collection-strategy §6.5의 S1~S4가 초안 상태 | 데이터 모델링 시 | Open |
+| 1 | ~~KAMP 데이터 실체 확인~~ → **timestamp/equipment_id 합성 설계** | timestamp: sequence×100ms→datetime (seed=42). equipment_id: exp01~06→CNC-001, 07~12→CNC-002, 13~18→CNC-003. `data/processed/kaggle-cnc-mill/`에 반영 완료 | Phase 1 Day 5 | **Decided** |
+| 2 | 정비 매뉴얼 데이터 확보 방안 | 방향 결정: failure_code 4종 × 부품 5종 기준으로 **합성 매뉴얼 작성** (Phase 3). CNC 제조사 공개 문서로 보강 가능. IT 합성에서 failure_code 체계가 확정되어 범위 명확 | Phase 3 진입 시 구현 | **Partial** |
+| 3 | 온톨로지 스키마 설계 방향 | 방향 결정: failure_code→부품→조치 관계가 IT 합성 스키마에서 초안 확정 ([it-data-synthesis-schema.md](../1-data-exploration/it-data-synthesis-schema.md)). Neo4j 노드/관계 설계는 Phase 3 | Phase 3 진입 시 구현 | **Partial** |
+| 4 | 합성 데이터 시나리오 확정 | IT 합성 스키마 확정: failure_code 4종, 부품 5종, MES 18건, Maintenance 39건, ERP 35건. 조인 키 다이어그램 포함. 상세: [it-data-synthesis-schema.md](../1-data-exploration/it-data-synthesis-schema.md) | Phase 1 Day 5 | **Decided** |
 
 ## A-1. 내부 표준 형식 관련 (Phase 1~2에서 구체화)
 
 | # | 항목 | 왜 미결인가 | 결정 시점 | 상태 |
 |---|------|------------|-----------|------|
-| 5 | 내부 표준 형식(Canonical Model) 초안 | 지금은 원칙만 확정했고, 실제 센서/이벤트 컬럼은 EDA 후 구체화해야 함 | EDA 후, 아키텍처 설계 시 | Open |
+| 5 | 내부 표준 형식(Canonical Model) 초안 | OT: 42유효컬럼 + timestamp + equipment_id 확정. IT: MES/ERP/Maintenance 컬럼 확정 ([it-data-synthesis-schema.md](../1-data-exploration/it-data-synthesis-schema.md)). DB 스키마는 Phase 2에서 구체화 | Phase 1 일부 해결, Phase 2 계속 | **Partial** |
 
 ## B. 모델링 관련 (Phase 1~2에서 결정)
 

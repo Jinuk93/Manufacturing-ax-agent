@@ -113,5 +113,5 @@ AI가 **자동으로 순회 → 분석 → 조치를 제안**하는 에이전트
 | Phase | 이름 | 상태 |
 |-------|------|------|
 | 0 | Project Definition | ✅ 완료 |
-| 1 | Data Exploration | **진행중** |
-| 2 | Architecture | 대기 |
+| 1 | Data Exploration | ✅ 완료 |
+| 2 | Architecture | **다음** |

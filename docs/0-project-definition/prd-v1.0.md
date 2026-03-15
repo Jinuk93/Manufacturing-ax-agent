@@ -2,8 +2,8 @@
 
 **프로젝트명:** 예측 기반 자율 조치 에이전트 관제 시스템 (`manufacturing-ax-agent`)
 **문서 버전:** v1.0
-**최종 수정일:** 2026-03-10
-**상태:** Draft (검토 중)
+**최종 수정일:** 2026-03-15
+**상태:** 확정 (Phase 0 완료, Phase 1 EDA 반영)
 
 ---
 
@@ -37,7 +37,7 @@
 ### F1. 실시간 시계열 데이터 수집 및 전처리
 
 - 현재 확보한 **Kaggle CNC Mill Tool Wear 원시 센서 데이터(100ms 샘플링, experiment 단위)**를 기준으로 결측치 및 이상치를 통계적으로 제거
-- Phase 1에서 `sequence -> timestamp`, `experiment -> equipment_id` 규칙을 정의하여 내부 표준 시계열 형식으로 정규화
+- Phase 1에서 `sequence -> timestamp`, `experiment -> equipment_id` 규칙을 정의하여 내부 표준 시계열 형식으로 정규화 (✅ 합성 완료)
 - 지정된 윈도우(Sliding Window) 크기로 이동 평균, 분산 등 파생 변수(Feature) 추출
 
 ### F2. 사전 위험 예측 및 이상 탐지 (Forecasting & Anomaly Detection)
@@ -110,9 +110,10 @@
 ### 4.2. 데이터 제약
 
 - SCADA 센서 데이터: **Kaggle CNC Mill Tool Wear를 핵심 실데이터로 사용**, Bosch CNC는 진동 보조 데이터로 참고
-- KAMP 데이터: 현재는 카탈로그/메타데이터만 확보되어 참고용으로 유지
-- MES(작업 지시) 및 ERP(부품 재고): CNC 도메인에 맞춰 Python 스크립트로 합성(Synthetic) 생성 (ADR-002)
-- 정비 매뉴얼: 확보 방안 미정 (ADR 필요)
+- ~~KAMP 데이터~~: 카탈로그/메타데이터만이었으므로 Phase 1에서 삭제 (Kaggle CNC Mill로 대체)
+- MES(작업 지시) 및 ERP(부품 재고): CNC 도메인에 맞춰 Python 스크립트로 합성 완료 (ADR-002, Phase 1)
+- 정비/고장 이벤트 로그: failure_code 4종 기반으로 합성 완료 (Phase 1)
+- 정비 매뉴얼: 확보 방안 미정 (Phase 3에서 결정)
 
 ### 4.3. 인프라 제약
 
