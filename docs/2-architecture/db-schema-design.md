@@ -364,7 +364,7 @@ F4 서비스에서 Neo4j 순회 결과 → PG 쿼리 순서로 2단계 조회.
 
 | # | 테이블 | 유형 | 레코드 수 | 확장 | 비고 |
 |---|--------|------|----------|------|------|
-| 1 | sensor_readings | TimescaleDB hypertable | ~25,286 (현재) | 하루 ~51,840 | 와이드 44컬럼 |
+| 1 | sensor_readings | TimescaleDB hypertable | ~25,286 (현재) | 하루 ~51,840 | 와이드 47컬럼 |
 | 2 | anomaly_scores | TimescaleDB hypertable | F2 출력 | sensor_readings와 동일 | Phase 3 |
 | 3 | mes_work_orders | 이벤트 | 18 | 운영 시 증가 | 작업지시 |
 | 4 | maintenance_events | 이벤트 | 39 | 운영 시 증가 | 정비 기록 |

@@ -1450,8 +1450,8 @@
     <ul>
       <li><strong>Phase 0 (문서 중심) :</strong> &nbsp;PRD, 데이터 전략, ADR, 제약사항 등 의사결정 기록. 코드 없음</li>
       <li><strong>Phase 1 (분석 중심) :</strong> &nbsp;EDA로 실데이터 검증, 42컬럼 확정, IT 합성 완료 <span style="color:#00a854;">[완료]</span></li>
-      <li><strong>Phase 2 (설계 중심) :</strong> &nbsp;DB 스키마, 전처리 파이프라인, 이상탐지 모델 설계 <span style="color:#3182f6;">[다음]</span></li>
-      <li><strong>Phase 3+ (구현 중심) :</strong> &nbsp;FastAPI, PostgreSQL, Neo4j, 대시보드 개발. 코드 규칙 적용</li>
+      <li><strong>Phase 2 (설계 중심) :</strong> &nbsp;온톨로지 + DB 스키마 + 파이프라인 + API 설계 완료 (리뷰 4회) <span style="color:#00a854;">[완료]</span></li>
+      <li><strong>Phase 3+ (구현 중심) :</strong> &nbsp;FastAPI, PostgreSQL, Neo4j, 대시보드 개발. 코드 규칙 적용 <span style="color:#3182f6;">[다음]</span></li>
     </ul>
     <p style="color:#888;font-size:13px;">코드 규칙(타입 힌트, 한국어 주석, Docker Compose 등)은 Phase 2 이후부터 적용됩니다.</p>
   </div>
@@ -1501,13 +1501,13 @@
       <button class="ph-tab" data-ph="phase2">
         <span class="ph-tab-label">Phase 2</span>
         <span class="ph-tab-name-kr">아키텍처 설계</span>
-        <span class="ph-tab-state current">다음</span>
+        <span class="ph-tab-state done">완료</span>
       </button>
       <span class="ph-tab-arrow">&darr;</span>
       <button class="ph-tab" data-ph="phase3">
         <span class="ph-tab-label">Phase 3+</span>
         <span class="ph-tab-name-kr">구현 및 검증</span>
-        <span class="ph-tab-state">대기</span>
+        <span class="ph-tab-state current">다음</span>
       </button>
     </div>
 
@@ -2241,26 +2241,26 @@ const phaseDetails={
     phase:'Phase 2',
     title:'Architecture',
     subtitleKr:'아키텍처 설계',
-    state:'다음 단계',
-    meta:['Phase 1 완료 → 시작 가능','설계 중심','DB + 파이프라인'],
-    summary:'EDA 결과를 기반으로 DB 스키마, 전처리, GraphRAG 구조를 구현 가능한 형태로 설계합니다.',
+    state:'완료',
+    meta:['2026-03-16 완료','설계 문서 4종','리뷰 4회 반영'],
+    summary:'온톨로지 → DB 스키마 → 파이프라인 → API 순서로 설계. 4개 문서 모두 리뷰 완료, Phase 3 구현 청사진 확정.',
     goal:[
-      {text:'데이터 구조 설계',detail:'EDA 결과를 기반으로 DB 스키마와 전처리 파이프라인 구체화'},
-      {text:'서비스 구조 설계',detail:'F1~F6 기능 간 인터페이스와 데이터 흐름 정의'},
-      {text:'GraphRAG 구조 설계',detail:'Neo4j 온톨로지와 pgvector 연계 아키텍처'}
+      {text:'온톨로지 설계',detail:'Neo4j 7종 노드 (Equipment, Sensor, FailureCode, Part, Procedure, Document, Manual) + 10종 관계'},
+      {text:'DB 스키마 설계',detail:'PostgreSQL 10테이블 (TimescaleDB hypertable + pgvector) + Neo4j Cypher 매핑'},
+      {text:'파이프라인 설계',detail:'F1~F6 데이터 흐름, 에러 처리 6시나리오, 설정값 13개 파라미터화'},
+      {text:'API 설계',detail:'FastAPI 12 엔드포인트 + Pydantic 모델, F5 비동기 분리'}
     ],
     outputs:[
-      {text:'DB 스키마',detail:'PostgreSQL + Neo4j 테이블/노드 구조 정의'},
-      {text:'전처리 파이프라인 설계',detail:'센서 데이터 정규화, 윈도잉, 피처 엔지니어링 흐름'},
-      {text:'MES/ERP 합성 모델',detail:'Python 기반 합성 데이터 생성 구조와 규칙'},
-      {text:'GraphRAG 아키텍처',detail:'온톨로지 스키마, 임베딩 전략, 검색 흐름'},
-      {text:'프론트엔드 MVP 방향',detail:'대시보드 컴포넌트 구성과 데이터 연동 계획'}
+      {text:'ontology-design.md',detail:'Neo4j 131노드 / 200+관계 인스턴스. PG↔Neo4j 역할 분담 명확화'},
+      {text:'db-schema-design.md',detail:'sensor_readings 와이드 47컬럼, anomaly_scores, MES/ERP 테이블, 참조 마스터 3종'},
+      {text:'pipeline-design.md',detail:'F1→F2 매 5초 폴링, F3~F5 이벤트 트리거. 비동기 메인 루프 + process_alarm 분리'},
+      {text:'api-design.md',detail:'12 엔드포인트 (F1~F5 POST 6 + F6 GET 5 + health 1). 내부 직접 호출 + HTTP 병행'}
     ],
     handoff:[
-      {text:'구현 우선순위',detail:'Phase 3에서 어떤 기능부터 만들지 순서 확정'},
-      {text:'실험 설계 기준',detail:'모델 성능 검증을 위한 실험 시나리오와 평가 지표'},
-      {text:'서비스 간 인터페이스',detail:'각 기능 모듈의 입출력 스펙'},
-      {text:'Phase 3 실행 계획',detail:'구현 단위, 일정, 검증 기준'}
+      {text:'F2 상세 설계 필요',detail:'42개 센서 피처 선택, worn/unworn 라벨링 전략, 비지도 vs 준지도 결정'},
+      {text:'정비 매뉴얼 합성',detail:'F4 GraphRAG에 쓸 문서가 0건 — Phase 3 초반에 합성 필요'},
+      {text:'CSV→실시간 시뮬레이터',detail:'과거 실험 CSV를 5초 간격으로 흘려보내는 F1 시뮬레이터 구조 필요'},
+      {text:'Docker: timescaledb-ha + neo4j:5-community + app',detail:'app 서비스는 Phase 3에서 추가'}
     ],
     links:[
       {label:'핵심 ADR 보기', href:'#p0', primary:true},
@@ -2271,8 +2271,8 @@ const phaseDetails={
     phase:'Phase 3+',
     title:'Build and Validate',
     subtitleKr:'구현 및 검증',
-    state:'Phase 2 이후 정의',
-    meta:['장기 단계','준비도 0%','구현/검증 중심'],
+    state:'다음 단계',
+    meta:['Phase 2 완료 → 시작 가능','구현 중심','선결 과제 3건'],
     summary:'F1~F6를 점진적으로 연결하고, GraphRAG + LLM 판단이 실제로 동작하는지 검증합니다.',
     goal:[
       {text:'기능 구현',detail:'F1~F6 파이프라인을 실제 코드로 구현'},
@@ -2345,7 +2345,19 @@ const phaseOverlayData={
       {num:'5',cls:'g',title:'experiment_12 줄바꿈 이슈',desc:'raw 파일이 CR-only(\\r) → wc -l이 0행으로 오인',fix:'해결 완료: processed에서 CRLF 통일, 실제 2,276행 정상 확인'}
     ]
   },
-  phase2:{log:[],adr:[],gap:[]},
+  phase2:{
+    log:[
+      {day:'Day 1 (03-16)',items:['<strong>온톨로지 설계</strong> — Neo4j 7종 노드 + 10종 관계 정의, PG↔Neo4j 역할 분담, Sensor 42개만 모델링','<strong>DB 스키마 설계</strong> — PostgreSQL 10테이블 (sensor_readings 와이드 47컬럼), TimescaleDB hypertable, Parts 원본 통일','<strong>파이프라인 설계</strong> — F1→F2 매 폴링 + F3~F5 이벤트 트리거, 에러 6시나리오, 비동기 메인 루프 패턴','<strong>API 설계</strong> — FastAPI 12 엔드포인트, Pydantic 모델, F5 비동기 분리, 내부 직접 호출 + HTTP 병행','<strong>리뷰 피드백 4회</strong> — 온톨로지 6건 + DB 스키마 7건 + 파이프라인 8건 + API 2건 + 종합 6건 반영'],
+       outputs:'ontology-design.md, db-schema-design.md, pipeline-design.md, api-design.md, phase-2.md'}
+    ],
+    adr:[],
+    gap:[
+      {num:'1',cls:'y',title:'F2 이상탐지 상세 설계 필요',desc:'42개 센서 피처 선택, worn/unworn 라벨링 전략, 비지도 vs 준지도 모델 결정이 Phase 3 초반에 필요',fix:'Phase 3 선결 과제로 등록'},
+      {num:'2',cls:'y',title:'정비 매뉴얼 문서 0건',desc:'F4 GraphRAG에 검색할 Document 노드가 없음. 매뉴얼 품질이 F4+F5 성능을 직접 좌우',fix:'Phase 3에서 합성 (open-items #2 의존)'},
+      {num:'3',cls:'y',title:'CSV→실시간 시뮬레이터 미설계',desc:'파이프라인은 5초 폴링 전제인데 실제 데이터는 과거 실험 CSV. 시뮬레이터 구조가 없음',fix:'Phase 3 초반에 F1 시뮬레이터부터 구현'},
+      {num:'4',cls:'g',title:'Bosch CNC 활용 미확정 (Phase 1에서 이관)',desc:'1,702 HDF5 파일. Kaggle과 조인 불가(별도 독립 데이터셋)',fix:'보관 유지, Phase 3+에서 진동 분석 시 활용 여부 판단'}
+    ]
+  },
   phase3:{log:[],adr:[],gap:[]}
 };
 

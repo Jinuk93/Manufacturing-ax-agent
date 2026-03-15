@@ -17,11 +17,11 @@ Phase 1에서 확보한 데이터(OT 42컬럼 + IT 합성 3종)를 기반으로,
 
 | # | 문서 | 경로 | 내용 | 상태 |
 |---|------|------|------|------|
-| 1 | 온톨로지 설계 | `docs/2-architecture/ontology-design.md` | Neo4j 노드/관계/속성 정의 | 미착수 |
-| 2 | DB 스키마 설계 | `docs/2-architecture/db-schema-design.md` | PostgreSQL 테이블 + TimescaleDB + Neo4j 매핑 | 미착수 |
-| 3 | 파이프라인 설계 | `docs/2-architecture/pipeline-design.md` | F1~F6 데이터 흐름 + 에러 처리 | 미착수 |
-| 4 | API 설계 | `docs/2-architecture/api-design.md` | FastAPI 엔드포인트 + 스키마 | 미착수 |
-| 5 | ADR (필요 시) | `docs/adr/adr-006-*.md` 등 | 설계 과정에서 결정이 필요한 사항 | 미착수 |
+| 1 | 온톨로지 설계 | `docs/2-architecture/ontology-design.md` | Neo4j 7노드/10관계/속성 정의 | ✅ 완료 (리뷰 1회) |
+| 2 | DB 스키마 설계 | `docs/2-architecture/db-schema-design.md` | PostgreSQL 10테이블 + TimescaleDB + Neo4j 매핑 | ✅ 완료 (리뷰 1회) |
+| 3 | 파이프라인 설계 | `docs/2-architecture/pipeline-design.md` | F1~F6 데이터 흐름 + 에러 처리 6시나리오 | ✅ 완료 (리뷰 1회) |
+| 4 | API 설계 | `docs/2-architecture/api-design.md` | FastAPI 12엔드포인트 + Pydantic 모델 | ✅ 완료 (리뷰 1회) |
+| 5 | ADR (필요 시) | `docs/adr/adr-006-*.md` 등 | 설계 과정에서 결정이 필요한 사항 | 해당 없음 (기존 ADR로 충분) |
 
 ---
 
@@ -143,4 +143,50 @@ Phase 1에서 확보한 데이터(OT 42컬럼 + IT 합성 3종)를 기반으로,
 
 > 아래에 Phase 2 진행 시 일일 로그를 기록합니다.
 
-(아직 미착수)
+### Day 1 (2026-03-16)
+
+**목표:** Phase 2 아키텍처 설계 4개 문서 작성 + 리뷰 반영
+
+- 온톨로지 설계 초안 작성 → 리뷰어 피드백 6건 반영 (Sensor 42개만, Document 1계층, DETECTS 가설 명시 등)
+- DB 스키마 설계 초안 작성 → 리뷰어 피드백 7건 반영 (S축 11개, Parts 원본 통일, sensors 42개만 등)
+- 파이프라인 설계 초안 작성 → 리뷰어 피드백 8건 반영 (F5 임계치 config, F3 작업 0건 분기, 컬럼 수 47개 등)
+- API 설계 초안 작성 → 리뷰어 피드백 2건 반영 (F5 비동기 주석, series 타입 메모)
+- 종합 리뷰 피드백 6건 반영 (상태 갱신, 메인 루프 동기화, note 위치, 컬럼 수 오타 등)
+
+**산출물:**
+- `docs/2-architecture/ontology-design.md`
+- `docs/2-architecture/db-schema-design.md`
+- `docs/2-architecture/pipeline-design.md`
+- `docs/2-architecture/api-design.md`
+- `docs/progress/phases/phase-2.md` (이 파일)
+
+---
+
+## Phase 3 진입 전 선결 과제
+
+> Phase 2 설계는 "구현 가능한 청사진"으로 합격. 다만 Phase 3에서 바로 코딩에 들어가기 전, 아래 3가지를 먼저 정리해야 함.
+
+### 1. F2 상세 설계 (피처 선택 + 라벨링 전략)
+
+F2는 파이프라인의 핵심인데 설계가 가장 얇음. Phase 3 초반에 별도 상세 설계 필요:
+
+- **피처 선택:** 42개 센서를 전부 넣을지, 상관관계 높은 것만 골라 넣을지?
+- **라벨링 전략:** EDA에서 발견한 "worn 상태 CurrentFeedback -47%" 같은 패턴을 어떻게 활용?
+- **비지도 vs 준지도:** 현재 데이터에 이상/정상 라벨이 없음 (worn/unworn만 있음). 비지도 모델만으로 충분한지?
+- **Why:** F2 설계 없이 Phase 3 구현에 들어가면 피처/모델 선택에서 시행착오가 커짐
+
+### 2. 정비 매뉴얼 합성 계획
+
+F4 GraphRAG 설계는 잘 되어 있지만, 실제 검색할 정비 매뉴얼 문서가 **0건**:
+
+- 매뉴얼 품질이 F4+F5 성능을 직접 좌우
+- 합성 작업이 예상보다 시간이 걸릴 수 있음
+- **의존성:** open-items #2 (정비 매뉴얼 합성 방향)
+
+### 3. CSV → 실시간 시뮬레이터 구조
+
+파이프라인은 "5초 폴링 실시간 수집"을 전제로 설계됐지만, 실제 데이터는 KAMP CSV(과거 실험):
+
+- CSV 행을 순차적으로 5초 간격으로 흘려보내는 시뮬레이터 필요
+- 시뮬레이터 설계가 현재 어디에도 없음
+- **Phase 3 구현 초기에 F1 시뮬레이터부터 만들어야 파이프라인 테스트 가능**
