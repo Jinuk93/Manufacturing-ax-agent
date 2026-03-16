@@ -149,7 +149,7 @@ def _query_inventory(conn, alarm_time: datetime) -> list[InventoryItem]:
         ORDER BY e.part_id
     """
     with conn.cursor() as cur:
-        cur.execute(sql, (alarm_time,))
+        cur.execute(sql, (alarm_time.date(),))
         rows = cur.fetchall()
 
     return [
