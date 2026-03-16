@@ -32,6 +32,12 @@ docs/
 │   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
 │   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
+│   ├── ontology-design.md         #   Neo4j 온톨로지 설계
+│   ├── db-schema-design.md        #   PostgreSQL + Neo4j DB 스키마
+│   ├── pipeline-design.md         #   F1~F6 데이터 파이프라인
+│   ├── api-design.md              #   FastAPI 엔드포인트 (15개)
+│   ├── ui-design.md               #   F6 대시보드 컴포넌트 설계
+│   └── ui-ux-design.md            #   UX 설계 근거 + Palantir 디자인 시스템
 └── adr/                           # ADR 템플릿 + 의사결정 기록
     ├── 000-template.md
     └── adr-006-frontend-stack.md  #   프론트엔드 스택 결정 (React 18 + Vite)

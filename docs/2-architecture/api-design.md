@@ -23,6 +23,9 @@
 | 11 | `/api/f6/action/{equipment_id}` | GET | LLM 조치 리포트 | 알람 시 |
 | 12 | `/api/health` | GET | 헬스 체크 (PG + Neo4j 상태) | 모니터링 |
 | 13 | `/api/f6/alarms` | GET | 전체 설비 알람 피드 (3대 통합) | 대시보드 폴링 |
+| 14 | `/api/f6/maintenance/{equipment_id}` | GET | 설비별 정비 이력 타임라인 | 대시보드 폴링 (60초) |
+| 15 | `/api/f6/alarms/{alarm_id}/acknowledge` | POST | 알람 확인 처리 (Audit trail) | 사용자 액션 시 |
+| 16 | `/api/chat` | POST | 챗봇 — 사용자 질문 → F4+F5 재사용 → 답변 반환 | 사용자 입력 시 |
 
 ---
 
@@ -142,6 +145,7 @@ class RelatedDocument(BaseModel):
     bm25_score: float
     vector_score: float
     text_preview: Optional[str] = None
+    snippet: Optional[str] = None           # UI 표시용 관련 청크 텍스트 (최대 200자)
 
 class PastMaintenance(BaseModel):
     event_id: str
@@ -172,10 +176,28 @@ class PartNeeded(BaseModel):
 class LLMActionResponse(BaseModel):
     recommendation: str                  # STOP / REDUCE / MONITOR
     confidence: float
-    reasoning: str
+    reasoning: str                       # 1~2줄 요약 (UI 기본 표시)
     action_steps: List[str]
     estimated_downtime_min: int
     parts_needed: List[PartNeeded]
+    # ── 판단 투명성 필드 (프롬프트 확장으로 추가, F5 구현 시 같이 적용) ──
+    input_summary: Optional[Dict] = None        # F3에서 가져온 컨텍스트 요약
+    rag_documents: Optional[List[str]] = None   # F4 참조 문서 ID 목록
+    alternatives_considered: Optional[str] = None  # "REDUCE도 고려했지만..."
+    full_reasoning: Optional[str] = None        # 전체 판단 과정 (접이식 표시)
+
+
+### 2.8 챗봇
+
+```python
+class ChatRequest(BaseModel):
+    equipment_id: Optional[str] = None  # 현재 선택된 설비 컨텍스트 (없으면 전체)
+    message: str                        # 사용자 질문
+
+class ChatResponse(BaseModel):
+    answer: str                         # LLM 답변
+    sources: Optional[List[str]] = None # 참조한 문서/이력 ID 목록
+    equipment_id: Optional[str] = None
 ```
 
 ### 2.7 F6: 대시보드
@@ -368,6 +390,7 @@ async def llm_action(equipment_id: str) -> LLMActionResponse:
 
 ### 3.8 `GET /api/f6/alarms`
 
+
 전체 설비(3대) 알람 피드를 단일 엔드포인트로 제공.
 대시보드 AlarmFeed 컴포넌트가 설비별 × 3 호출 대신 이 엔드포인트 1회만 호출.
 
@@ -388,7 +411,71 @@ async def alarm_feed(
 | 성공 응답 | 200 + `AlarmFeedResponse` |
 | 알람 없음 | 200 + `{"alarms": [], "total_count": 0}` |
 
-### 3.10 `GET /api/health`
+### 3.9 `GET /api/f6/maintenance/{equipment_id}`
+
+설비별 정비 이력을 타임라인 형태로 반환. Center 패널 하단 정비 이력 표시용.
+
+```python
+class MaintenanceTimelineItem(BaseModel):
+    event_id: str
+    failure_code: str
+    event_type: str                      # corrective / preventive
+    started_at: datetime
+    duration_min: int
+    parts_used: str
+    resolution: Optional[str] = None
+
+class MaintenanceTimelineResponse(BaseModel):
+    equipment_id: str
+    records: List[MaintenanceTimelineItem]  # 최신 순 정렬
+
+@app.get("/api/f6/maintenance/{equipment_id}", response_model=MaintenanceTimelineResponse)
+async def maintenance_timeline(equipment_id: str, limit: int = 10):
+    # maintenance_events 테이블에서 해당 설비 최근 N건 조회
+    pass
+```
+
+| 항목 | 값 |
+|------|-----|
+| 폴링 주기 | 60초 (정비 이력은 자주 안 바뀜) |
+| 성공 응답 | 200 + `MaintenanceTimelineResponse` |
+
+### 3.10 `POST /api/chat`
+
+사용자 질문을 받아 F4(GraphRAG) + LLM으로 답변 생성.
+F5(자율 판단)와 동일한 로직을 재사용하되 트리거가 "사용자 입력"이라는 점만 다름.
+
+```python
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    # 1. equipment_id가 있으면 현재 설비 상태 컨텍스트 로드 (F3)
+    # 2. 질문으로 F4 GraphRAG 검색 (관련 문서/이력)
+    # 3. 컨텍스트 + 검색 결과 + 질문을 LLM에 전달
+    # 4. 답변 + 참조 문서 목록 반환
+    pass
+```
+
+| 항목 | 값 |
+|------|-----|
+| F5와의 차이 | 트리거만 다름 (자동 vs 수동). F4+LLM 로직 재사용 |
+| 구현 시점 | F5 완성 후 (Phase 3 후반) |
+| 응답 시간 | 2~10초 (LLM API 호출) |
+
+### 3.11 `POST /api/f6/alarms/{alarm_id}/acknowledge`
+
+알람 확인 처리. 운영 감사 추적(Audit trail)용. Phase 3 구현 예약.
+
+```python
+@app.post("/api/f6/alarms/{alarm_id}/acknowledge")
+async def acknowledge_alarm(alarm_id: str):
+    # anomaly_scores 테이블에 acknowledged_at, acknowledged_by 컬럼 추가 필요
+    # Phase 3에서 구현
+    pass
+```
+
+> **Phase 3 구현 예약:** DB 스키마에 `acknowledged_at` / `acknowledged_by` 컬럼 추가 필요.
+
+### 3.11 `GET /api/health`
 
 ```python
 @app.get("/api/health")
