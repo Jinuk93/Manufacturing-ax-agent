@@ -1458,6 +1458,158 @@
     </div>
   </div>
 
+  <!-- ── 섹션 1.5: GraphRAG란? ── -->
+  <h3>GraphRAG란?</h3>
+  <div class="arch-card">
+    <p>GraphRAG를 이해하려면 먼저 <strong>RAG</strong>를 알아야 합니다.</p>
+
+    <h4 style="color:#a78bfa;margin-top:16px;">RAG (Retrieval-Augmented Generation)</h4>
+    <p>LLM한테 질문할 때, <strong>관련 문서를 먼저 찾아서 같이 넘겨주는 기법</strong>입니다.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:6px;">일반 LLM (RAG 없이)</p>
+        <p style="font-size:13px;margin:0;">"TOOL_WEAR 수리 방법?" &rarr; LLM이 일반 지식으로 대답<br><strong>문제:</strong> 우리 설비에 맞지 않는 답, 환각(hallucination) 위험</p>
+      </div>
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:6px;">RAG 적용</p>
+        <p style="font-size:13px;margin:0;">"TOOL_WEAR 수리 방법?" &rarr; <strong>정비 매뉴얼에서 관련 문서를 먼저 검색</strong> &rarr; 찾은 문서를 LLM에게 "이거 참고해서 답해줘"라고 같이 전달 &rarr; 근거 있는 답변</p>
+      </div>
+    </div>
+
+    <h4 style="color:#f59e0b;margin-top:20px;">그러면 GraphRAG는?</h4>
+    <p><strong>RAG의 "검색" 부분에 지식 그래프를 쓰는 것</strong>입니다.</p>
+    <p>일반 RAG는 문서를 <strong>벡터 유사도</strong>(pgvector)로 검색합니다. "TOOL_WEAR"와 의미적으로 비슷한 문서를 찾는 거죠. 하지만 벡터 검색만으로는 <strong>구조적 관계</strong>를 모릅니다:</p>
+    <ul style="font-size:13px;padding-left:20px;margin:8px 0;">
+      <li>"TOOL_WEAR에 필요한 <strong>부품</strong>이 뭔지" &mdash; 관계를 타야 알 수 있음</li>
+      <li>"과거에 같은 고장을 <strong>어떻게 수리</strong>했는지" &mdash; 정비 이력 순회 필요</li>
+      <li>"그 부품 <strong>재고</strong>가 지금 있는지" &mdash; ERP 조인 필요</li>
+    </ul>
+    <p>이건 문서 유사도로는 못 찾고, <strong>관계를 타고 탐색</strong>해야 합니다. 그래서 GraphRAG입니다.</p>
+
+    <h4 style="color:#f59e0b;margin-top:20px;">우리 F4의 2단계 검색</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:rgba(0,168,84,0.06);border:1px solid rgba(0,168,84,0.15);border-radius:10px;padding:16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:8px;">1단계 &mdash; Neo4j 그래프 순회 (구조적 검색)</p>
+        <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+          TOOL_WEAR_001 &rarr; REQUIRES &rarr; Endmill (P001)<br>
+          TOOL_WEAR_001 &rarr; DESCRIBED_BY &rarr; 매뉴얼 3건<br>
+          TOOL_WEAR_001 &larr; RESOLVES &larr; 과거 정비 5건
+        </div>
+        <p style="font-size:12px;color:#888;margin:0;">"이 고장과 관련된 것들"을 <strong>관계로 정확히</strong> 찾음</p>
+      </div>
+      <div style="background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.15);border-radius:10px;padding:16px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:8px;">2단계 &mdash; pgvector 의미 검색 (의미적 검색)</p>
+        <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+          1단계에서 좁혀진 매뉴얼 3건 안에서<br>
+          &rarr; "베어링 교체 절차" 같은 구체적 섹션을<br>
+          &rarr; 벡터 유사도(cosine)로 정밀 검색
+        </div>
+        <p style="font-size:12px;color:#888;margin:0;">자연어 의미를 이해해서 <strong>가장 관련 높은 섹션</strong>을 찾음</p>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:#888;">&darr;&nbsp; 두 결과를 합쳐서 LLM에게 전달 &rarr; <strong>근거 있는 자율 판단</strong></p>
+
+    <h4 style="color:#f59e0b;margin-top:20px;">세 가지 방식 비교</h4>
+    <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:8px;">
+    <table>
+      <thead><tr><th>방식</th><th>검색 방법</th><th>강점</th><th>약점</th></tr></thead>
+      <tbody>
+        <tr><td><strong>일반 RAG</strong></td><td>벡터 유사도만</td><td>의미적으로 비슷한 문서 찾기</td><td>구조적 관계를 모름</td></tr>
+        <tr><td><strong style="color:#f59e0b;">GraphRAG</strong></td><td><strong>그래프 순회 + 벡터</strong></td><td>관계로 정확히 좁힌 후 정밀 검색</td><td>그래프 구축 비용</td></tr>
+        <tr><td><strong>지식 그래프만</strong></td><td>그래프 순회만</td><td>관계 탐색 빠름</td><td>자연어 의미 검색 못함</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;"><strong>GraphRAG = 지식 그래프의 "정확한 관계 탐색" + 벡터 검색의 "자연어 이해"</strong>를 결합한 것입니다. Neo4j와 pgvector를 둘 다 쓰는 이유가 바로 이것입니다.</p>
+  </div>
+
+  <!-- ── 섹션 1.7: 데이터 시스템 구분 ── -->
+  <h3>우리 데이터는 어디서 오는가?</h3>
+  <div class="arch-card">
+    <p>제조 현장에서는 여러 시스템이 서로 다른 종류의 데이터를 관리합니다. 우리 프로젝트의 데이터도 이 시스템별로 구분됩니다.</p>
+
+    <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:12px;">
+    <table>
+      <thead><tr><th>시스템</th><th>역할</th><th>우리 데이터</th><th>파일</th><th>규모</th><th>종류</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:#4ade80;">SCADA (OT)</strong></td>
+          <td>설비 센서를 실시간으로 수집하는 감시/제어 시스템</td>
+          <td>CNC 센서 42컬럼, 100ms 샘플링</td>
+          <td>Kaggle CNC Mill<br><span style="font-size:11px;color:#4ade80;">실데이터</span></td>
+          <td>25,286행</td>
+          <td>실시간 연속</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#60a5fa;">MES</strong></td>
+          <td>생산 실행 관리 &mdash; "어떤 설비로 뭘 만들어라"</td>
+          <td>작업지시 (설비, 제품, 납기, 우선순위)</td>
+          <td>mes_work_orders.csv<br><span style="font-size:11px;color:#fbbf24;">합성</span></td>
+          <td>18건</td>
+          <td>이벤트성</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#60a5fa;">CMMS</strong></td>
+          <td>설비보전 관리 &mdash; "언제, 무엇을, 어떻게 수리했나"</td>
+          <td>정비 이벤트 (고장코드, 부품, 소요시간)</td>
+          <td>maintenance_events.csv<br><span style="font-size:11px;color:#fbbf24;">합성</span></td>
+          <td>39건</td>
+          <td>이벤트성</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#60a5fa;">ERP</strong></td>
+          <td>자원 관리 &mdash; "부품 재고가 몇 개 남았나"</td>
+          <td>부품 재고 주간 스냅샷 (5부품 &times; 7주)</td>
+          <td>erp_inventory_snapshots.csv<br><span style="font-size:11px;color:#fbbf24;">합성</span></td>
+          <td>35건</td>
+          <td>주간 스냅샷</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:4px;">OT (운영 기술)</p>
+        <p style="font-size:13px;margin:0;">SCADA 센서 데이터 &mdash; <strong>실데이터 1종</strong><br>설비가 "지금 어떤 상태인가"를 알려줌</p>
+      </div>
+      <div style="background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">IT (정보 기술)</p>
+        <p style="font-size:13px;margin:0;">MES + CMMS + ERP &mdash; <strong>합성 데이터 3종</strong><br>설비가 "무슨 일을 하고 있고, 뭘 준비해야 하는가"를 알려줌</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>왜 이 데이터로 충분한가? (MVP 관점)</h3>
+  <div class="arch-card">
+    <p style="font-size:13px;color:#888;margin-bottom:12px;">합성 데이터를 쓰는 게 찜찜할 수 있습니다. 하지만 우리의 목표는 <strong>"파이프라인이 동작하는 것을 증명하는 MVP"</strong>이지, 상용 배포가 아닙니다.</p>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">이 프로젝트가 증명하려는 것</p>
+      <p style="font-size:13px;">센서가 이상 신호를 보내면 &rarr; IT 데이터(작업/재고/정비이력)와 합쳐서 &rarr; 온톨로지로 관련 지식을 찾고 &rarr; LLM이 "무엇을 해야 하는지"를 자율 판단하는 <strong>전체 흐름(F1&rarr;F6)이 끊기지 않고 작동</strong>하는 것입니다.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:6px;">SCADA (실데이터) &mdash; 왜 충분한가</p>
+        <p style="font-size:13px;margin:0;">미시간대 SMART Lab의 <strong>실제 CNC 밀링 실험</strong>입니다. 42개 센서, 18개 실험, 100ms 고해상도. 센서 패턴의 다양성(마모/정상, 고속/저속, 중단/완료)이 충분히 확보되어 있어서 F2 이상탐지 모델의 학습/검증이 가능합니다.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:6px;">MES/CMMS/ERP (합성) &mdash; 왜 충분한가</p>
+        <p style="font-size:13px;margin:0;">기업 IT 데이터는 비공개입니다(ADR-002). 하지만 파이프라인이 필요한 건 <strong>"데이터의 존재와 형식"</strong>이지 "실제 비즈니스 정확도"가 아닙니다. 합성 데이터로도 F3 동기화, F4 GraphRAG 검색, F5 LLM 판단의 <strong>흐름과 인터페이스</strong>를 완전히 검증할 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px 16px;margin-top:12px;">
+      <p style="font-size:13px;margin:0;"><strong>핵심 테스트 시나리오:</strong> W5(5주차)에 P003 Coolant 재고가 0이 됩니다. 이때 COOLANT_LOW_001 고장이 감지되면, F5 LLM은 "수리하고 싶지만 부품이 없다 &rarr; 긴급 발주 필요"라는 판단을 내려야 합니다. 이 시나리오 하나만으로도 SCADA &rarr; MES &rarr; CMMS &rarr; ERP &rarr; 온톨로지 &rarr; LLM의 <strong>전체 파이프라인이 정상 작동하는지</strong> 검증할 수 있습니다.</p>
+    </div>
+
+    <div style="margin-top:16px;">
+      <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">실제 현장 도입 시에는?</p>
+      <p style="font-size:13px;margin:0;">합성 데이터를 실제 MES/ERP API로 교체하면 됩니다. 파이프라인의 <strong>인터페이스(입출력 형식)가 동일</strong>하도록 합성 스키마를 설계했기 때문에, 데이터 소스만 바꾸면 코드 변경 없이 실데이터로 전환 가능합니다. 이것이 합성 데이터의 진짜 가치입니다.</p>
+    </div>
+  </div>
+
   <!-- ── 섹션 2: 우리 온톨로지가 답해야 할 질문들 ── -->
   <h3>이 온톨로지가 답해야 할 핵심 질문</h3>
   <div class="arch-card">
@@ -1512,10 +1664,10 @@
         <div class="arch-flow-arrow">&rarr;</div>
         <div class="arch-flow-box">MaintenanceAction<br><span style="font-size:11px;color:#888;">39건</span></div>
         <div class="arch-flow-arrow">&rarr;</div>
-        <div class="arch-flow-box">Document<br><span style="font-size:11px;color:#888;">~20건</span></div>
+        <div class="arch-flow-box">Document<br><span style="font-size:11px;color:#888;">12건</span></div>
       </div>
     </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">7종 노드 &middot; 10종 관계 &middot; 총 ~131개 노드 &middot; FailureCode가 그래프의 중심 허브</p>
+    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">7종 노드 &middot; 10종 관계 &middot; 총 ~123개 노드 &middot; FailureCode가 그래프의 중심 허브</p>
   </div>
 
   <!-- ── 섹션 4: 노드 하나씩 설명 ── -->
@@ -1586,8 +1738,8 @@
   </div>
 
   <div class="arch-card">
-    <h4 style="font-size:15px;"><span style="color:#f59e0b;font-size:13px;margin-right:6px;">05</span> Document &mdash; 정비 매뉴얼 (~20건)</h4>
-    <p><strong>무엇:</strong> 고장별 정비 절차, 안전 주의사항, 교체 방법을 담은 문서입니다. Phase 3에서 합성 예정.</p>
+    <h4 style="font-size:15px;"><span style="color:#f59e0b;font-size:13px;margin-right:6px;">05</span> Document &mdash; 정비 매뉴얼 (12건)</h4>
+    <p><strong>무엇:</strong> 고장별 정비 절차, 안전 주의사항, 교체 방법을 담은 문서입니다. 4종 고장코드 &times; 3종 문서유형(교체 절차서, 점검 체크리스트, 트러블슈팅) = 12건 합성 완료.</p>
     <p><strong>왜 필요한가:</strong> LLM이 조치를 판단할 때, <strong>"왜 이렇게 해야 하는지"의 근거</strong>가 되는 문서입니다. GraphRAG의 RAG(Retrieval-Augmented Generation) 부분이 바로 이 문서를 검색하는 것입니다. 매뉴얼 없이는 LLM이 일반 지식으로만 답하게 되어 환각(hallucination) 위험이 커집니다.</p>
     <p style="font-size:12px;color:#888;margin-bottom:0;">Neo4j에는 메타데이터(제목, 문서 타입, 관련 고장코드)만 저장하고, 실제 텍스트와 임베딩은 PostgreSQL pgvector에 저장합니다. 검색 시 Neo4j로 관련 문서를 좁히고, pgvector로 정밀 의미 검색을 수행합니다.</p>
   </div>
@@ -1666,6 +1818,7 @@
         <span style="font-size:12px;color:#999;">WorkOrder &rarr; MaintenanceAction &middot; 1:N</span>
       </div>
       <p style="font-size:13px;margin:0;"><strong>왜:</strong> "이 작업 중에 정비가 필요했던 적이 있는가?" &mdash; 작업과 정비의 인과관계를 추적합니다.</p>
+      <p style="font-size:12px;color:#f59e0b;margin:4px 0 0;"><strong>예외:</strong> 예방정비 27건은 작업지시 없이 정기 일정으로 수행 &rarr; work_order_id가 비어있어 R7 관계 없음. 교정정비 12건만 연결됩니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -1674,6 +1827,7 @@
         <span style="font-size:12px;color:#999;">MaintenanceAction &rarr; FailureCode &middot; N:1</span>
       </div>
       <p style="font-size:13px;margin:0;"><strong>왜:</strong> "과거에 TOOL_WEAR를 어떻게 해결했는가?" &mdash; 성공적인 정비 사례를 LLM에게 제공합니다. <span style="color:#888;">속성: resolution_time_min(해결 소요 시간) &mdash; "보통 30분이면 고칠 수 있다"는 정보.</span></p>
+      <p style="font-size:12px;color:#f59e0b;margin:4px 0 0;"><strong>예외:</strong> 에어 필터 정기 교체 9건(MT-031~039)은 특정 고장코드 없이 수행 &rarr; failure_code가 비어있어 R8 관계 없음. R9(CONSUMES &rarr; P005)만 연결됩니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -1715,23 +1869,86 @@
   </div>
 
   <!-- ── 섹션 7: PG vs Neo4j 역할 분담 ── -->
-  <h3>PostgreSQL &harr; Neo4j &mdash; 왜 두 개를 쓰는가?</h3>
+  <h3>PostgreSQL(포스트그레스) &harr; Neo4j(네오포제이) &mdash; 왜 두 개를 쓰는가?</h3>
   <div class="arch-card">
     <p>한마디로: <strong>PostgreSQL은 "숫자를 빠르게 집계"</strong>하고, <strong>Neo4j는 "관계를 빠르게 탐색"</strong>합니다.</p>
     <p>센서 데이터 25,286행을 "최근 30초 평균"으로 집계하는 건 PostgreSQL(TimescaleDB)이 빠르고, "이 고장코드에 필요한 부품 &rarr; 그 부품을 과거에 쓴 정비 이력"을 3단계 관계로 찾는 건 Neo4j가 압도적으로 빠릅니다.</p>
     <p style="font-size:12px;color:#888;">ADR-003 결정: 1인 개발에서 DB 4개는 비현실적 &rarr; PostgreSQL(TimescaleDB + pgvector 통합) + Neo4j = 총 2개로 제한</p>
   </div>
+
+  <div class="arch-card">
+    <h4 style="margin-top:0;">먼저 알아야 할 용어</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:6px;">PK (Primary Key, 기본 키)</p>
+        <p style="font-size:13px;margin:0;">"이 테이블에서 나를 유일하게 식별하는 ID"<br>예: failure_codes 테이블의 <code>TOOL_WEAR_001</code></p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:6px;">FK (Foreign Key, 외래 키)</p>
+        <p style="font-size:13px;margin:0;">"다른 테이블의 PK를 가리키는 참조 화살표"<br>예: maintenance_events의 failure_code &rarr; failure_codes 테이블을 가리킴</p>
+      </div>
+    </div>
+    <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin-top:12px;font-family:monospace;font-size:12px;color:#ccc;line-height:1.8;">
+      <span style="color:#888;"># maintenance_events 테이블 (FK를 가진 쪽)</span><br>
+      MT-001 | failure_code: <span style="color:#f59e0b;">TOOL_WEAR_001</span> &larr; "failure_codes 테이블 가서 찾아봐!"<br>
+      MT-002 | failure_code: <span style="color:#f59e0b;">SPINDLE_OVERHEAT_001</span><br>
+      <br>
+      <span style="color:#888;"># failure_codes 테이블 (PK를 가진 원본)</span><br>
+      <span style="color:#60a5fa;">TOOL_WEAR_001</span> (PK) | 설명: 엔드밀 마모 &larr; 여기에 진짜 정보가 있음<br>
+      <span style="color:#60a5fa;">SPINDLE_OVERHEAT_001</span> (PK) | 설명: 주축 과열
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">FK 덕분에 "MT-001 이벤트는 어떤 고장이야?" &rarr; failure_codes 테이블에서 바로 찾을 수 있습니다. 데이터를 중복 저장하지 않으면서도 연결하는 방법이에요.</p>
+  </div>
+
+  <h4 style="color:#ddd;margin-top:20px;margin-bottom:12px;">그래서 같은 데이터가 어디에 저장되는가?</h4>
+  <p style="font-size:13px;color:#888;margin-bottom:12px;">아래 표에서 "어떤 역할로 저장되는가"를 보여줍니다. 같은 데이터라도 쓰는 목적이 다르면 양쪽에 다 넣어요.</p>
+
   <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);">
   <table>
-    <thead><tr><th>데이터</th><th>PostgreSQL</th><th>Neo4j</th><th>이유</th></tr></thead>
+    <thead><tr><th>데이터</th><th>PostgreSQL에서의 역할</th><th>Neo4j에서의 역할</th><th>왜 이렇게 나눴는가</th></tr></thead>
     <tbody>
-      <tr><td>센서 시계열 (25,286행 &times; 42컬럼)</td><td><span class="arch-badge pg">TimescaleDB</span></td><td>&mdash;</td><td>시간 범위 집계, 압축, 연속 데이터에 최적화</td></tr>
-      <tr><td>센서 메타데이터 (42개)</td><td>참조 테이블</td><td><span class="arch-badge neo">Node</span></td><td>"이 센서가 어떤 고장을 감지하는가" 관계 순회</td></tr>
-      <tr><td>고장코드 마스터 (4종)</td><td><span class="arch-badge pg">FK 참조</span></td><td><span class="arch-badge neo">Node</span></td><td>PG: anomaly_scores의 FK, Neo4j: 그래프 허브</td></tr>
-      <tr><td>부품 마스터 (5종)</td><td><span class="arch-badge pg">FK 참조</span></td><td><span class="arch-badge neo">Node</span></td><td>PG: ERP 재고 조인, Neo4j: 고장&rarr;부품 탐색</td></tr>
-      <tr><td>정비 이벤트 (39건)</td><td><span class="arch-badge pg">이벤트 테이블</span></td><td><span class="arch-badge neo">Node</span></td><td>PG: 이력 조회/통계, Neo4j: 고장&harr;정비&harr;부품 경로</td></tr>
-      <tr><td>매뉴얼 텍스트 + 임베딩</td><td><span class="arch-badge pg">pgvector</span></td><td>&mdash;</td><td>벡터 유사도 검색 (HNSW cosine)</td></tr>
-      <tr><td>매뉴얼 메타 + 관계</td><td>&mdash;</td><td><span class="arch-badge neo">Node</span></td><td>"이 고장에 관련된 매뉴얼은?" 그래프 순회</td></tr>
+      <tr>
+        <td><strong>센서 시계열</strong><br><span style="font-size:11px;color:#888;">25,286행 &times; 42컬럼</span></td>
+        <td><span class="arch-badge pg">저장 + 집계</span><br><span style="font-size:11px;color:#888;">TimescaleDB로 "최근 30초 평균" 같은 시간 계산</span></td>
+        <td style="color:#555;">&mdash; 안 넣음</td>
+        <td>수만 행의 숫자 계산은 PostgreSQL이 압도적</td>
+      </tr>
+      <tr>
+        <td><strong>센서 메타</strong><br><span style="font-size:11px;color:#888;">42개 센서 정보</span></td>
+        <td><span class="arch-badge pg">목록 관리</span><br><span style="font-size:11px;color:#888;">sensors 테이블에 이름, 축, 단위 저장</span></td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"이 센서가 어떤 고장을 감지하는가" 관계 탐색</span></td>
+        <td>센서 &rarr; 고장 관계는 그래프로 찾아야 빠름</td>
+      </tr>
+      <tr>
+        <td><strong>고장코드</strong><br><span style="font-size:11px;color:#888;">4종</span></td>
+        <td><span class="arch-badge pg">원본 테이블</span><br><span style="font-size:11px;color:#888;">다른 테이블들이 FK로 참조하는 원본</span></td>
+        <td><span class="arch-badge neo">중심 허브 노드</span><br><span style="font-size:11px;color:#888;">부품, 매뉴얼, 정비이력이 여기서 갈라짐</span></td>
+        <td>PG: "이 이상 점수의 고장코드가 뭐야?"<br>Neo4j: "이 고장에 필요한 부품/매뉴얼은?"</td>
+      </tr>
+      <tr>
+        <td><strong>부품</strong><br><span style="font-size:11px;color:#888;">5종</span></td>
+        <td><span class="arch-badge pg">원본 테이블</span><br><span style="font-size:11px;color:#888;">ERP 재고와 조인하여 "지금 몇 개 남았나" 계산</span></td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"이 고장을 고치려면 어떤 부품이 필요한가" 탐색</span></td>
+        <td>PG: 재고 숫자 집계<br>Neo4j: 고장&rarr;부품 관계 탐색</td>
+      </tr>
+      <tr>
+        <td><strong>정비 이벤트</strong><br><span style="font-size:11px;color:#888;">39건</span></td>
+        <td><span class="arch-badge pg">이벤트 기록</span><br><span style="font-size:11px;color:#888;">날짜별 정비 이력, 통계 (평균 소요시간 등)</span></td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"과거에 같은 고장을 어떻게 수리했나" 경로 탐색</span></td>
+        <td>PG: "지난달 정비 몇 건?"<br>Neo4j: "고장&rarr;정비&rarr;부품" 3단계 탐색</td>
+      </tr>
+      <tr>
+        <td><strong>매뉴얼 본문</strong><br><span style="font-size:11px;color:#888;">12건 텍스트</span></td>
+        <td><span class="arch-badge pg">텍스트 + 벡터</span><br><span style="font-size:11px;color:#888;">pgvector로 "이 증상과 비슷한 매뉴얼 섹션" 검색</span></td>
+        <td style="color:#555;">&mdash; 안 넣음</td>
+        <td>벡터 유사도 검색은 PostgreSQL(pgvector)이 담당</td>
+      </tr>
+      <tr>
+        <td><strong>매뉴얼 메타</strong><br><span style="font-size:11px;color:#888;">제목, 유형, 연결 고장</span></td>
+        <td style="color:#555;">&mdash; 안 넣음</td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"이 고장에 관련된 매뉴얼이 뭐야?" 그래프로 찾기</span></td>
+        <td>고장코드 &rarr; 매뉴얼 관계는 Neo4j가 빠름</td>
+      </tr>
     </tbody>
   </table>
   </div>
@@ -1760,7 +1977,7 @@
       <tr><td>7</td><td><strong>failure_codes</strong></td><td>Master</td><td>4</td><td>4</td><td>TOOL_WEAR, SPINDLE 등</td></tr>
       <tr><td>8</td><td><strong>parts</strong></td><td>Master</td><td>5</td><td>5</td><td>P001~P005</td></tr>
       <tr><td>9</td><td><strong>sensors</strong></td><td>Meta</td><td>42</td><td>4</td><td>유효 센서만</td></tr>
-      <tr><td>10</td><td><strong>document_embeddings</strong></td><td><span class="arch-badge pg">pgvector</span></td><td>~20</td><td>7</td><td>Phase 3에서 생성</td></tr>
+      <tr><td>10</td><td><strong>document_embeddings</strong></td><td><span class="arch-badge pg">pgvector</span></td><td>12+</td><td>7</td><td>12문서 &times; N청크 (Phase 3 임베딩)</td></tr>
     </tbody>
   </table>
   </div>
@@ -2861,7 +3078,7 @@ const phaseDetails={
     meta:['2026-03-16 완료','설계 문서 4종','리뷰 4회 반영'],
     summary:'온톨로지 → DB 스키마 → 파이프라인 → API 순서로 설계. 4개 문서 모두 리뷰 완료, Phase 3 구현 청사진 확정.',
     goal:[
-      {text:'온톨로지 설계',detail:'Neo4j 7종 노드 (Equipment, Sensor, FailureCode, Part, Procedure, Document, Manual) + 10종 관계'},
+      {text:'온톨로지 설계',detail:'Neo4j 7종 노드 (Equipment, Sensor, FailureCode, Part, Document, WorkOrder, MaintenanceAction) + 10종 관계'},
       {text:'DB 스키마 설계',detail:'PostgreSQL 10테이블 (TimescaleDB hypertable + pgvector) + Neo4j Cypher 매핑'},
       {text:'파이프라인 설계',detail:'F1~F6 데이터 흐름, 에러 처리 6시나리오, 설정값 13개 파라미터화'},
       {text:'API 설계',detail:'FastAPI 12 엔드포인트 + Pydantic 모델, F5 비동기 분리'}
