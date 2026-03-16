@@ -21,9 +21,35 @@ from app.models.schemas import (
 
 logger = logging.getLogger(__name__)
 
+# 싱글턴: Neo4j 드라이버 + SentenceTransformer (한 번만 로드)
+_neo4j_driver = None
+_embed_model = None
+
 
 def _get_neo4j_driver():
-    """Neo4j 드라이버 (호출 시 생성)"""
+    """Neo4j 드라이버 싱글턴"""
+    global _neo4j_driver
+    if _neo4j_driver is None:
+        _neo4j_driver = GraphDatabase.driver(
+            settings.NEO4J_URI,
+            auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
+        )
+        logger.info("Neo4j 드라이버 초기화 완료")
+    return _neo4j_driver
+
+
+def _get_embed_model():
+    """SentenceTransformer 싱글턴 (첫 호출 시 수 초 로드, 이후 즉시)"""
+    global _embed_model
+    if _embed_model is None:
+        from sentence_transformers import SentenceTransformer
+        _embed_model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+        logger.info("SentenceTransformer 모델 로드 완료 (384차원)")
+    return _embed_model
+
+
+def _placeholder():
+    """이전 호환 — 사용하지 않음. 향후 삭제"""
     return GraphDatabase.driver(
         settings.NEO4J_URI,
         auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
@@ -45,7 +71,6 @@ def search_graphrag(
         parts = _neo4j_search_parts(driver, failure_code)
         documents_neo = _neo4j_search_documents(driver, failure_code)
         maintenance = _neo4j_search_maintenance(driver, failure_code, equipment_id)
-        driver.close()
     except Exception as e:
         # E3 폴백: Neo4j 연결 실패 시 PG로 폴백
         logger.warning(f"Neo4j 연결 실패, PG 폴백: {e}")
@@ -189,9 +214,8 @@ def _pgvector_search_documents(
             row = cur.fetchone()
             query_text = row[0] if row else failure_code
 
-        # 쿼리 벡터 생성
-        from sentence_transformers import SentenceTransformer
-        model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+        # 쿼리 벡터 생성 (싱글턴 모델 사용)
+        model = _get_embed_model()
         query_vec = model.encode(query_text, normalize_embeddings=True)
         vec_str = "[" + ",".join(str(v) for v in query_vec.tolist()) + "]"
 
