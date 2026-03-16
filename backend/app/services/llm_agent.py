@@ -10,8 +10,14 @@ LLM_PROVIDER 설정:
 """
 import json
 import logging
+import time
 from datetime import datetime
 from typing import Optional
+
+try:
+    import openai
+except ImportError:
+    openai = None  # LLM_PROVIDER != "openai"이면 불필요
 
 from app.config import settings
 from app.models.schemas import (
@@ -326,7 +332,8 @@ def _call_llm_api(
     - E4 타임아웃/429: 최대 max_retries회 재시도
     - E6 환각: failure_code/part_id 검증 → 실패 시 재시도
     """
-    import openai
+    if openai is None:
+        raise ImportError("openai 패키지가 설치되지 않았습니다. pip install openai")
 
     client = openai.OpenAI()  # OPENAI_API_KEY 환경변수에서 자동 로드
 
@@ -337,7 +344,7 @@ def _call_llm_api(
             logger.info(f"F5 LLM 호출 (시도 {attempt + 1}/{max_retries + 1})")
 
             response = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=settings.OPENAI_MODEL,  # #1: config에서 모델명 가져옴
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": user_prompt},
@@ -355,6 +362,7 @@ def _call_llm_api(
             if validation_errors:
                 logger.warning(f"F5 환각 감지: {validation_errors}")
                 if attempt < max_retries:
+                    time.sleep(2 ** attempt)
                     continue  # 재시도
                 else:
                     logger.error("F5 환각 재시도 실패 — 규칙 기반 폴백")
@@ -385,11 +393,14 @@ def _call_llm_api(
             return result
 
         except (openai.APITimeoutError, openai.RateLimitError) as e:
-            # E4: 타임아웃/429 → 재시도
+            # E4: 타임아웃/429 → 지수 백오프 후 재시도
             logger.warning(f"F5 LLM API 오류 (시도 {attempt + 1}): {e}")
             if attempt >= max_retries:
                 logger.error("F5 LLM 재시도 실패 — 규칙 기반 폴백")
                 return _rule_based_action(f2, f3, f4)
+            backoff = 2 ** attempt  # 1초 → 2초 → 4초
+            logger.info(f"  {backoff}초 대기 후 재시도...")
+            time.sleep(backoff)
 
         except Exception as e:
             logger.error(f"F5 LLM 예외: {e}")
