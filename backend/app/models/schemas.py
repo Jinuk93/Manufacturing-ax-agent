@@ -147,6 +147,11 @@ class LLMActionResponse(BaseModel):
     parts_needed: list[PartNeeded]
     predicted_failure_code: str
     estimated_downtime_min: Optional[int] = None
+    # 판단 투명성 (Phase 3 후반 추가)
+    input_summary: Optional[dict] = None           # F3 컨텍스트 요약
+    rag_documents: Optional[list[str]] = None      # F4 참조 문서 목록
+    alternatives_considered: Optional[str] = None   # "REDUCE도 고려했지만..."
+    full_reasoning: Optional[str] = None            # 전체 판단 과정
 
 
 # ── F6 대시보드 ──

@@ -31,8 +31,9 @@ def to_snake(name: str) -> str:
     s1 = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', name)
     return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
-# f2-anomaly-detection-design.md 기준 1차 피처셋 (10개)
+# 피처셋 (기존 10개 + 확장 4개 = 14개)
 FEATURE_COLUMNS = [
+    # 기존 10개 (1차 피처셋)
     "X1_CurrentFeedback",      # worn -47% (핵심 지표)
     "Y1_CurrentFeedback",      # 마모 보조
     "S1_CurrentFeedback",      # 스핀들 과열
@@ -43,6 +44,17 @@ FEATURE_COLUMNS = [
     "S1_ActualVelocity",       # 과열 시 속도 미달
     "M1_CURRENT_FEEDRATE",     # feedrate=50은 비절삭
     "Machining_Process",       # 공정별 정상 범위 다름
+    # 확장 4개 (축 간 편차 + 추가 전력)
+    "X1_ActualPosition",       # 위치 편차 계산용
+    "X1_CommandPosition",      # 위치 편차 계산용
+    "Y1_OutputPower",          # Y축 전력 (X축과 비교)
+    "S1_OutputCurrent",        # 스핀들 출력 전류
+]
+
+# 파생 피처 (prepare_features에서 계산)
+DERIVED_FEATURES = [
+    "x_position_deviation",    # |ActualPosition - CommandPosition| → 클램프 이상 지표
+    "x_power_ratio",           # X1_OutputPower / S1_OutputPower → 부하 비율
 ]
 
 # 범주형 → 수치 매핑 (Machining_Process)
@@ -117,6 +129,25 @@ class AnomalyDetector:
                 use_cols.append(col)
 
         use_cols.append("machining_process_num")
+
+        # 파생 피처 계산
+        def _get(name):
+            if name in df_feat.columns: return df_feat[name]
+            if name.lower() in df_feat.columns: return df_feat[name.lower()]
+            if to_snake(name) in df_feat.columns: return df_feat[to_snake(name)]
+            return None
+
+        x_pos = _get("X1_ActualPosition")
+        x_cmd = _get("X1_CommandPosition")
+        if x_pos is not None and x_cmd is not None:
+            df_feat["x_position_deviation"] = (x_pos - x_cmd).abs()
+            use_cols.append("x_position_deviation")
+
+        x_pow = _get("X1_OutputPower")
+        s_pow = _get("S1_OutputPower")
+        if x_pow is not None and s_pow is not None:
+            df_feat["x_power_ratio"] = x_pow / (s_pow + 1e-8)
+            use_cols.append("x_power_ratio")
 
         X = df_feat[use_cols].values.astype(np.float64)
 

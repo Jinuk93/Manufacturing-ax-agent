@@ -6,17 +6,18 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
+from app.config import settings
 
 app = FastAPI(
     title="Manufacturing AX Agent API",
     description="CNC 예지보전 + 온톨로지 + LLM 자율 판단 관제 시스템",
-    version="0.1.0",
+    version="0.2.0",
 )
 
-# CORS 설정 (프론트엔드 연동용)
+# CORS 설정 (config에서 가져옴)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React + Vite (ADR-006)
+    allow_origins=settings.CORS_ORIGINS.split(","),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

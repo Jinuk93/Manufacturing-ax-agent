@@ -189,6 +189,59 @@ def create_maintenance_nodes(driver):
         logger.info(f"R9 CONSUMES: {r9_count}개")
 
 
+def create_detects_relations(driver):
+    """R2 DETECTS (Sensor → FailureCode) — 도메인 지식 기반 초기 매핑
+
+    f2-anomaly-detection-design.md 기준:
+    - 전류 센서 → TOOL_WEAR_001 (마모 시 전류 하락)
+    - S축 센서 → SPINDLE_OVERHEAT_001 (과열 시 전류/전력 상승)
+    - 위치 센서 → CLAMP_PRESSURE_001 (고정 불량 시 위치 편차)
+    - 전력 센서 → COOLANT_LOW_001 (냉각 부족 시 전력 변화)
+    """
+    SENSOR_FAILURE_MAP = [
+        # (sensor_id, failure_code, anomaly_pattern, lead_time_min)
+        ("X1_CurrentFeedback", "TOOL_WEAR_001", "전류 지속 하락 (-47%)", 30),
+        ("Y1_CurrentFeedback", "TOOL_WEAR_001", "전류 변동 증가", 30),
+        ("S1_CurrentFeedback", "SPINDLE_OVERHEAT_001", "전류 지속 상승", 20),
+        ("S1_OutputPower", "SPINDLE_OVERHEAT_001", "전력 급증", 20),
+        ("S1_OutputCurrent", "SPINDLE_OVERHEAT_001", "출력 전류 상승", 20),
+        ("X1_ActualPosition", "CLAMP_PRESSURE_001", "위치 편차 급변 (>0.5mm)", 10),
+        ("X1_OutputPower", "COOLANT_LOW_001", "전력 패턴 변화 (간접)", None),
+    ]
+
+    with driver.session() as session:
+        session.run("MATCH ()-[r:DETECTS]->() DELETE r")
+        count = 0
+        for sensor_id, fc, pattern, lead_time in SENSOR_FAILURE_MAP:
+            props = {"anomaly_pattern": pattern}
+            if lead_time is not None:
+                props["lead_time_min"] = lead_time
+            session.run(
+                "MATCH (s:Sensor {sensor_id: $sid}), (f:FailureCode {failure_code: $fc}) "
+                "MERGE (s)-[r:DETECTS]->(f) SET r += $props",
+                sid=sensor_id, fc=fc, props=props,
+            )
+            count += 1
+        logger.info(f"R2 DETECTS 관계 {count}개 생성 (도메인 지식 기반 초기 매핑)")
+
+
+def create_references_relations(driver):
+    """R10 REFERENCES (MaintenanceAction → Document)
+
+    정비 이벤트의 failure_code와 Document의 failure_code를 매칭하여
+    "이 정비에서 참조했을 매뉴얼"을 연결합니다.
+    """
+    with driver.session() as session:
+        session.run("MATCH ()-[r:REFERENCES]->() DELETE r")
+        result = session.run("""
+            MATCH (m:MaintenanceAction)-[:RESOLVES]->(f:FailureCode)-[:DESCRIBED_BY]->(d:Document)
+            MERGE (m)-[:REFERENCES {section_number: 'all'}]->(d)
+            RETURN count(*) AS cnt
+        """)
+        count = result.single()["cnt"]
+        logger.info(f"R10 REFERENCES 관계 {count}개 생성 (정비→매뉴얼 자동 매칭)")
+
+
 def verify(driver):
     """전체 노드/관계 수 확인"""
     with driver.session() as session:
@@ -216,9 +269,11 @@ def main():
     driver = get_neo4j_driver()
     try:
         create_sensor_nodes(driver)
+        create_detects_relations(driver)
         create_experiences_relations(driver)
         create_workorder_nodes(driver)
         create_maintenance_nodes(driver)
+        create_references_relations(driver)
         verify(driver)
         logger.info("\n=== Neo4j 온톨로지 완성 완료 ===")
     finally:
