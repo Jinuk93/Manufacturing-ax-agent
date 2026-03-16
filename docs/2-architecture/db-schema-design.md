@@ -96,7 +96,7 @@ ALTER TABLE sensor_readings SET (timescaledb.compress = true);
 SELECT add_compression_policy('sensor_readings', INTERVAL '7 days');
 ```
 
-**컬럼 수:** 42개 센서 + 3개 컨텍스트(m1_current_program_number, m1_current_feedrate, machining_process) + 2개 PK(timestamp, equipment_id) = **47개**
+**컬럼 수:** 유효 센서 39개(X11+Y11+Z6+S11) + M1 메타 2개 + machining_process 1개 + PK 2개(timestamp, equipment_id) = **44개**
 **예상 행 수:** ~25,286행 (현재), 운영 시 5초 폴링 × 설비 3대 = 하루 ~51,840행
 
 ---
@@ -284,7 +284,7 @@ CREATE TABLE document_embeddings (
   chunk_number     INT           NOT NULL DEFAULT 0,
   title            VARCHAR(100),
   text_content     TEXT          NOT NULL,
-  embedding        VECTOR(768),              -- OpenAI text-embedding-3-small
+  embedding        VECTOR(768),              -- text-embedding-3-small (기본 1536, dimensions=768 명시 필요)
   created_at       TIMESTAMPTZ   DEFAULT NOW(),
 
   UNIQUE (manual_id, chunk_number)
@@ -364,7 +364,7 @@ F4 서비스에서 Neo4j 순회 결과 → PG 쿼리 순서로 2단계 조회.
 
 | # | 테이블 | 유형 | 레코드 수 | 확장 | 비고 |
 |---|--------|------|----------|------|------|
-| 1 | sensor_readings | TimescaleDB hypertable | ~25,286 (현재) | 하루 ~51,840 | 와이드 47컬럼 |
+| 1 | sensor_readings | TimescaleDB hypertable | ~25,286 (현재) | 하루 ~51,840 | 와이드 44컬럼 |
 | 2 | anomaly_scores | TimescaleDB hypertable | F2 출력 | sensor_readings와 동일 | Phase 3 |
 | 3 | mes_work_orders | 이벤트 | 18 | 운영 시 증가 | 작업지시 |
 | 4 | maintenance_events | 이벤트 | 39 | 운영 시 증가 | 정비 기록 |
