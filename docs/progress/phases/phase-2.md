@@ -24,6 +24,7 @@ Phase 1에서 확보한 데이터(OT 42컬럼 + IT 합성 3종)를 기반으로,
 | 5 | ADR (필요 시) | `docs/adr/adr-006-*.md` 등 | 설계 과정에서 결정이 필요한 사항 | 해당 없음 (기존 ADR로 충분) |
 | 6 | UI 설계 | `docs/2-architecture/ui-design.md` | F6 대시보드 컴포넌트 8종 + 폴링 전략 + React+Vite 스택 | ✅ 완료 (리뷰 1회) |
 | 7 | UI/UX 설계 | `docs/2-architecture/ui-ux-design.md` | 사용자 분석, 3-Pane 레이아웃 근거, Palantir 디자인 시스템, 정보 계층, 폴링 전략 | ✅ 완료 |
+| 8 | UI 목업 | `ui-mockup.html` | 순수 HTML+CSS+JS 프로토타입, v4 최종본 — Palantir 디자인 토큰 + FAB 챗봇 + 상단 오버레이 | ✅ 완료 (Phase 3 이관) |
 
 ---
 
@@ -161,7 +162,26 @@ Phase 1에서 확보한 데이터(OT 42컬럼 + IT 합성 3종)를 기반으로,
 - `docs/2-architecture/pipeline-design.md`
 - `docs/2-architecture/api-design.md`
 - `docs/2-architecture/ui-design.md`
+- `docs/2-architecture/ui-ux-design.md` (v4 최종 — 레이아웃/디자인 토큰/CSS 주의사항 추가)
+- `ui-mockup.html` (v4 목업 최종본)
 - `docs/progress/phases/phase-2.md` (이 파일)
+
+### Day 2 (2026-03-17)
+
+**목표:** UI 목업 완성 + Phase 3 프론트엔드 전환 결정
+
+- 목업 v3 기능 완성도 점검 (~88% 커버리지 확인)
+- 우측 패널 재고 현황(P001~P005) 전체 목록 + 프로그레스 바 추가
+- 챗봇 채널.io/Intercom 패턴 FAB으로 전환 (Always-visible → 우하단 고정 버튼)
+- 레이아웃 재설계: `[Sidebar 200px] | [AI Detail Panel 320px] | [Monitoring Center flex]`
+- 작업현황·재고현황 → 상단 슬라이드다운 오버레이로 이동
+- Palantir 디자인 토큰 적용 (색상 변수, Inter+JetBrains Mono 폰트, 링 로고 스타일)
+- Critical 배너 그라디언트 + 펄스 도트 디자인 개선
+- CSS 버그 2건 해결: `overflow:hidden` FAB 클리핑 / `const banner` 중복 선언 SyntaxError
+- **목업 v4로 최종 확정 → Phase 3 React 18 + Vite 실제 구현으로 이관 결정**
+
+**결정:** 목업 추가 개선 없이 Phase 3 실제 프론트엔드 개발로 전환.
+이유: 하드코딩된 HTML 목업을 계속 고도화하는 것보다 실제 React 스택으로 구현하는 것이 1인 개발 효율 측면에서 우월함.
 
 ---
 

@@ -31,7 +31,9 @@ class Settings(BaseSettings):
     TEMPERATURE: float = 0.1            # 확정 (일관성)
     STOP_THRESHOLD: float = 0.8         # Phase 3 검증
     REDUCE_THRESHOLD: float = 0.6       # Phase 3 검증
-    LLM_PROVIDER: str = "tbd"           # Phase 3 결정
+    LLM_PROVIDER: str = "openai"         # OpenAI GPT-4o-mini
+    OPENAI_MODEL: str = "gpt-4o-mini"    # 비용 효율적 + JSON mode 지원
+    OPENAI_API_KEY: str = ""             # .env에서 로드
 
     class Config:
         env_file = ".env"

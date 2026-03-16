@@ -3,84 +3,105 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>CNC 관제 시스템 — Palantir Style Mockup v2</title>
+<title>Manufacturing AX — CNC Control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 /* ── Palantir Blueprint Token System ──────────────── */
 :root {
-  --black:      #111418;
-  --dg1:        #1C2127;
-  --dg2:        #252A31;
-  --dg3:        #2F343C;
-  --dg4:        #383E47;
-  --dg5:        #404854;
-  --gray1:      #5F6B7C;
-  --gray2:      #738091;
-  --gray3:      #8F99A8;
-  --gray4:      #ABB3BF;
-  --gray5:      #C5CBD3;
+  /* 배경 더 진하게 (2) */
+  --black:      #090C10;
+  --dg1:        #0F1318;
+  --dg2:        #161B22;
+  --dg3:        #1E2530;
+  --dg4:        #28303C;
+  --dg5:        #323B48;
+
+  /* 텍스트 가독성 향상 (4) */
+  --gray1:      #6B7A8D;
+  --gray2:      #8695A7;
+  --gray3:      #A0AEBB;
+  --gray4:      #BCC5D0;
+  --gray5:      #D8DFE8;
   --white:      #FFFFFF;
 
   --blue3:      #2D72D2;
   --blue4:      #4C90F0;
   --blue5:      #8ABBFF;
 
-  --green3:     #238551;
-  --green5:     #72CA9B;
+  --green3:     #1F7A4A;
+  --green5:     #5EC98A;
 
   --orange3:    #C87619;
   --orange5:    #FBB360;
 
-  --red3:       #CD4246;
-  --red5:       #FA999C;
+  --red3:       #C53030;
+  --red5:       #F87171;
 
   --gold3:      #D4AC0D;
   --gold5:      #FFE39F;
 
-  --border:     rgba(255,255,255,0.08);
-  --border-md:  rgba(255,255,255,0.12);
+  /* 영역 구분 강화 (3) */
+  --border:     rgba(255,255,255,0.10);
+  --border-md:  rgba(255,255,255,0.18);
+  --border-strong: rgba(255,255,255,0.24);
 
-  --sidebar-w:  240px;
-  --right-w:    360px;
+  --sidebar-w:  200px;
+  --right-w:    320px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
-html, body { height: 100%; overflow: hidden; }
+html, body { height: 100%; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--black);
   color: var(--gray5);
   font-size: 14px;
   line-height: 1.4;
 }
-.mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+.mono { font-family: 'JetBrains Mono', "SFMono-Regular", Consolas, monospace; }
 
 /* ── TOPBAR ───────────────────────────────────────── */
 .topbar {
-  height: 50px;
+  height: 52px;
   background: var(--dg1);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-strong);
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 20px;
   gap: 12px;
   position: relative;
   z-index: 100;
   flex-shrink: 0;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.4);
 }
 .topbar-logo {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 15px; font-weight: 700; color: var(--white);
-  letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; font-weight: 700; color: var(--white);
+  letter-spacing: 0.06em; text-transform: uppercase;
 }
+/* 로고: Palantir 링 스타일 — 원형 링 + AX */
 .logo-sq {
-  width: 28px; height: 28px;
-  background: var(--blue3);
-  border-radius: 3px;
+  width: 32px; height: 32px;
+  background: transparent;
+  border: 2px solid var(--blue4);
+  border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 900; color: #fff;
+  font-size: 9px; font-weight: 800; color: var(--blue5);
+  letter-spacing: 0.06em;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(76,144,240,0.15), 0 0 12px rgba(45,114,210,0.25);
 }
-.topbar-sep { width: 1px; height: 20px; background: var(--border-md); margin: 0 4px; }
+.logo-sq::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(76,144,240,0.3);
+}
+.topbar-sep { width: 1px; height: 22px; background: var(--border-strong); margin: 0 6px; }
 .topbar-breadcrumb { font-size: 13px; color: var(--gray2); }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
 .db-status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--gray3); }
@@ -95,7 +116,7 @@ body {
 /* ── APP SHELL ────────────────────────────────────── */
 .app-shell {
   display: flex;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 52px);
   overflow: hidden;
 }
 
@@ -103,8 +124,8 @@ body {
 .sidebar {
   width: var(--sidebar-w);
   min-width: var(--sidebar-w);
-  background: var(--dg1);
-  border-right: 1px solid var(--border);
+  background: var(--black);          /* 가장 어두움 */
+  border-right: 2px solid var(--border-strong);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -112,7 +133,7 @@ body {
 }
 .sidebar-section {
   padding: 12px 0 4px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-md);
 }
 .sidebar-label {
   font-size: 11px;
@@ -191,42 +212,95 @@ body {
   padding: 1px 5px; border-radius: 2px; flex-shrink: 0; margin-top: 1px;
 }
 
-/* ── CENTER PANEL ─────────────────────────────────── */
+/* Chat trigger button (sidebar bottom) */
+.chat-trigger-wrap {
+  margin-top: auto;
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+.chat-trigger-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(45,114,210,0.15);
+  border: 1px solid rgba(45,114,210,0.35);
+  color: var(--blue4);
+  font-size: 12px; font-weight: 600;
+  padding: 9px 12px; border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  letter-spacing: 0.02em;
+}
+.chat-trigger-btn:hover {
+  background: rgba(45,114,210,0.25);
+  border-color: rgba(45,114,210,0.6);
+  color: var(--blue5);
+}
+.chat-trigger-btn .chat-icon {
+  font-size: 14px;
+}
+.chat-trigger-badge {
+  font-size: 10px; color: var(--gray1);
+  text-align: center; margin-top: 5px;
+  line-height: 1.4;
+}
+
+/* ── CENTER PANEL (모니터링) ───────────────────────── */
 .center {
   flex: 1;
   overflow-y: auto;
-  background: var(--dg1);
+  background: var(--dg2);            /* 가장 밝음 — 메인 콘텐츠 강조 */
   display: flex;
   flex-direction: column;
 }
 
-/* Critical Banner */
+/* Critical Banner — 디자인틱 */
 .critical-banner {
-  background: rgba(205,66,70,0.12);
-  border-bottom: 1px solid rgba(205,66,70,0.3);
+  background: linear-gradient(90deg, rgba(197,48,48,0.18) 0%, rgba(197,48,48,0.06) 60%, transparent 100%);
+  border-left: 3px solid var(--red3);
+  border-bottom: 1px solid rgba(197,48,48,0.25);
   padding: 10px 20px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-shrink: 0;
 }
 .critical-banner.hidden { display: none; }
-.crit-icon { font-size: 18px; }
-.crit-text { flex: 1; }
-.crit-title { font-size: 13px; font-weight: 700; color: var(--red5); }
-.crit-sub   { font-size: 12px; color: var(--gray3); margin-top: 1px; }
-.ack-btn {
-  padding: 5px 12px;
-  background: transparent;
-  border: 1px solid var(--red3);
-  color: var(--red5);
-  font-size: 12px; font-weight: 600;
-  border-radius: 2px;
-  cursor: pointer;
-  transition: background 0.15s;
+/* 깜빡이는 빨간 점 (이모지 대신) */
+.crit-icon {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--red5);
+  box-shadow: 0 0 0 3px rgba(248,113,113,0.25);
+  animation: pulse-red 1.6s ease-in-out infinite;
   flex-shrink: 0;
 }
-.ack-btn:hover { background: rgba(205,66,70,0.15); }
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(248,113,113,0.25); }
+  50%       { box-shadow: 0 0 0 6px rgba(248,113,113,0.08); }
+}
+.crit-text { flex: 1; }
+.crit-title {
+  font-size: 12px; font-weight: 700;
+  color: var(--red5);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.crit-sub   { font-size: 11px; color: var(--gray3); margin-top: 2px; font-weight: 400; }
+.ack-btn {
+  padding: 5px 14px;
+  background: transparent;
+  border: 1px solid rgba(197,48,48,0.5);
+  color: var(--red5);
+  font-size: 11px; font-weight: 600;
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.ack-btn:hover { background: rgba(197,48,48,0.15); border-color: var(--red3); }
 
 /* Center Content */
 .center-content { padding: 16px 20px; flex: 1; }
@@ -240,36 +314,37 @@ body {
   padding: 14px 16px;
 }
 .kpi-label {
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--gray2); margin-bottom: 8px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gray2); margin-bottom: 6px;
 }
 .kpi-value {
-  font-size: 28px; font-weight: 700; line-height: 1;
+  font-size: 32px; font-weight: 800; line-height: 1;  /* 숫자 더 크게 (4) */
   color: var(--white);
 }
 .kpi-value.red   { color: var(--red5); }
 .kpi-value.orange{ color: var(--orange5); }
 .kpi-value.green { color: var(--green5); }
-.kpi-sub { font-size: 11px; color: var(--gray2); margin-top: 4px; }
+.kpi-sub { font-size: 11px; color: var(--gray3); margin-top: 5px; }
 
 /* Section header */
 .section-hd {
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--gray2);
-  margin-bottom: 10px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gray3);
+  margin-bottom: 12px;
   display: flex; align-items: center; gap: 8px;
 }
-.section-hd::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-hd::after { content: ''; flex: 1; height: 1px; background: var(--border-md); }
 
 /* Sensor chart card */
 .chart-card {
-  background: var(--dg2);
-  border: 1px solid var(--border);
-  border-radius: 3px;
+  background: var(--dg1);            /* 센터(dg2)보다 어두워 카드 돌출 효과 */
+  border: 1px solid var(--border-md);
+  border-radius: 4px;
   padding: 14px 16px;
   margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 .chart-controls {
   display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
@@ -329,19 +404,72 @@ body {
 .type-prev { background: rgba(35,133,81,0.15); color: var(--green5); }
 .maint-time { font-size: 11px; color: var(--gray1); }
 
-/* ── RIGHT PANEL ──────────────────────────────────── */
+/* ── RIGHT PANEL (AI 분석) ────────────────────────── */
 .right-panel {
   width: var(--right-w);
   min-width: var(--right-w);
-  background: var(--dg1);
-  border-left: 1px solid var(--border);
+  background: var(--dg1);            /* 사이드바보다 살짝 밝음 */
+  border-right: 2px solid var(--border-strong);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
 .rp-section {
+  border-bottom: 1px solid var(--border-md);
+  padding: 16px 16px;
+}
+
+/* ── GROUP LABELS ─────────────────────────────────── */
+.group-divider {
+  padding: 8px 14px 6px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gray1);
+  background: var(--dg2);
+  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 14px 16px;
+  display: flex; align-items: center; gap: 6px;
+}
+.group-divider .g-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+
+/* ── TOPBAR BUTTONS ───────────────────────────────── */
+.topbar-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--dg3); border: 1px solid var(--border-md);
+  color: var(--gray4); font-size: 11px; font-weight: 600;
+  padding: 5px 10px; border-radius: 2px;
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.1s;
+}
+.topbar-btn:hover { background: var(--dg4); color: var(--gray5); }
+.topbar-btn.active { background: rgba(45,114,210,0.15); border-color: rgba(45,114,210,0.4); color: var(--blue4); }
+
+/* ── SLIDE-DOWN OVERLAY ───────────────────────────── */
+.top-overlay {
+  position: fixed;
+  top: 50px; left: 0; right: 0;
+  z-index: 500;
+  background: var(--dg1);
+  border-bottom: 2px solid var(--border-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+.top-overlay.open { max-height: 320px; }
+.overlay-inner {
+  padding: 16px 24px 20px;
+  display: flex; gap: 24px;
+}
+.overlay-section {
+  flex: 1;
+}
+.overlay-title {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gray1); margin-bottom: 10px;
 }
 
 /* Recommendation Banner */
@@ -444,6 +572,34 @@ body {
 .part-ok  { font-size: 11px; font-weight: 600; color: var(--green5); }
 .part-no  { font-size: 11px; font-weight: 600; color: var(--red5); }
 
+/* Full inventory list */
+.inv-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.inv-item:last-child { border-bottom: none; }
+.inv-header { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+.inv-pid {
+  font-size: 10px; font-weight: 700; font-family: monospace;
+  background: var(--dg4); color: var(--gray4);
+  padding: 1px 5px; border-radius: 2px; flex-shrink: 0;
+}
+.inv-name { font-size: 11px; color: var(--gray4); flex: 1; }
+.inv-qty { font-size: 11px; font-family: monospace; color: var(--gray3); flex-shrink: 0; }
+.inv-need-tag {
+  font-size: 9px; font-weight: 700;
+  background: rgba(45,114,210,0.2); color: var(--blue5);
+  padding: 1px 5px; border-radius: 2px; flex-shrink: 0;
+}
+.inv-warn-icon { font-size: 11px; flex-shrink: 0; }
+.inv-bar-wrap {
+  height: 4px; background: var(--dg4);
+  border-radius: 2px; overflow: hidden;
+}
+.inv-bar { height: 100%; border-radius: 2px; }
+.inv-bar-ok   { background: var(--green3); }
+.inv-bar-warn { background: var(--orange3); }
+
 /* Downtime */
 .downtime-row {
   display: flex; align-items: center; gap: 8px;
@@ -496,12 +652,24 @@ body {
 <!-- ── TOPBAR ────────────────────────────────────────── -->
 <div class="topbar">
   <div class="topbar-logo">
-    <div class="logo-sq">C</div>
-    CNC 관제 시스템
+    <div class="logo-sq">AX</div>
+    Manufacturing AX
   </div>
   <div class="topbar-sep"></div>
-  <div class="topbar-breadcrumb">Manufacturing AX Agent</div>
+  <div class="topbar-breadcrumb">CNC 관제 시스템</div>
   <div class="topbar-right">
+      <button class="topbar-btn" id="btn-work" onclick="toggleOverlay('work')">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M5 3V2a1 1 0 011-1h4a1 1 0 011 1v1"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/>
+        </svg>
+        작업현황
+      </button>
+      <button class="topbar-btn" id="btn-inv" onclick="toggleOverlay('inv')">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 5l6-3 6 3v6l-6 3-6-3V5z"/><path d="M8 2v12M2 5l6 3 6-3"/>
+        </svg>
+        재고현황
+      </button>
     <div class="db-status">
       <div class="db-dot"><div class="dot dot-ok"></div> PostgreSQL</div>
       <div class="db-dot"><div class="dot dot-ok"></div> Neo4j</div>
@@ -596,17 +764,132 @@ body {
 
   </div><!-- /sidebar -->
 
+  <!-- ══ RIGHT PANEL (Detail Panel) ════════════════════ -->
+  <div class="right-panel">
+
+    <div class="group-divider"><div class="g-dot" style="background:var(--blue3)"></div>AI 분석 결과</div>
+
+    <!-- 이상 점수 게이지 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">이상 점수 <span class="poll-tag">5초</span></div>
+      <div class="gauge-section">
+        <div class="gauge-big crit mono" id="rp-score">0.87</div>
+        <div class="gauge-sub">STOP 임계치 (0.80) 초과</div>
+        <div class="gauge-code" id="rp-code">SPINDLE_OVERHEAT_001</div>
+        <div class="gauge-conf">확신도 <strong style="color:var(--gray4)">91%</strong></div>
+      </div>
+      <div class="mini-bars" id="miniBars"></div>
+    </div>
+
+    <!-- LLM 조치 리포트 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">AI 조치 리포트 <span class="poll-tag">이벤트</span></div>
+      <div class="rec-banner stop">
+        <div class="rec-icon">⛔</div>
+        <div>
+          <div class="rec-title stop">즉시 정지 (STOP)</div>
+          <div class="rec-sub">anomaly_score ≥ 0.80 — 즉각 조치 필요</div>
+          <div class="rec-meta"><span>생성: 08:23:05</span><span>신뢰도: 85%</span></div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;">조치 단계</div>
+      <div class="action-steps">
+        <div class="action-step"><div class="step-num">1</div><div class="step-text">feedrate 즉시 0으로 감속</div></div>
+        <div class="action-step"><div class="step-num">2</div><div class="step-text">현재 가공 중단 (안전 정지)</div></div>
+        <div class="action-step"><div class="step-num">3</div><div class="step-text"><span class="step-tag">DOC-004</span> 스핀들 점검 절차 실행</div></div>
+        <div class="action-step"><div class="step-num">4</div><div class="step-text"><span class="step-tag">P002</span> 베어링 교체 (재고 2세트 확인)</div></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray2);margin:12px 0 6px;">판단 근거</div>
+      <div class="reasoning-box">
+        anomaly_score 0.87, 과거 동일 고장 평균 75분 소요. 현재 urgent 작업이나 납기까지 2시간 여유 있어 즉시 정지 후 정비 권장.
+      </div>
+    </div>
+
+    <!-- GraphRAG 참조 문서 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">GraphRAG 참조 문서 <span class="poll-tag">F4</span></div>
+      <div class="doc-card">
+        <div class="doc-header">
+          <div class="doc-id">DOC-004</div>
+          <div class="doc-score">hybrid: 0.94</div>
+        </div>
+        <div class="doc-title">SPINDLE_OVERHEAT_001 교체절차서</div>
+        <div class="doc-snippet">스핀들 과열 발생 시 즉시 전원 차단 후 냉각 대기. 베어링 마모 확인 후 P002 교체 절차 진행…</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-header">
+          <div class="doc-id">DOC-006</div>
+          <div class="doc-score">hybrid: 0.87</div>
+        </div>
+        <div class="doc-title">SPINDLE_OVERHEAT_001 트러블슈팅가이드</div>
+        <div class="doc-snippet">과열 원인 진단: 냉각수 부족 / 베어링 마모 / 회전수 초과. 각 케이스별 조치 방법…</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-header">
+          <div class="doc-id">DOC-005</div>
+          <div class="doc-score">hybrid: 0.81</div>
+        </div>
+        <div class="doc-title">SPINDLE_OVERHEAT_001 점검체크리스트</div>
+        <div class="doc-snippet">정기 점검 항목: 냉각수 수위, 베어링 온도, 회전 소음, 윤활유 상태 확인…</div>
+      </div>
+    </div>
+
+    <!-- 판단 투명성 패널 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">
+        AI 판단 투명성
+        <span class="poll-tag" style="cursor:pointer;" onclick="toggleTransparency()">▼ 펼치기</span>
+      </div>
+      <div id="transparency-panel" style="display:none;">
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">입력 컨텍스트 (F3)</div>
+          <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
+            · 작업지시: WO-2024-007 (urgent, 납기 2시간)<br>
+            · 재고: P002 베어링 2개 (재주문점 이하)<br>
+            · 최근 정비: 2주 전 동일 고장 (72분 소요)
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">참조 문서 (F4 GraphRAG)</div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:5px 8px;font-size:11px;color:var(--gray3);display:flex;justify-content:space-between;">
+              <span class="step-tag">DOC-004</span> 교체절차서 <span style="color:var(--gray1);">0.94</span>
+            </div>
+            <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:5px 8px;font-size:11px;color:var(--gray3);display:flex;justify-content:space-between;">
+              <span class="step-tag">DOC-006</span> 트러블슈팅 <span style="color:var(--gray1);">0.87</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">검토한 대안</div>
+          <div style="background:var(--dg2);border-left:3px solid var(--gray1);padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
+            REDUCE 검토 → score 0.87로 STOP 기준 초과, 배제<br>
+            MONITOR 검토 → 납기 여유 있으나 위험도 과다, 배제
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">전체 판단 과정</div>
+          <div style="background:var(--dg2);border-left:3px solid var(--blue3);padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
+            anomaly_score가 STOP 임계치(0.80)를 초과하고, 과거 동일 고장 사례에서 방치 시 평균 200분 추가 손실 발생. urgent 작업 납기까지 2시간 여유가 있어 즉시 정지 후 75분 정비가 납기 리스크보다 낮다고 판단.
+          </div>
+        </div>
+      </div>
+      <div id="transparency-closed" style="font-size:11px;color:var(--gray1);">클릭하여 AI 판단 근거 전체 보기</div>
+    </div>
+
+  </div><!-- /right-panel -->
+
   <!-- ══ CENTER ════════════════════════════════════════ -->
   <div class="center" id="center-panel">
 
     <!-- Critical Banner -->
     <div class="critical-banner" id="critical-banner">
-      <div class="crit-icon">🔴</div>
+      <div class="crit-icon"></div>
       <div class="crit-text">
-        <div class="crit-title">CNC-002 — 즉시 정지 필요 (anomaly_score: 0.87 ≥ STOP 0.8)</div>
-        <div class="crit-sub">SPINDLE_OVERHEAT_001 예측 · 확신도 91% · 08:23:01 감지</div>
+        <div class="crit-title">CNC-002 &mdash; Immediate Stop Required &nbsp;·&nbsp; score 0.87 &ge; STOP 0.80</div>
+        <div class="crit-sub">SPINDLE_OVERHEAT_001 predicted &nbsp;·&nbsp; confidence 91% &nbsp;·&nbsp; detected 08:23:01</div>
       </div>
-      <button class="ack-btn" onclick="acknowledgeAlarm()">확인 처리</button>
+      <button class="ack-btn" onclick="acknowledgeAlarm()">Acknowledge</button>
     </div>
 
     <div class="center-content">
@@ -697,176 +980,127 @@ body {
     </div><!-- /center-content -->
   </div><!-- /center -->
 
-  <!-- ══ RIGHT PANEL ════════════════════════════════════ -->
-  <div class="right-panel">
-
-    <!-- 이상 점수 게이지 -->
-    <div class="rp-section">
-      <div class="section-hd" style="margin-bottom:8px;">이상 점수 <span class="poll-tag">5초</span></div>
-      <div class="gauge-section">
-        <div class="gauge-big crit mono" id="rp-score">0.87</div>
-        <div class="gauge-sub">STOP 임계치 (0.80) 초과</div>
-        <div class="gauge-code" id="rp-code">SPINDLE_OVERHEAT_001</div>
-        <div class="gauge-conf">확신도 <strong style="color:var(--gray4)">91%</strong></div>
-      </div>
-      <div class="mini-bars" id="miniBars"></div>
-    </div>
-
-    <!-- LLM 조치 리포트 -->
-    <div class="rp-section">
-      <div class="section-hd" style="margin-bottom:8px;">AI 조치 리포트 <span class="poll-tag">이벤트</span></div>
-      <div class="rec-banner stop">
-        <div class="rec-icon">⛔</div>
-        <div>
-          <div class="rec-title stop">즉시 정지 (STOP)</div>
-          <div class="rec-sub">anomaly_score ≥ 0.80 — 즉각 조치 필요</div>
-          <div class="rec-meta"><span>생성: 08:23:05</span><span>신뢰도: 85%</span></div>
-        </div>
-      </div>
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;">조치 단계</div>
-      <div class="action-steps">
-        <div class="action-step"><div class="step-num">1</div><div class="step-text">feedrate 즉시 0으로 감속</div></div>
-        <div class="action-step"><div class="step-num">2</div><div class="step-text">현재 가공 중단 (안전 정지)</div></div>
-        <div class="action-step"><div class="step-num">3</div><div class="step-text"><span class="step-tag">DOC-004</span> 스핀들 점검 절차 실행</div></div>
-        <div class="action-step"><div class="step-num">4</div><div class="step-text"><span class="step-tag">P002</span> 베어링 교체 (재고 2세트 확인)</div></div>
-      </div>
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray2);margin:12px 0 6px;">판단 근거</div>
-      <div class="reasoning-box">
-        anomaly_score 0.87, 과거 동일 고장 평균 75분 소요. 현재 urgent 작업이나 납기까지 2시간 여유 있어 즉시 정지 후 정비 권장.
-      </div>
-    </div>
-
-    <!-- GraphRAG 참조 문서 -->
-    <div class="rp-section">
-      <div class="section-hd" style="margin-bottom:8px;">GraphRAG 참조 문서 <span class="poll-tag">F4</span></div>
-      <div class="doc-card">
-        <div class="doc-header">
-          <div class="doc-id">DOC-004</div>
-          <div class="doc-score">hybrid: 0.94</div>
-        </div>
-        <div class="doc-title">SPINDLE_OVERHEAT_001 교체절차서</div>
-        <div class="doc-snippet">스핀들 과열 발생 시 즉시 전원 차단 후 냉각 대기. 베어링 마모 확인 후 P002 교체 절차 진행…</div>
-      </div>
-      <div class="doc-card">
-        <div class="doc-header">
-          <div class="doc-id">DOC-006</div>
-          <div class="doc-score">hybrid: 0.87</div>
-        </div>
-        <div class="doc-title">SPINDLE_OVERHEAT_001 트러블슈팅가이드</div>
-        <div class="doc-snippet">과열 원인 진단: 냉각수 부족 / 베어링 마모 / 회전수 초과. 각 케이스별 조치 방법…</div>
-      </div>
-      <div class="doc-card">
-        <div class="doc-header">
-          <div class="doc-id">DOC-005</div>
-          <div class="doc-score">hybrid: 0.81</div>
-        </div>
-        <div class="doc-title">SPINDLE_OVERHEAT_001 점검체크리스트</div>
-        <div class="doc-snippet">정기 점검 항목: 냉각수 수위, 베어링 온도, 회전 소음, 윤활유 상태 확인…</div>
-      </div>
-    </div>
-
-    <!-- 필요 부품 + 재고 -->
-    <div class="rp-section">
-      <div class="section-hd" style="margin-bottom:8px;">필요 부품 · 재고 현황 <span class="poll-tag">30초</span></div>
-      <div class="part-row">
-        <div class="part-id">P002</div>
-        <div class="part-name">Spindle Bearing ×1세트</div>
-        <div class="part-ok">재고 2개 ✓</div>
-      </div>
-      <div class="part-row">
-        <div class="part-id">P003</div>
-        <div class="part-name">Coolant 20L ×1</div>
-        <div class="part-ok">재고 10개 ✓</div>
-      </div>
-      <div class="downtime-row">
-        <span>예상 다운타임</span>
-        <span class="downtime-val">75분</span>
-        <span style="font-size:11px;color:var(--gray2)">과거 사례 기준</span>
-      </div>
-    </div>
-
-    <!-- 작업 현황 -->
-    <div class="rp-section">
-      <div class="section-hd" style="margin-bottom:8px;">작업 현황 <span class="poll-tag">30초</span></div>
-      <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:10px 12px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-          <div style="font-size:12px;font-weight:700;color:var(--gray5);">WO-2024-007</div>
-          <div style="font-size:10px;font-weight:700;background:rgba(200,118,25,0.15);color:var(--orange5);padding:2px 6px;border-radius:2px;">urgent</div>
-        </div>
-        <div style="font-size:11px;color:var(--gray2);">납기: 2024-01-22 10:30 · <span style="color:var(--gold5);">⏱ 2시간 16분 남음</span></div>
-        <div style="font-size:11px;color:var(--gray2);margin-top:3px;">상태: completed</div>
-      </div>
-    </div>
-
-    <!-- 판단 투명성 패널 -->
-    <div class="rp-section">
-      <div class="section-hd" style="margin-bottom:8px;">
-        AI 판단 투명성
-        <span class="poll-tag" style="cursor:pointer;" onclick="toggleTransparency()">▼ 펼치기</span>
-      </div>
-      <div id="transparency-panel" style="display:none;">
-        <div style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">입력 컨텍스트 (F3)</div>
-          <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
-            · 작업지시: WO-2024-007 (urgent, 납기 2시간)<br>
-            · 재고: P002 베어링 2개 (재주문점 이하)<br>
-            · 최근 정비: 2주 전 동일 고장 (72분 소요)
-          </div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">참조 문서 (F4 GraphRAG)</div>
-          <div style="display:flex;flex-direction:column;gap:3px;">
-            <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:5px 8px;font-size:11px;color:var(--gray3);display:flex;justify-content:space-between;">
-              <span class="step-tag">DOC-004</span> 교체절차서 <span style="color:var(--gray1);">0.94</span>
-            </div>
-            <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:5px 8px;font-size:11px;color:var(--gray3);display:flex;justify-content:space-between;">
-              <span class="step-tag">DOC-006</span> 트러블슈팅 <span style="color:var(--gray1);">0.87</span>
-            </div>
-          </div>
-        </div>
-        <div style="margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">검토한 대안</div>
-          <div style="background:var(--dg2);border-left:3px solid var(--gray1);padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
-            REDUCE 검토 → score 0.87로 STOP 기준 초과, 배제<br>
-            MONITOR 검토 → 납기 여유 있으나 위험도 과다, 배제
-          </div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">전체 판단 과정</div>
-          <div style="background:var(--dg2);border-left:3px solid var(--blue3);padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
-            anomaly_score가 STOP 임계치(0.80)를 초과하고, 과거 동일 고장 사례에서 방치 시 평균 200분 추가 손실 발생. urgent 작업 납기까지 2시간 여유가 있어 즉시 정지 후 75분 정비가 납기 리스크보다 낮다고 판단.
-          </div>
-        </div>
-      </div>
-      <div id="transparency-closed" style="font-size:11px;color:var(--gray1);">클릭하여 AI 판단 근거 전체 보기</div>
-    </div>
-
-    <!-- 챗봇 패널 -->
-    <div class="rp-section" style="border-bottom:none;flex:1;display:flex;flex-direction:column;">
-      <div class="section-hd" style="margin-bottom:8px;">💬 AI에게 질문 <span class="poll-tag">/api/chat</span></div>
-      <div id="chat-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:220px;">
-        <div style="display:flex;gap:8px;align-items:flex-start;">
-          <div style="width:22px;height:22px;background:var(--blue3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">AI</div>
-          <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:12px;color:var(--gray4);line-height:1.6;flex:1;">
-            CNC-002의 anomaly_score가 <strong style="color:var(--red5);">0.87</strong>로 STOP 임계치를 초과했습니다. 무엇이 궁금하신가요?
-          </div>
-        </div>
-        <div id="chat-typing" style="display:none;padding:4px 8px;">
-          <span style="font-size:11px;color:var(--gray2);">AI가 생각 중</span>
-          <span style="color:var(--blue5);">●●●</span>
-        </div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <input id="chat-input" type="text" placeholder="질문을 입력하세요..." onkeydown="handleChatKey(event)"
-          style="flex:1;background:var(--dg3);border:1px solid var(--border-md);color:var(--gray4);padding:7px 10px;border-radius:2px;font-size:12px;outline:none;" />
-        <button onclick="sendChat()"
-          style="background:var(--blue3);border:none;color:#fff;padding:7px 12px;border-radius:2px;font-size:12px;font-weight:600;cursor:pointer;">▶</button>
-      </div>
-    </div>
-
-  </div><!-- /right-panel -->
-
 </div><!-- /app-shell -->
+
+<!-- ── TOPBAR OVERLAYS ──────────────────────────── -->
+<div id="overlay-work" class="top-overlay">
+  <div class="overlay-inner">
+    <div class="overlay-section">
+      <div class="overlay-title">📋 작업 현황</div>
+      <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:12px 14px;max-width:340px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div style="font-size:13px;font-weight:700;color:var(--gray5);">WO-2024-007</div>
+          <div style="font-size:10px;font-weight:700;background:rgba(200,118,25,0.15);color:var(--orange5);padding:2px 8px;border-radius:2px;">urgent</div>
+        </div>
+        <div style="font-size:12px;color:var(--gray3);margin-bottom:4px;">납기: 2024-01-22 10:30 · <span style="color:var(--gold5);">⏱ 2시간 16분 남음</span></div>
+        <div style="font-size:12px;color:var(--gray3);">상태: completed</div>
+      </div>
+    </div>
+    <div class="overlay-section" style="flex:2;">
+      <div class="overlay-title">설명</div>
+      <div style="font-size:12px;color:var(--gray2);line-height:1.7;">
+        현재 CNC-002에 urgent 작업 WO-2024-007이 할당되어 있습니다.<br>
+        예상 정비 시간(75분) 이후에도 납기(10:30)까지 여유가 있습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay-inv" class="top-overlay">
+  <div class="overlay-inner">
+    <div class="overlay-section">
+      <div class="overlay-title">📦 재고 현황 (전체 5종)</div>
+      <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:10px 12px;min-width:280px;">
+        <div class="inv-item">
+          <div class="inv-header"><div class="inv-pid">P001</div><div class="inv-name">Endmill 6mm</div><div class="inv-qty">12개</div></div>
+          <div class="inv-bar-wrap"><div class="inv-bar inv-bar-ok" style="width:80%"></div></div>
+        </div>
+        <div class="inv-item">
+          <div class="inv-header"><div class="inv-pid">P002</div><div class="inv-name">Spindle Bearing</div><div class="inv-need-tag">필요</div><div class="inv-warn-icon">⚠️</div><div class="inv-qty" style="color:var(--orange5);">2개</div></div>
+          <div class="inv-bar-wrap"><div class="inv-bar inv-bar-warn" style="width:20%"></div></div>
+        </div>
+        <div class="inv-item">
+          <div class="inv-header"><div class="inv-pid">P003</div><div class="inv-name">Coolant 20L</div><div class="inv-need-tag">필요</div><div class="inv-qty">10개</div></div>
+          <div class="inv-bar-wrap"><div class="inv-bar inv-bar-ok" style="width:100%"></div></div>
+        </div>
+        <div class="inv-item">
+          <div class="inv-header"><div class="inv-pid">P004</div><div class="inv-name">Clamp Bolt Set</div><div class="inv-qty">9개</div></div>
+          <div class="inv-bar-wrap"><div class="inv-bar inv-bar-ok" style="width:75%"></div></div>
+        </div>
+        <div class="inv-item">
+          <div class="inv-header"><div class="inv-pid">P005</div><div class="inv-name">Air Filter</div><div class="inv-qty">5개</div></div>
+          <div class="inv-bar-wrap"><div class="inv-bar inv-bar-ok" style="width:62%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="overlay-section" style="flex:1;">
+      <div class="overlay-title">재주문 필요</div>
+      <div style="background:rgba(200,118,25,0.1);border:1px solid rgba(200,118,25,0.25);border-radius:2px;padding:10px 12px;">
+        <div style="font-size:12px;font-weight:700;color:var(--orange5);margin-bottom:4px;">⚠️ P002 Spindle Bearing</div>
+        <div style="font-size:11px;color:var(--gray3);">현재 재고: 2개 (재주문점: 3개)<br>리드타임: 3일 · 즉시 발주 권장</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FLOATING CHAT ─────────────────────────────── -->
+<div id="chat-fab-wrap" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+
+  <!-- Chat Popup -->
+  <div id="chat-popup" style="display:none;width:320px;background:var(--dg1);border:1px solid var(--border-md);border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,0.5);overflow:hidden;">
+
+    <!-- Popup Header -->
+    <div style="background:var(--dg2);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:10px;">
+      <div style="width:32px;height:32px;background:var(--blue3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0;">AI</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;color:var(--white);">AI 정비 어시스턴트</div>
+        <div style="font-size:11px;color:var(--green5);display:flex;align-items:center;gap:4px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--green5);"></div>
+          F4 GraphRAG + F5 LLM 응답 중
+        </div>
+      </div>
+      <button onclick="toggleChat()" style="background:none;border:none;color:var(--gray2);font-size:16px;cursor:pointer;padding:2px 6px;border-radius:2px;" onmouseover="this.style.color='var(--gray5)'" onmouseout="this.style.color='var(--gray2)'">✕</button>
+    </div>
+
+    <!-- Context Banner -->
+    <div id="chat-context-banner" style="background:rgba(205,66,70,0.12);border-bottom:1px solid rgba(205,66,70,0.2);padding:8px 14px;font-size:11px;color:var(--red5);display:flex;align-items:center;gap:6px;">
+      <span>🔴</span>
+      <span id="chat-context-text">CNC-002 · SPINDLE_OVERHEAT_001 · score 0.87</span>
+    </div>
+
+    <!-- Messages -->
+    <div id="chat-messages" style="height:280px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;gap:8px;align-items:flex-start;">
+        <div style="width:24px;height:24px;background:var(--blue3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:#fff;">AI</div>
+        <div style="background:var(--dg2);border:1px solid var(--border);border-radius:0 6px 6px 6px;padding:9px 12px;font-size:12px;color:var(--gray4);line-height:1.6;flex:1;">
+          CNC-002의 anomaly_score가 <strong style="color:var(--red5);">0.87</strong>로 STOP 임계치를 초과했습니다. 무엇이 궁금하신가요?
+        </div>
+      </div>
+      <div id="chat-typing" style="display:none;padding:2px 0 2px 32px;">
+        <span style="font-size:11px;color:var(--gray2);">AI가 생각 중 </span>
+        <span style="color:var(--blue5);">●●●</span>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div style="border-top:1px solid var(--border);padding:10px 12px;display:flex;gap:8px;background:var(--dg2);">
+      <input id="chat-input" type="text" placeholder="설비 상태, 정비 절차 등 질문..." onkeydown="handleChatKey(event)"
+        style="flex:1;background:var(--dg3);border:1px solid var(--border-md);color:var(--gray4);padding:8px 10px;border-radius:4px;font-size:12px;outline:none;" />
+      <button onclick="sendChat()" style="background:var(--blue3);border:none;color:#fff;padding:8px 14px;border-radius:4px;font-size:13px;cursor:pointer;">▶</button>
+    </div>
+  </div>
+
+  <!-- FAB Button -->
+  <button id="chat-fab-btn" onclick="toggleChat()"
+    style="width:52px;height:52px;border-radius:50%;background:var(--blue3);border:none;color:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(45,114,210,0.5);display:flex;align-items:center;justify-content:center;transition:transform 0.15s,box-shadow 0.15s;position:relative;"
+    onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 6px 20px rgba(45,114,210,0.7)'"
+    onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(45,114,210,0.5)'">
+    💬
+    <!-- Unread badge -->
+    <div id="chat-badge" style="position:absolute;top:0;right:0;width:16px;height:16px;background:var(--red3);border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--black);">1</div>
+  </button>
+
+</div>
 
 <script>
 /* ── Clock ─────────────────────────── */
@@ -927,6 +1161,16 @@ function selectEq(id) {
   document.getElementById('rp-score').textContent = d.score.toFixed(2);
   document.getElementById('rp-score').className = 'gauge-big mono ' + (d.status === 'crit' ? 'crit' : d.status === 'warn' ? 'warn' : 'ok');
   document.getElementById('rp-code').textContent = d.code || '—';
+
+  // Chat context banner 갱신
+  const chatBanner = document.getElementById('chat-context-banner');
+  const ctx = document.getElementById('chat-context-text');
+  if (d.status === 'crit') {
+    chatBanner.style.display = 'flex';
+    ctx.textContent = `${id} · ${d.code} · score ${d.score.toFixed(2)}`;
+  } else {
+    chatBanner.style.display = 'none';
+  }
 
   // Charts
   initCharts(id);
@@ -1151,6 +1395,48 @@ function sendChat() {
 function handleChatKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
 }
+
+/* ── 플로팅 챗 토글 ─────────────────── */
+let chatOpen = false;
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const popup = document.getElementById('chat-popup');
+  popup.style.display = chatOpen ? 'block' : 'none';
+  // 배지 제거
+  document.getElementById('chat-badge').style.display = chatOpen ? 'none' : 'flex';
+  if (chatOpen) {
+    setTimeout(() => document.getElementById('chat-input').focus(), 100);
+  }
+}
+function openChat() { if (!chatOpen) toggleChat(); }
+
+/* ── 상단 오버레이 토글 ──────────────── */
+const overlayState = { work: false, inv: false };
+function toggleOverlay(key) {
+  // 다른 오버레이 닫기
+  Object.keys(overlayState).forEach(k => {
+    if (k !== key && overlayState[k]) {
+      overlayState[k] = false;
+      document.getElementById('overlay-' + k).classList.remove('open');
+      document.getElementById('btn-' + k).classList.remove('active');
+    }
+  });
+  overlayState[key] = !overlayState[key];
+  document.getElementById('overlay-' + key).classList.toggle('open', overlayState[key]);
+  document.getElementById('btn-' + key).classList.toggle('active', overlayState[key]);
+}
+// 오버레이 외부 클릭 시 닫기
+document.addEventListener('click', e => {
+  if (!e.target.closest('.top-overlay') && !e.target.closest('.topbar-btn')) {
+    Object.keys(overlayState).forEach(k => {
+      if (overlayState[k]) {
+        overlayState[k] = false;
+        document.getElementById('overlay-' + k).classList.remove('open');
+        document.getElementById('btn-' + k).classList.remove('active');
+      }
+    });
+  }
+});
 </script>
 </body>
 </html>

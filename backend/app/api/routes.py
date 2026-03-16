@@ -14,12 +14,13 @@ from app.models.schemas import (
     GraphRAGRequest, GraphRAGResponse,
     LLMActionRequest, LLMActionResponse,
     DashboardSummary, EquipmentStatus,
-    AlarmFeedResponse, AlarmEvent,
+    AlarmFeedResponse,
     HealthResponse,
 )
+# #1 수정: import alias로 라우트 함수명과 충돌 방지
 from app.services.itot_sync import sync_itot_context
-from app.services.graphrag import search_graphrag
-from app.services.llm_agent import generate_action
+from app.services.graphrag import search_graphrag as graphrag_search
+from app.services.llm_agent import generate_action as llm_generate_action
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api")
@@ -79,8 +80,9 @@ async def sync_itot(req: ITOTSyncRequest):
         )
         return result
     except Exception as e:
-        logger.error(f"F3 동기화 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"F3 sync error: {e}")
+        # #2 수정: 내부 에러 상세는 로그에만, 외부에는 일반 메시지
+        logger.error(f"F3 동기화 실패: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="F3 동기화 실패. 관리자에게 문의하세요.")
 
 
 # ── F4: GraphRAG (실제 서비스 연결) ──
@@ -88,14 +90,15 @@ async def sync_itot(req: ITOTSyncRequest):
 async def search_rag(req: GraphRAGRequest):
     """Neo4j 그래프 순회 + pgvector 의미 검색"""
     try:
-        result = search_graphrag(
+        # #1 수정: graphrag_search alias 사용
+        result = graphrag_search(
             failure_code=req.failure_code,
             equipment_id=req.equipment_id,
         )
         return result
     except Exception as e:
-        logger.error(f"F4 검색 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"F4 search error: {e}")
+        logger.error(f"F4 검색 실패: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="F4 검색 실패. 관리자에게 문의하세요.")
 
 
 # ── F5: LLM 판단 (실제 서비스 연결) ──
@@ -103,15 +106,18 @@ async def search_rag(req: GraphRAGRequest):
 async def gen_action(req: LLMActionRequest):
     """F2+F3+F4 결과를 종합하여 조치 권고"""
     try:
-        result = generate_action(
+        # #1 수정: llm_generate_action alias 사용
+        # #3 수정: equipment_id도 로그에 명시
+        logger.info(f"F5 판단 요청: {req.equipment_id}")
+        result = llm_generate_action(
             f2_result=req.f2_result,
             f3_context=req.f3_context,
             f4_rag_result=req.f4_rag_result,
         )
         return result
     except Exception as e:
-        logger.error(f"F5 판단 실패: {e}")
-        raise HTTPException(status_code=500, detail=f"F5 action error: {e}")
+        logger.error(f"F5 판단 실패 ({req.equipment_id}): {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="F5 판단 실패. 관리자에게 문의하세요.")
 
 
 # ── F6: 대시보드 ──

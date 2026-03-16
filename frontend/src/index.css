@@ -1,0 +1,130 @@
+/* @import 는 가장 먼저 (PostCSS 규칙) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Palantir 디자인 토큰 */
+:root {
+  --black:          #090C10;
+  --dg1:            #0F1318;
+  --dg2:            #161B22;
+  --dg3:            #1E2530;
+  --dg4:            #252D3A;
+  --gray5:          #D8DFE8;
+  --gray4:          #A8B3C0;
+  --gray3:          #6B7788;
+  --blue3:          #2D72D2;
+  --blue4:          #4C90F0;
+  --green5:         #72CA9B;
+  --yellow5:        #FBB360;
+  --red3:           #C53030;
+  --red5:           #F17474;
+  --border-subtle:  rgba(255,255,255,0.08);
+  --border-mid:     rgba(255,255,255,0.12);
+  --border-strong:  rgba(255,255,255,0.24);
+  --sidebar-w:      200px;
+  --ai-panel-w:     320px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--black);
+  color: var(--gray5);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+}
+
+@layer base {
+  :root {
+    --background:          oklch(1 0 0);
+    --foreground:          oklch(0.145 0 0);
+    --card:          oklch(1 0 0);
+    --card-foreground:          oklch(0.145 0 0);
+    --popover:          oklch(1 0 0);
+    --popover-foreground:          oklch(0.145 0 0);
+    --primary:          oklch(0.205 0 0);
+    --primary-foreground:          oklch(0.985 0 0);
+    --secondary:          oklch(0.97 0 0);
+    --secondary-foreground:          oklch(0.205 0 0);
+    --muted:          oklch(0.97 0 0);
+    --muted-foreground:          oklch(0.556 0 0);
+    --accent:          oklch(0.97 0 0);
+    --accent-foreground:          oklch(0.205 0 0);
+    --destructive:          oklch(0.577 0.245 27.325);
+    --border:          oklch(0.922 0 0);
+    --input:          oklch(0.922 0 0);
+    --ring:          oklch(0.708 0 0);
+    --chart-1:          oklch(0.809 0.105 251.813);
+    --chart-2:          oklch(0.623 0.214 259.815);
+    --chart-3:          oklch(0.546 0.245 262.881);
+    --chart-4:          oklch(0.488 0.243 264.376);
+    --chart-5:          oklch(0.424 0.199 265.638);
+    --radius:          0.625rem;
+    --sidebar:          oklch(0.985 0 0);
+    --sidebar-foreground:          oklch(0.145 0 0);
+    --sidebar-primary:          oklch(0.205 0 0);
+    --sidebar-primary-foreground:          oklch(0.985 0 0);
+    --sidebar-accent:          oklch(0.97 0 0);
+    --sidebar-accent-foreground:          oklch(0.205 0 0);
+    --sidebar-border:          oklch(0.922 0 0);
+    --sidebar-ring:          oklch(0.708 0 0);
+  }
+  .dark {
+    --background:          oklch(0.145 0 0);
+    --foreground:          oklch(0.985 0 0);
+    --card:          oklch(0.205 0 0);
+    --card-foreground:          oklch(0.985 0 0);
+    --popover:          oklch(0.205 0 0);
+    --popover-foreground:          oklch(0.985 0 0);
+    --primary:          oklch(0.922 0 0);
+    --primary-foreground:          oklch(0.205 0 0);
+    --secondary:          oklch(0.269 0 0);
+    --secondary-foreground:          oklch(0.985 0 0);
+    --muted:          oklch(0.269 0 0);
+    --muted-foreground:          oklch(0.708 0 0);
+    --accent:          oklch(0.269 0 0);
+    --accent-foreground:          oklch(0.985 0 0);
+    --destructive:          oklch(0.704 0.191 22.216);
+    --border:          oklch(1 0 0 / 10%);
+    --input:          oklch(1 0 0 / 15%);
+    --ring:          oklch(0.556 0 0);
+    --chart-1:          oklch(0.809 0.105 251.813);
+    --chart-2:          oklch(0.623 0.214 259.815);
+    --chart-3:          oklch(0.546 0.245 262.881);
+    --chart-4:          oklch(0.488 0.243 264.376);
+    --chart-5:          oklch(0.424 0.199 265.638);
+    --sidebar:          oklch(0.205 0 0);
+    --sidebar-foreground:          oklch(0.985 0 0);
+    --sidebar-primary:          oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground:          oklch(0.985 0 0);
+    --sidebar-accent:          oklch(0.269 0 0);
+    --sidebar-accent-foreground:          oklch(0.985 0 0);
+    --sidebar-border:          oklch(1 0 0 / 10%);
+    --sidebar-ring:          oklch(0.556 0 0);
+  }
+  .theme {
+    --font-sans:          'Geist Variable', sans-serif;
+  }
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background: var(--black);
+    color: var(--gray5);
+  }
+}

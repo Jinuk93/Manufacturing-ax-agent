@@ -19,3 +19,6 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+# 모델 파일 (바이너리)
+backend/models/
+*.pkl

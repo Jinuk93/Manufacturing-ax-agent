@@ -263,7 +263,7 @@ CREATE TABLE document_embeddings (
   chunk_number     INT           NOT NULL DEFAULT 0,
   title            VARCHAR(100),
   text_content     TEXT          NOT NULL,
-  embedding        VECTOR(768),  -- text-embedding-3-small (dimensions=768 명시 필요)
+  embedding        VECTOR(384),  -- paraphrase-multilingual-MiniLM-L12-v2 (384차원, 로컬 무료)
   created_at       TIMESTAMPTZ   DEFAULT NOW(),
 
   UNIQUE (manual_id, chunk_number)

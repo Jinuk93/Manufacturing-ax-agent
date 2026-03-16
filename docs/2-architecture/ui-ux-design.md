@@ -476,6 +476,7 @@ Right Panel 최하단 고정:
 | v1 | 2026-03-16 | 2-Page SPA, 기본 레이아웃, 핵심 기능 일부 누락 |
 | v2 | 2026-03-17 | 3-Pane Layout, Palantir Blueprint 스타일, 전체 기능 포함 (GraphRAG, 파이프라인 상태, 정비 이력, 임계치 선, Acknowledge) |
 | v3 | 2026-03-17 | 챗봇 패널 + 판단 투명성 패널 자리 확보 (백엔드 연동은 Phase 3 후반) |
+| v4 | 2026-03-17 | 최종 레이아웃 확정 — Sidebar+AI Panel 좌측 고정, Monitoring Center 우측, FAB 챗봇, 상단 오버레이, Palantir 디자인 토큰 적용 (목업 완료, Phase 3 이관) |
 
 ---
 
@@ -495,3 +496,190 @@ Right Panel 최하단 고정:
 4. **Acknowledge = POST 엔드포인트** — `POST /api/f6/alarms/:id/acknowledge` Phase 3 예약 ✅
 5. **폴링 전략 차별화** — 설비 목록 5초 / 정비 이력 60초 / LLM 리포트 이벤트 → 반영 ✅
 6. **Critical 단순화 모드** — Critical 알람 시 Center 영역이 단순해지면 좋겠다 → UX-6으로 등록, Phase 3 구현 예약 ✅
+
+### 리뷰 #3 — 목업 v4 최종 확정 (2026-03-17)
+
+1. **재고·작업 현황 → 상단 오버레이 이동** — Right Panel에서 빼고 상단 버튼 클릭 시 슬라이드 다운 패널로 이동. 이유: AI 분석 영역과 운영 데이터가 동일 패널에 섞이면 정보 계층이 무너짐 ✅ v4 반영
+2. **챗봇 → FAB 패턴** — Always-visible 패널 대신 우하단 고정 버튼(⊕) 클릭 시 팝업. 이유: Channel.io/Intercom 패턴 — 공간 효율 + 필요할 때만 접근 ✅ v4 반영
+3. **레이아웃 순서 변경** — `[Center] [Right AI]` → `[Sidebar 200px] [AI Detail Panel 320px] [Monitoring Center flex]`. 이유: 설비 선택(Sidebar) → 상세 분석(AI Panel) 흐름이 좌→우로 자연스럽고, 모니터링 차트는 넓은 공간 필요 ✅ v4 반영
+4. **그룹 구분선(Divider)** — Right Panel 내 "AI 분석 결과" 구분선으로 논리적 영역 가시화 ✅ v4 반영
+5. **Palantir 디자인 토큰 적용** — 색상, 폰트, 로고 스타일 확정 (섹션 14 참조) ✅ v4 반영
+6. **목업 완료 선언** — v4로 목업 종료. Phase 3에서 실제 React 18 + Vite 구현으로 이관 ✅
+
+---
+
+## 14. 최종 디자인 시스템 (v4 확정)
+
+> 목업 v4에서 확정된 디자인 토큰. Phase 3 React 구현 시 동일하게 적용.
+
+### 14-1. 레이아웃 구조 (최종)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Topbar (44px) — 로고 | 상태 배너 | 📋 작업현황 📦 재고현황    │
+├──────────┬──────────────────────┬──────────────────────────────┤
+│ Sidebar  │  AI Detail Panel     │  Monitoring Center           │
+│ 200px    │  320px               │  flex (나머지)               │
+│          │                      │                              │
+│ 설비 목록 │  [설비 선택 시 표시]  │  센서 차트                   │
+│ + 상태   │  · 이상 점수 게이지   │  파이프라인 상태              │
+│ + 알람   │  · AI 조치 리포트    │  정비 이력 타임라인           │
+│          │  · GraphRAG 근거 문서 │  EDA 차트                    │
+│          │  · 판단 투명성 패널  │                              │
+├──────────┴──────────────────────┴──────────────────────────────┤
+│                      FAB 챗봇 버튼 (우하단 fixed)              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**구분:** `border-right: 2px solid rgba(255,255,255,0.12)` (Sidebar↔AI Panel, AI Panel↔Center)
+
+### 14-2. 색상 토큰 (Palantir 스타일)
+
+```css
+--black:        #090C10;   /* 최심층 배경 */
+--dg1:          #0F1318;   /* Sidebar / Right Panel 배경 */
+--dg2:          #161B22;   /* Center 배경 */
+--dg3:          #1E2530;   /* 카드/행 배경 */
+--dg4:          #252D3A;   /* hover 상태 */
+--gray5:        #D8DFE8;   /* 주요 텍스트 */
+--gray4:        #A8B3C0;   /* 보조 텍스트 */
+--gray3:        #6B7788;   /* 비활성 텍스트 */
+--blue3:        #2D72D2;   /* Primary accent */
+--blue4:        #4C90F0;   /* Logo ring, 강조 */
+--green5:       #72CA9B;   /* 정상 상태 */
+--yellow5:      #FBB360;   /* 경고 상태 */
+--red3:         #C53030;   /* Critical border */
+--red5:         #F17474;   /* Critical dot/text */
+--border-subtle: rgba(255,255,255,0.08);
+--border-mid:    rgba(255,255,255,0.12);
+--border-strong: rgba(255,255,255,0.24);
+```
+
+### 14-3. 타이포그래피
+
+| 용도 | 폰트 | 크기 | 굵기 |
+|------|------|------|------|
+| UI 레이블, 본문 | Inter | 11~13px | 400~500 |
+| 섹션 제목 | Inter | 10~11px | 500~600 |
+| 숫자, 코드, 센서값 | JetBrains Mono | 11~14px | 400 |
+| 이상 점수 (대형) | JetBrains Mono | 32px | 700 |
+
+CDN: Google Fonts (`Inter:wght@400;500;600;700` + `JetBrains+Mono:wght@400;700`)
+
+### 14-4. 로고 스타일 (Palantir Ring 패턴)
+
+```css
+/* AX 로고 — Palantir 동심원 링 스타일 */
+.logo-sq {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--blue4);
+  box-shadow: 0 0 0 1px rgba(76,144,240,0.15),
+              0 0 12px rgba(45,114,210,0.25);
+  position: relative;
+}
+.logo-sq::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px solid rgba(76,144,240,0.3);
+}
+/* 내부 텍스트: "AX" */
+```
+
+### 14-5. Critical 배너 (그라디언트 + 펄스 도트)
+
+```css
+.critical-banner {
+  background: linear-gradient(
+    90deg,
+    rgba(197,48,48,0.18) 0%,
+    rgba(197,48,48,0.06) 60%,
+    transparent 100%
+  );
+  border-left: 3px solid var(--red3);
+  padding: 8px 16px;
+}
+.crit-icon {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--red5);
+  animation: pulse-red 1.6s ease-in-out infinite;
+}
+```
+
+### 14-6. 챗봇 FAB
+
+```
+position: fixed; bottom: 24px; right: 24px; z-index: 9999
+```
+
+- 기본 상태: 원형 버튼 (44×44px), "⊕ AI" 표시
+- 클릭 시: 팝업 `display: block` 토글 (flex 아님)
+- 팝업 크기: 340×420px, 오른쪽 하단 앵커
+
+### 14-7. 상단 오버레이 패널 (작업현황 / 재고현황)
+
+```css
+.overlay-panel {
+  position: absolute; top: 44px; left: 0; right: 0;
+  background: var(--dg1);
+  border-bottom: 1px solid var(--border-mid);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.25s ease;
+}
+.overlay-panel.open { max-height: 320px; }
+```
+
+- 토글 버튼: 상단 바에 SVG 아이콘 버튼 (`📋 작업현황`, `📦 재고현황`)
+- 내용: 작업지시 목록 / P001~P005 부품 재고 (수량 + 프로그레스 바)
+
+---
+
+## 15. Phase 3 CSS 주의사항
+
+> 목업 개발 중 발생한 CSS 버그. React 구현 시 동일 실수를 피하기 위해 기록.
+
+### 주의 1: `overflow: hidden` + `position: fixed`
+
+```
+증상: FAB 챗봇 버튼이 보이지만 클릭 안 됨
+원인: html, body { overflow: hidden } 이 fixed 요소의 클리핑 컨텍스트 생성
+해결: html, body { height: 100% } 만 적용
+      스크롤 방지는 .app-shell { overflow: hidden } 에서 처리
+```
+
+React 구현 시: Tailwind `h-screen overflow-hidden`은 `html`/`body`가 아닌 루트 div에만 적용.
+
+### 주의 2: `const` 중복 선언
+
+```
+증상: 모든 JavaScript 동작 불가 (차트 빈 화면, 함수 미정의 에러)
+원인: 같은 함수 스코프 내 const banner 두 번 선언 → SyntaxError
+해결: 변수명 다르게 (const chatBanner)
+```
+
+React 구현 시: TypeScript strict 모드로 컴파일 타임에 차단됨.
+
+### 주의 3: FAB 팝업 `display: flex` vs `display: block`
+
+```
+증상: toggleChat() 에서 display:flex 로 설정했으나 팝업 미표시
+원인: 팝업 내부 자식이 또 flex 레이아웃 → 레이아웃 붕괴
+해결: display: block 으로 토글, 내부 각 영역이 자체 flex 유지
+```
+
+React 구현 시: 상태 기반 조건부 렌더링으로 대체 (visibility 문제 없음).
+
+### 주의 4: z-index 스택 순서
+
+| 레이어 | z-index |
+|--------|---------|
+| 기본 UI | 1 |
+| 상단 오버레이 패널 | 100 |
+| 모달 | 1000 |
+| FAB 챗봇 팝업 | 9000 |
+| FAB 챗봇 버튼 | 9999 |
+
+React 구현 시: Tailwind `z-*` 유틸리티 + shadcn/ui Dialog/Sheet 컴포넌트 활용.
