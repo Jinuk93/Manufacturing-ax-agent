@@ -12,6 +12,7 @@ F2 이상탐지 — Isolation Forest 베이스라인
 """
 import logging
 import pickle
+import re
 from pathlib import Path
 from typing import Optional
 
@@ -23,6 +24,12 @@ from sklearn.preprocessing import MinMaxScaler
 from app.config import settings
 
 logger = logging.getLogger(__name__)
+
+
+def to_snake(name: str) -> str:
+    """CamelCase/PascalCase → snake_case 변환 (X1_CurrentFeedback → x1_current_feedback)"""
+    s1 = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', name)
+    return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 # f2-anomaly-detection-design.md 기준 1차 피처셋 (10개)
 FEATURE_COLUMNS = [
@@ -97,12 +104,6 @@ class AnomalyDetector:
             df_feat["machining_process_num"] = 0
 
         # 피처 선택 (CSV 원본 CamelCase / DB snake_case 모두 대응)
-        import re
-        def to_snake(name: str) -> str:
-            """X1_CurrentFeedback → x1_current_feedback"""
-            s1 = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', name)
-            return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-
         use_cols = []
         for col in self.feature_columns:
             if col in df_feat.columns:
