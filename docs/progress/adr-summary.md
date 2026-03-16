@@ -15,6 +15,7 @@
 | ADR-003 | 0 | 2026-03-08 | DB 아키텍처 | 전용 DB 다수 vs PostgreSQL 통합? 1인 개발에서 운영 복잡도 최소화 필요 | InfluxDB+Milvus+PostgreSQL: 3개 DB 운영 부담 과도 | **PostgreSQL 통합 (TimescaleDB + pgvector) + Neo4j 별도 = 총 2개 DB** | 시계열+관계형+벡터는 PostgreSQL 1개로 통합, 그래프만 Neo4j 별도 |
 | ADR-004 | 0 | 2026-03-08 | 실시간 처리 방식 | Kafka/Flink 스트리밍 vs 폴링? 1인 개발에 스트리밍 인프라는 과도 | Kafka+Flink: 인프라 복잡도 과도, 학습 비용 높음 | **5초 폴링으로 실시간성 모사** | 진정한 실시간은 아니지만 MVP에 충분 |
 | ADR-005 | 0 | 2026-03-09 | 대시보드 우선순위 | 파이프라인 완성 후 UI vs 조기 시각화? 결과물 없이 진행하면 방향 검증 어려움 | 파이프라인 완성 후 UI: 중간 검증이 불가능 | **시각적 결과물(대시보드 MVP) 앞당김** | F6를 초기부터 병행 개발 |
+| ADR-006 | 2 | 2026-03-16 | 프론트엔드 스택 | Next.js vs React+Vite vs HTML+Plotly? SSR/SEO 불필요한 내부 관제 시스템, 페이지 2개 SPA | Next.js: SSR·파일라우팅 이점 없음. HTML+Plotly: 프로토타입 수준 | **React 18 + Vite (SPA)** | React Router v6, shadcn/ui, TanStack Query, Zustand 조합. ui-design.md 파일 구조 Vite 기준으로 전환 |
 
 ---
 
