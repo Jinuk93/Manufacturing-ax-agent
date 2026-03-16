@@ -2699,7 +2699,7 @@ function renderOverview(el){
   h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:12px 0;">';
 
   const metaDescs = [
-    ['material','소재 종류','가공 대상 소재. 이 데이터셋은 wax(왕스) 단일 소재입니다. 실제 현장에서는 철강, 알루미늄 등 다양합니다.','#888'],
+    ['material','소재 종류','가공 대상 소재. 이 데이터셋은 wax(왁스) 단일 소재입니다. 실제 현장에서는 철강, 알루미늄 등 다양합니다.','#888'],
     ['feedrate','이송속도 (mm/min)','공구가 워크피스를 깎아나가는 속도. 높을수록 빠르지만 공구 마모가 빨라집니다. 이 데이터에서 3~20 범위.','#e8770e'],
     ['clamp_pressure','클램프 압력 (bar)','워크피스를 고정하는 지그의 압력. 낮으면 진동/떨림, 너무 높으면 변형. 이 데이터에서 2.5~4.0 범위.','#3b82f6'],
     ['tool_condition','공구 상태 (Target)','worn(마모) 또는 unworn(정상). 가공 후 검사관이 판정한 결과이며, 이것이 우리가 예측할 대상입니다.','#ef4444'],
