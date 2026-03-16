@@ -330,7 +330,8 @@ function MaintenanceTimeline({ equipmentId }: { equipmentId: string }) {
   const { data } = useQuery({
     queryKey: ['work-order', equipmentId],
     queryFn: () => getWorkOrderStatus(equipmentId),
-    staleTime: 60000,
+    staleTime: 60_000,
+    refetchInterval: 60_000,
     retry: false,
   })
 

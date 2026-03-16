@@ -17,9 +17,9 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 export default function WorkOrderOverlay({ open }: Props) {
   // 3개 설비 각각 고정 hook (hooks 규칙: 조건부/반복 불가)
-  const q1 = useQuery({ queryKey: ['work-order', 'CNC-001'], queryFn: () => getWorkOrderStatus('CNC-001'), enabled: open, retry: false, staleTime: 30_000 })
-  const q2 = useQuery({ queryKey: ['work-order', 'CNC-002'], queryFn: () => getWorkOrderStatus('CNC-002'), enabled: open, retry: false, staleTime: 30_000 })
-  const q3 = useQuery({ queryKey: ['work-order', 'CNC-003'], queryFn: () => getWorkOrderStatus('CNC-003'), enabled: open, retry: false, staleTime: 30_000 })
+  const q1 = useQuery({ queryKey: ['work-order', 'CNC-001'], queryFn: () => getWorkOrderStatus('CNC-001'), enabled: open, retry: false, staleTime: 30_000, refetchInterval: open ? 30_000 : false })
+  const q2 = useQuery({ queryKey: ['work-order', 'CNC-002'], queryFn: () => getWorkOrderStatus('CNC-002'), enabled: open, retry: false, staleTime: 30_000, refetchInterval: open ? 30_000 : false })
+  const q3 = useQuery({ queryKey: ['work-order', 'CNC-003'], queryFn: () => getWorkOrderStatus('CNC-003'), enabled: open, retry: false, staleTime: 30_000, refetchInterval: open ? 30_000 : false })
 
   const rows = [
     { id: 'CNC-001', data: q1.data },

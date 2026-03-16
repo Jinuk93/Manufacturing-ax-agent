@@ -63,7 +63,7 @@ export interface AlarmEvent {
   timestamp: string
   equipment_id: string
   anomaly_score: number
-  predicted_failure_code: string
+  predicted_failure_code: string | null  // 백엔드 Optional → null 허용
   confidence: number
   severity: AlarmSeverity
 }
