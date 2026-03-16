@@ -37,7 +37,7 @@ PRD v1.0 시점에서 아직 결정되지 않은 항목들을 추적합니다.
 |---|------|------------|-----------|------|
 | 9 | LLM 선택 (API vs 로컬) | 비용/성능 트레이드오프 미검토 | 아키텍처 설계 시 | Open |
 | 10 | 하이브리드 검색 점수 결합 방식 | BM25 + Vector 비율/방식 미정 | GraphRAG 구현 시 | Open |
-| 11 | 프론트엔드 MVP 전략 | Streamlit 선행 vs 바로 Next.js | 아키텍처 설계 시 | Open |
+| 11 | ~~프론트엔드 MVP 전략~~ → **React 18 + Vite SPA** | SSR/SEO 불필요한 내부 관제 시스템. 페이지 2개 → Next.js 과함. React Router v6으로 충분 | Phase 2 완료 | **Decided (ADR-006)** |
 
 ## D. 프로젝트 관리
 

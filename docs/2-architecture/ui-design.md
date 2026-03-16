@@ -1,27 +1,32 @@
 # F6 대시보드 UI 설계서
 
-> **기술 스택:** Next.js 15 (App Router) + TypeScript + Tailwind CSS + shadcn/ui + Recharts
+> **기술 스택:** React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui + Recharts + TanStack Query + Zustand + React Router v6
 > **대상:** F6 관제 대시보드 — CNC 3대의 실시간 상태 + LLM 조치 리포트
 > **갱신 주기:** 5초 폴링 (TanStack Query)
-
-> ⚠️ **기술 스택 결정 주의 (open-items #11 연결)**
-> Next.js 15 + TypeScript + Tailwind + shadcn/ui + Recharts + TanStack Query + Zustand 조합은
-> 1인 개발 입문자에게 학습 곡선이 높을 수 있습니다.
-> 현재 `data-review.html` 처럼 순수 HTML + Plotly.js 방식도 F6 MVP로는 충분히 구현 가능한 대안입니다.
-> **Phase 3 착수 전 ADR-006(프론트엔드 전략)으로 최종 확정 필요.**
-> (open-items #11 참조)
+> **스택 결정:** ADR-006 (2026-03-16 확정)
 
 ---
 
 ## 1. 페이지 구조 (라우팅)
 
+React Router v6 기반 SPA 라우팅 (Next.js 파일 기반 라우팅 아님)
+
 ```
-app/
-├── layout.tsx          ← 공통 레이아웃 (헤더 포함)
-├── page.tsx            ← / : 전체 설비 개요 (메인)
-└── equipment/
-    └── [id]/
-        └── page.tsx    ← /equipment/CNC-001 : 설비 상세
+src/
+├── main.tsx            ← 진입점 (BrowserRouter 감싸기)
+├── App.tsx             ← 라우트 정의
+├── pages/
+│   ├── Overview.tsx    ← / : 전체 설비 개요 (메인)
+│   └── EquipmentDetail.tsx  ← /equipment/:id : 설비 상세
+└── components/         ← 공유 컴포넌트
+```
+
+```tsx
+// App.tsx
+<Routes>
+  <Route path="/" element={<Overview />} />
+  <Route path="/equipment/:id" element={<EquipmentDetail />} />
+</Routes>
 ```
 
 **이동 흐름:**
@@ -345,47 +350,54 @@ const POLL = {
 
 ## 6. 파일 구조
 
+Vite 프로젝트 기준 (`npm create vite@latest frontend -- --template react-ts`)
+
 ```
 frontend/
-├── app/
-│   ├── layout.tsx
-│   ├── page.tsx                       ← 전체 개요
-│   └── equipment/
-│       └── [id]/
-│           └── page.tsx               ← 설비 상세
+├── index.html
+├── vite.config.ts
+├── package.json
 │
-├── components/
-│   ├── layout/
-│   │   └── Header.tsx
-│   ├── equipment/
-│   │   ├── EquipmentCard.tsx
-│   │   └── EquipmentGrid.tsx
-│   ├── alarm/
-│   │   └── AlarmFeed.tsx
-│   ├── sensor/
-│   │   └── SensorChart.tsx
-│   ├── anomaly/
-│   │   └── AnomalyPanel.tsx
-│   ├── work/
-│   │   └── WorkOrderPanel.tsx
-│   └── llm/
-│       └── ActionReport.tsx
-│
-├── lib/
-│   ├── api.ts                         ← fetch 래퍼 함수
-│   └── utils.ts                       ← score → status 변환 등
-│
-├── store/
-│   └── dashboardStore.ts              ← Zustand 전역 상태
-│
-├── types/
-│   └── api.ts                         ← API 응답 TypeScript 타입
-│
-└── hooks/
-    ├── useEquipmentSummary.ts         ← TanStack Query 훅
-    ├── useSensorData.ts
-    ├── useAnomalyData.ts
-    └── useWorkOrder.ts
+└── src/
+    ├── main.tsx                       ← 진입점 (BrowserRouter)
+    ├── App.tsx                        ← 라우트 정의
+    │
+    ├── pages/
+    │   ├── Overview.tsx               ← / : 전체 개요
+    │   └── EquipmentDetail.tsx        ← /equipment/:id : 설비 상세
+    │
+    ├── components/
+    │   ├── layout/
+    │   │   └── Header.tsx
+    │   ├── equipment/
+    │   │   ├── EquipmentCard.tsx
+    │   │   └── EquipmentGrid.tsx
+    │   ├── alarm/
+    │   │   └── AlarmFeed.tsx
+    │   ├── sensor/
+    │   │   └── SensorChart.tsx
+    │   ├── anomaly/
+    │   │   └── AnomalyPanel.tsx
+    │   ├── work/
+    │   │   └── WorkOrderPanel.tsx
+    │   └── llm/
+    │       └── ActionReport.tsx
+    │
+    ├── lib/
+    │   ├── api.ts                     ← fetch 래퍼 함수
+    │   └── utils.ts                   ← score → status 변환 등
+    │
+    ├── store/
+    │   └── dashboardStore.ts          ← Zustand 전역 상태
+    │
+    ├── types/
+    │   └── api.ts                     ← API 응답 TypeScript 타입
+    │
+    └── hooks/
+        ├── useEquipmentSummary.ts     ← TanStack Query 훅
+        ├── useSensorData.ts
+        ├── useAnomalyData.ts
+        └── useWorkOrder.ts
 ```
 
 ---
