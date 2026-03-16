@@ -2018,11 +2018,11 @@
   <table>
     <thead><tr><th>Part ID</th><th>부품명</th><th>단가</th><th>리드타임</th><th>비고</th></tr></thead>
     <tbody>
-      <tr><td><strong>P001</strong></td><td>Endmill 6mm Carbide</td><td>&yen;45,000</td><td>3일</td><td>가장 자주 교체</td></tr>
-      <tr><td><strong>P002</strong></td><td>Spindle Bearing Set</td><td>&yen;280,000</td><td>7일</td><td>고가, 긴 리드타임</td></tr>
-      <tr><td><strong>P003</strong></td><td>Coolant Water-Soluble 20L</td><td>&yen;35,000</td><td>2일</td><td style="color:#ff4d4f;">W5(02-12) 재고 0 &rarr; 테스트 시나리오</td></tr>
-      <tr><td><strong>P004</strong></td><td>Clamp Bolt Set</td><td>&yen;12,000</td><td>1일</td><td>소모품</td></tr>
-      <tr><td><strong>P005</strong></td><td>Air Filter</td><td>&yen;8,000</td><td>1일</td><td>소모품</td></tr>
+      <tr><td><strong>P001</strong></td><td>Endmill 6mm Carbide</td><td>&#8361;45,000</td><td>3일</td><td>가장 자주 교체</td></tr>
+      <tr><td><strong>P002</strong></td><td>Spindle Bearing Set</td><td>&#8361;280,000</td><td>7일</td><td>고가, 긴 리드타임</td></tr>
+      <tr><td><strong>P003</strong></td><td>Coolant Water-Soluble 20L</td><td>&#8361;35,000</td><td>2일</td><td style="color:#ff4d4f;">W5(02-12) 재고 0 &rarr; 테스트 시나리오</td></tr>
+      <tr><td><strong>P004</strong></td><td>Clamp Bolt Set</td><td>&#8361;12,000</td><td>1일</td><td>소모품</td></tr>
+      <tr><td><strong>P005</strong></td><td>Air Filter</td><td>&#8361;8,000</td><td>1일</td><td>소모품</td></tr>
     </tbody>
   </table>
   </div>
@@ -2565,11 +2565,11 @@
     <p><strong>무엇:</strong> 정비에 사용되는 소모품/교체 부품입니다.</p>
     <p><strong>왜 필요한가:</strong> LLM이 "엔드밀을 교체하세요"라고 판단했을 때, <strong>재고가 있는지 확인</strong>해야 합니다. Part 노드는 FailureCode와 연결(REQUIRES)되어 "이 고장엔 이 부품이 필요"를 알려주고, PG의 erp_inventory와 조인하면 "지금 몇 개 남았는지"까지 답할 수 있습니다.</p>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px;">
-      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P001</div><div style="color:#ccc;">Endmill</div><div style="color:#888;font-size:11px;">&yen;45,000</div></div>
-      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P002</div><div style="color:#ccc;">Spindle Bearing</div><div style="color:#888;font-size:11px;">&yen;120,000</div></div>
-      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P003</div><div style="color:#ccc;">Coolant Filter</div><div style="color:#888;font-size:11px;">&yen;15,000</div></div>
-      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P004</div><div style="color:#ccc;">Clamp Bolt Set</div><div style="color:#888;font-size:11px;">&yen;8,000</div></div>
-      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P005</div><div style="color:#ccc;">Air Filter</div><div style="color:#888;font-size:11px;">&yen;12,000</div></div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P001</div><div style="color:#ccc;">Endmill 6mm</div><div style="color:#888;font-size:11px;">&#8361;45,000</div></div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P002</div><div style="color:#ccc;">Spindle Bearing Set</div><div style="color:#888;font-size:11px;">&#8361;280,000</div></div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P003</div><div style="color:#ccc;">Coolant 20L</div><div style="color:#888;font-size:11px;">&#8361;35,000</div></div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P004</div><div style="color:#ccc;">Clamp Bolt Set</div><div style="color:#888;font-size:11px;">&#8361;12,000</div></div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px;text-align:center;font-size:12px;"><div style="color:#f59e0b;font-weight:700;">P005</div><div style="color:#ccc;">Air Filter</div><div style="color:#888;font-size:11px;">&#8361;8,000</div></div>
     </div>
     <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">W5(5주차) 시나리오: P003 Coolant 재고 = 0 &rarr; F5 LLM이 "재고 없음, 긴급 발주 필요" 판단 테스트</p>
   </div>
@@ -3174,14 +3174,14 @@
   <h3>API 엔드포인트란?</h3>
   <div class="fn-detail">
     <p>API 엔드포인트는 <strong>"프로그램끼리 대화하는 주소"</strong>입니다. 대시보드(F6)가 센서 데이터를 가져오려면 <code>/api/f6/sensors/CNC-001</code>이라는 주소로 요청하면 됩니다. 마치 웹 주소(URL)처럼요.</p>
-    <p>우리 시스템은 <strong>FastAPI</strong>(Python 웹 프레임워크)로 12개 엔드포인트를 제공합니다. 크게 두 종류입니다:</p>
+    <p>우리 시스템은 <strong>FastAPI</strong>(Python 웹 프레임워크)로 13개 엔드포인트를 제공합니다. 크게 두 종류입니다:</p>
     <ul style="font-size:14px;line-height:2;">
       <li><strong>POST</strong> &mdash; "이 데이터를 처리해줘" (F1 수집, F2 감지, F3 동기화, F4 검색, F5 판단)</li>
       <li><strong>GET</strong> &mdash; "이 데이터를 보여줘" (이력 조회, 대시보드 표시, 헬스 체크)</li>
     </ul>
   </div>
 
-  <h3>12개 엔드포인트 상세</h3>
+  <h3>13개 엔드포인트 상세</h3>
   <div class="fn-detail">
     <h4>파이프라인 엔드포인트 (6개) &mdash; F1~F5 내부 동작</h4>
     <p style="font-size:13px;color:#999;margin-bottom:12px;">메인 루프가 내부적으로 호출합니다. HTTP로도 접근 가능하여 개별 테스트에 유용합니다.</p>
@@ -3493,10 +3493,10 @@
   <div class="oi-card">
     <div class="oi-head">
       <div class="oi-num">#11</div>
-      <div class="oi-title">프론트엔드 MVP 전략</div>
+      <div class="oi-title"><s>프론트엔드 MVP 전략</s> &rarr; React 18 + Vite SPA</div>
     </div>
-    <div class="oi-desc">Streamlit 선행 vs 바로 Next.js</div>
-    <div class="oi-meta">결정 시점: 아키텍처 설계 시 &nbsp;|&nbsp; <span class="st st-synth">Open</span></div>
+    <div class="oi-desc">SSR/SEO 불필요한 내부 관제 시스템. 페이지 2개 &rarr; React Router v6으로 충분</div>
+    <div class="oi-meta">결정 시점: Phase 2 완료 &nbsp;|&nbsp; <span class="st st-done">Decided (ADR-006)</span></div>
   </div>
 
   <h3>D. 프로젝트 관리</h3>
@@ -3771,7 +3771,7 @@ const phaseDetails={
       {text:'data-collection-strategy.md',detail:'데이터 수집 전략 — 데이터셋 기능별 매핑, 설계 원칙 (현재 2종으로 정리)'},
       {text:'required-data-summary.md',detail:'F1~F6 기능별 필요 데이터 상세 매핑표'},
       {text:'ADR-000~005',detail:'핵심 기술 의사결정 6건 (도메인, 예측, 합성, DB, 폴링, 대시보드)'},
-      {text:'open-items.md',detail:'미결사항 11건 — Phase 1에서 우선 해결할 과제 목록'}
+      {text:'open-items.md',detail:'미결사항 12건 — Phase별 해결 추적 (Phase 1에서 4건 해결)'}
     ],
     handoff:[
       {text:'EDA에서 검증할 가설',detail:'Phase 1이 데이터 탐색 단계이므로, 문서상 가설이 실제 데이터와 맞는지 확인 필요'},
@@ -3840,11 +3840,11 @@ const phaseDetails={
       {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores 7컬럼, MES 9컬럼, 참조 마스터 4종'},
       {text:'pipeline-design.md',detail:'F1→F2 매 5초 폴링, F3~F5 이벤트 트리거. 비동기 메인 루프 + process_alarm 분리'},
       {text:'api-design.md',detail:'13 엔드포인트 (F1~F5 POST 6 + F6 GET 6 + health 1). 알람 피드 엔드포인트 추가'},
-      {text:'ui-design.md',detail:'F6 대시보드 와이어프레임, 컴포넌트 8개, 폴링 전략, 색상 시스템. ADR-006(프론트 스택) 미결'},
+      {text:'ui-design.md',detail:'F6 대시보드 와이어프레임, 컴포넌트 8개, 폴링 전략, 색상 시스템. React 18 + Vite 확정 (ADR-006)'},
       {text:'maintenance_manuals.json',detail:'정비 매뉴얼 12건 합성 (DOC-001~012). 섹션별 청킹 가능, Phase 3 임베딩 대기'}
     ],
     handoff:[
-      {text:'ADR-006 프론트엔드 스택 결정',detail:'Next.js vs React+Vite vs HTML+Plotly.js. UI 구현 시작 전 결정 필요 (open-items #11)'},
+      {text:'ADR-006 프론트엔드 스택 확정',detail:'React 18 + Vite SPA로 결정 완료 (ADR-006, open-items #11 Decided)'},
       {text:'F2 상세 설계 필요',detail:'42개 센서 피처 선택, worn/unworn 라벨링 전략, 비지도 vs 준지도 결정'},
       {text:'CSV→실시간 시뮬레이터',detail:'과거 실험 CSV를 5초 간격으로 흘려보내는 F1 시뮬레이터 구조 필요'},
       {text:'Docker Compose',detail:'timescaledb-ha + neo4j:5-community + app. app 서비스는 Phase 3에서 추가'}
@@ -3945,7 +3945,7 @@ const phaseOverlayData={
       {num:'2',cls:'g',title:'정비 매뉴얼 12건 합성 완료',desc:'4 고장코드 × 3 문서유형 (교체 절차서, 점검 체크리스트, 트러블슈팅) = DOC-001~012',fix:'해결 완료: maintenance_manuals.json. Phase 3에서 임베딩 → pgvector 저장'},
       {num:'3',cls:'y',title:'CSV→실시간 시뮬레이터 미설계',desc:'파이프라인은 5초 폴링 전제인데 실제 데이터는 과거 실험 CSV. 시뮬레이터 구조가 없음',fix:'Phase 3 초반에 F1 시뮬레이터부터 구현'},
       {num:'4',cls:'g',title:'Bosch CNC 활용 미확정 (Phase 1에서 이관)',desc:'1,702 HDF5 파일. Kaggle과 조인 불가(별도 독립 데이터셋)',fix:'보관 유지, Phase 3+에서 진동 분석 시 활용 여부 판단'},
-      {num:'5',cls:'y',title:'ADR-006 프론트엔드 스택 미결정',desc:'Next.js vs React+Vite vs HTML+Plotly.js. UI 구현 시작 전 결정 필요',fix:'Phase 3 진입 시 ADR-006으로 확정 (open-items #11)'}
+      {num:'5',cls:'g',title:'ADR-006 프론트엔드 스택 확정',desc:'React 18 + Vite SPA 선택. SSR/SEO 불필요, 페이지 2개에 Next.js 과함',fix:'해결 완료: ADR-006 Decided (2026-03-16). open-items #11 Decided'}
     ]
   },
   phase3:{log:[],adr:[],gap:[]}
