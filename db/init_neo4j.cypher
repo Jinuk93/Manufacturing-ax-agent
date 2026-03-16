@@ -91,31 +91,9 @@ MERGE (f)-[:DESCRIBED_BY {relevance_score: 0.95}]->(d);
 
 // ============================================
 // 8. R3 EXPERIENCES (Equipment → FailureCode)
-//    maintenance_events에서 추출
+//    init_neo4j.py에서 PG 데이터 기준으로 자동 생성
+//    (수동 매핑 오류 방지)
 // ============================================
-// CNC-001: TOOL_WEAR, COOLANT_LOW
-MATCH (e:Equipment {equipment_id: 'CNC-001'}), (f:FailureCode {failure_code: 'TOOL_WEAR_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-01-15')}]->(f);
-MATCH (e:Equipment {equipment_id: 'CNC-001'}), (f:FailureCode {failure_code: 'COOLANT_LOW_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-01-19')}]->(f);
-
-// CNC-002: SPINDLE_OVERHEAT, TOOL_WEAR, CLAMP_PRESSURE, COOLANT_LOW
-MATCH (e:Equipment {equipment_id: 'CNC-002'}), (f:FailureCode {failure_code: 'SPINDLE_OVERHEAT_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-01-29')}]->(f);
-MATCH (e:Equipment {equipment_id: 'CNC-002'}), (f:FailureCode {failure_code: 'TOOL_WEAR_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-01-30')}]->(f);
-MATCH (e:Equipment {equipment_id: 'CNC-002'}), (f:FailureCode {failure_code: 'CLAMP_PRESSURE_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-02-06')}]->(f);
-MATCH (e:Equipment {equipment_id: 'CNC-002'}), (f:FailureCode {failure_code: 'COOLANT_LOW_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-01-26')}]->(f);
-
-// CNC-003: SPINDLE_OVERHEAT, TOOL_WEAR, COOLANT_LOW
-MATCH (e:Equipment {equipment_id: 'CNC-003'}), (f:FailureCode {failure_code: 'SPINDLE_OVERHEAT_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-02-15')}]->(f);
-MATCH (e:Equipment {equipment_id: 'CNC-003'}), (f:FailureCode {failure_code: 'TOOL_WEAR_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-02-06')}]->(f);
-MATCH (e:Equipment {equipment_id: 'CNC-003'}), (f:FailureCode {failure_code: 'COOLANT_LOW_001'})
-MERGE (e)-[:EXPERIENCES {first_occurrence: date('2024-02-02')}]->(f);
 
 // ============================================
 // 완료 확인

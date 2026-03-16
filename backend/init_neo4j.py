@@ -61,6 +61,39 @@ def create_sensor_nodes(driver):
         logger.info(f"R1 HAS_SENSOR 관계 {count}개 생성")
 
 
+def create_experiences_relations(driver):
+    """R3 EXPERIENCES (Equipment → FailureCode) — PG 데이터 기준 자동 생성
+
+    수동 매핑 대신 maintenance_events에서 설비별 고장코드를 집계하여 생성.
+    first_occurrence = 해당 설비에서 해당 고장이 처음 발생한 날짜.
+    """
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT equipment_id, failure_code, MIN(timestamp)::date AS first_date
+                FROM maintenance_events
+                WHERE failure_code IS NOT NULL AND failure_code != ''
+                GROUP BY equipment_id, failure_code
+                ORDER BY equipment_id, failure_code
+            """)
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    with driver.session() as session:
+        # 기존 EXPERIENCES 관계 삭제 후 재생성 (수동 매핑 오류 정리)
+        session.run("MATCH ()-[r:EXPERIENCES]->() DELETE r")
+
+        for eq_id, failure_code, first_date in rows:
+            session.run(
+                "MATCH (e:Equipment {equipment_id: $eid}), (f:FailureCode {failure_code: $fc}) "
+                "MERGE (e)-[:EXPERIENCES {first_occurrence: date($fd)}]->(f)",
+                eid=eq_id, fc=failure_code, fd=str(first_date)
+            )
+        logger.info(f"R3 EXPERIENCES 관계 {len(rows)}개 생성 (PG 데이터 기준)")
+
+
 def create_workorder_nodes(driver):
     """WorkOrder 노드 18개 생성 + R6 EXECUTES 관계"""
     conn = get_connection()
@@ -183,6 +216,7 @@ def main():
     driver = get_neo4j_driver()
     try:
         create_sensor_nodes(driver)
+        create_experiences_relations(driver)
         create_workorder_nodes(driver)
         create_maintenance_nodes(driver)
         verify(driver)
