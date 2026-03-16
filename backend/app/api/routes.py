@@ -9,9 +9,9 @@ from app.models.schemas import (
     SensorCollectRequest, SensorCollectResponse,
     AnomalyDetectRequest, AnomalyDetectResponse, AnomalyResult,
     AnomalyHistoryResponse,
-    ITOTSyncResponse, WorkOrderInfo, InventoryItem, MaintenanceRecord,
+    ITOTSyncRequest, ITOTSyncResponse, WorkOrderInfo, InventoryItem, MaintenanceRecord,
     GraphRAGRequest, GraphRAGResponse, RelatedPart, RelatedDocument, PastMaintenance,
-    LLMActionResponse, PartNeeded,
+    LLMActionRequest, LLMActionResponse, PartNeeded,
     DashboardSummary, EquipmentStatus,
     AlarmFeedResponse, AlarmEvent,
     HealthResponse,
@@ -64,12 +64,12 @@ async def anomaly_history(equipment_id: str):
 
 # ── F3: IT/OT 동기화 ──
 @router.post("/f3/sync", response_model=ITOTSyncResponse)
-async def sync_itot(equipment_id: str, timestamp: datetime):
+async def sync_itot(req: ITOTSyncRequest):
     """이상 감지 시 IT 데이터(MES+CMMS+ERP) 조회"""
     # TODO: 실제 3개 SQL 쿼리
     return ITOTSyncResponse(
-        equipment_id=equipment_id,
-        timestamp=timestamp,
+        equipment_id=req.equipment_id,
+        timestamp=req.timestamp,
         latest_work_order=WorkOrderInfo(
             work_order_id="WO-2024-008",
             product_type="WAX_BLOCK_6MM",
@@ -119,11 +119,11 @@ async def search_graphrag(req: GraphRAGRequest):
 
 # ── F5: LLM 판단 ──
 @router.post("/f5/generate-action", response_model=LLMActionResponse)
-async def generate_action(equipment_id: str):
+async def generate_action(req: LLMActionRequest):
     """F2+F3+F4 결과를 LLM에게 전달 → 조치 권고"""
     # TODO: 실제 LLM API 호출
     return LLMActionResponse(
-        equipment_id=equipment_id,
+        equipment_id=req.equipment_id,
         timestamp=datetime.now(),
         recommendation="REDUCE",
         confidence=0.85,

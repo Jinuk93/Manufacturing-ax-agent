@@ -13,7 +13,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 -- 설비 마스터 (3대)
 CREATE TABLE equipment (
   equipment_id   VARCHAR(7)    PRIMARY KEY,
-  equipment_type VARCHAR(20)   NOT NULL DEFAULT 'CNC_MILL',
+  equipment_type VARCHAR(30)   NOT NULL DEFAULT 'CNC Milling Machine',
   status         VARCHAR(10)   NOT NULL DEFAULT 'active',
   experiment_range VARCHAR(20)
 );
@@ -238,15 +238,16 @@ CREATE INDEX idx_maint_failure ON maintenance_events(failure_code);
 
 -- ERP 부품 재고 스냅샷
 CREATE TABLE erp_inventory (
-  snapshot_id      SERIAL        PRIMARY KEY,
-  part_id          VARCHAR(10)   NOT NULL REFERENCES parts(part_id),
-  week_label       VARCHAR(5)    NOT NULL,
-  snapshot_date    DATE          NOT NULL,
-  stock_quantity   INT           NOT NULL,
-  consumed         INT           NOT NULL DEFAULT 0,
-  reorder_triggered BOOLEAN      NOT NULL DEFAULT FALSE,
-  lead_time_days   INT           NOT NULL,
-  unit_cost        INT           NOT NULL
+  snapshot_date      DATE          NOT NULL,
+  part_id            VARCHAR(10)   NOT NULL REFERENCES parts(part_id),
+  stock_quantity     INT           NOT NULL,
+  reorder_point      INT           NOT NULL,
+  lead_time_days     INT           NOT NULL,
+  unit_cost          INT           NOT NULL,
+  weekly_consumption INT           NOT NULL DEFAULT 0,
+  reorder_triggered  BOOLEAN       NOT NULL DEFAULT FALSE,
+
+  PRIMARY KEY (snapshot_date, part_id)
 );
 
 CREATE INDEX idx_inv_part ON erp_inventory(part_id);

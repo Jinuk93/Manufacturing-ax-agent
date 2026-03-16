@@ -80,6 +80,14 @@ class ITOTSyncResponse(BaseModel):
     inventory: list[InventoryItem]
 
 
+# ── F3 IT/OT 동기화 요청 ──
+class ITOTSyncRequest(BaseModel):
+    timestamp: datetime
+    equipment_id: str
+    anomaly_score: float
+    predicted_failure_code: str
+
+
 # ── F4 GraphRAG ──
 class GraphRAGRequest(BaseModel):
     failure_code: str
@@ -120,6 +128,15 @@ class PartNeeded(BaseModel):
     in_stock: bool
 
 
+# ── F5 LLM 판단 요청 ──
+class LLMActionRequest(BaseModel):
+    equipment_id: str
+    timestamp: datetime
+    f2_result: AnomalyResult
+    f3_context: ITOTSyncResponse
+    f4_rag_result: GraphRAGResponse
+
+
 class LLMActionResponse(BaseModel):
     equipment_id: str
     timestamp: datetime
@@ -151,6 +168,7 @@ class AlarmEvent(BaseModel):
     anomaly_score: float
     predicted_failure_code: str
     confidence: float
+    severity: str  # critical / warning (프론트엔드 색상 구분용)
 
 
 class AlarmFeedResponse(BaseModel):
