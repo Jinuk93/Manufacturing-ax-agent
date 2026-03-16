@@ -134,19 +134,21 @@ def _search_related_documents(conn, failure_code: str) -> list[RelatedDocument]:
 def _search_past_maintenance(
     conn, failure_code: str, equipment_id: str
 ) -> list[PastMaintenance]:
-    """과거 동일 고장코드의 정비 이력 조회
+    """해당 설비의 과거 동일 고장코드 정비 이력 조회
 
     Neo4j R8 RESOLVES 관계의 PG 폴백.
+    설비별로 필터링하여 다른 설비의 이력이 섞이지 않도록 합니다.
     """
     sql = """
         SELECT event_id, event_type, duration_min, parts_used
         FROM maintenance_events
         WHERE failure_code = %s
+          AND equipment_id = %s
         ORDER BY timestamp DESC
         LIMIT 5
     """
     with conn.cursor() as cur:
-        cur.execute(sql, (failure_code,))
+        cur.execute(sql, (failure_code, equipment_id))
         rows = cur.fetchall()
 
     return [

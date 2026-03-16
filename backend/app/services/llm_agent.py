@@ -194,6 +194,51 @@ def _generate_reasoning(
     return " ".join(lines)
 
 
+SYSTEM_PROMPT = """당신은 CNC 밀링 머신의 예지보전 AI 에이전트입니다.
+센서 이상 감지 결과, 현재 작업 상황, 관련 정비 매뉴얼을 종합하여
+현장 기술자가 즉시 실행할 수 있는 조치를 권고합니다.
+
+판단 기준:
+- anomaly_score >= 0.8: STOP (즉시 정지) — 심각한 고장 위험
+- anomaly_score >= 0.6: REDUCE (감속 운전) — 위험하지만 여유 있음
+- anomaly_score < 0.6: MONITOR (모니터링 강화) — 주시하며 가동 유지
+
+반드시 아래 JSON 형식으로 응답하세요:
+{
+  "recommendation": "STOP" | "REDUCE" | "MONITOR",
+  "confidence": 0.0~1.0,
+  "reasoning": "판단 근거 상세 설명. 왜 이 판단을 했는지, 다른 대안은 왜 배제했는지.",
+  "action_steps": ["구체적 조치 1", "구체적 조치 2", ...],
+  "parts_needed": [{"part_id": "P001", "quantity": 1}],
+  "predicted_failure_code": "TOOL_WEAR_001",
+  "estimated_downtime_min": 30
+}
+
+주의: failure_code는 반드시 TOOL_WEAR_001, SPINDLE_OVERHEAT_001, CLAMP_PRESSURE_001, COOLANT_LOW_001 중 하나여야 합니다.
+part_id는 반드시 P001~P005 중 하나여야 합니다. 존재하지 않는 코드를 사용하지 마세요."""
+
+USER_PROMPT_TEMPLATE = """현재 상황:
+
+[F2 이상탐지 결과]
+- 설비: {equipment_id}
+- 시각: {timestamp}
+- anomaly_score: {anomaly_score}
+- 예측 고장: {predicted_failure_code}
+- 신뢰도: {confidence}
+
+[F3 비즈니스 컨텍스트]
+- 현재 작업: {work_order_info}
+- 최근 정비 이력: {maintenance_info}
+- 부품 재고: {inventory_info}
+
+[F4 GraphRAG 검색 결과]
+- 필요 부품: {related_parts}
+- 관련 매뉴얼: {related_documents}
+- 과거 동일 고장 정비: {past_maintenance}
+
+위 정보를 종합하여 조치를 권고하세요."""
+
+
 def _call_llm_api(
     f2: AnomalyResult,
     f3: ITOTSyncResponse,
@@ -201,8 +246,8 @@ def _call_llm_api(
 ) -> LLMActionResponse:
     """실제 LLM API 호출 (Phase 3 후반에 구현)
 
+    프롬프트 템플릿은 위의 SYSTEM_PROMPT + USER_PROMPT_TEMPLATE.
     TODO:
-    - 프롬프트 구성 (F2+F3+F4 결과를 구조화)
     - LLM API 호출 (temperature=0.1)
     - JSON 응답 파싱
     - 환각 검증 (failure_code, part_id 존재 확인)

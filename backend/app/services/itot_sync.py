@@ -47,8 +47,8 @@ def sync_itot_context(
         # ── 2. 정비 이력 조회 (최근 5건) ──
         maintenance = _query_maintenance(conn, equipment_id, limit=5)
 
-        # ── 3. 부품 재고 조회 ──
-        inventory = _query_inventory(conn)
+        # ── 3. 부품 재고 조회 (알람 시점 기준) ──
+        inventory = _query_inventory(conn, timestamp)
 
         logger.info(
             f"F3 동기화 완료: {equipment_id} @ {timestamp} | "
@@ -73,17 +73,23 @@ def sync_itot_context(
 def _query_work_order(
     conn, equipment_id: str, timestamp: datetime
 ) -> Optional[WorkOrderInfo]:
-    """해당 시각에 진행 중이던(또는 가장 최근) 작업지시 조회"""
+    """해당 시각에 진행 중이던 작업지시 조회
+
+    pipeline-design.md 스펙:
+    start_time <= alarm_time AND (end_time >= alarm_time OR end_time IS NULL)
+    결과 0건이면 null → work_order_note에 안내 메시지
+    """
     sql = """
         SELECT work_order_id, product_type, due_date, priority, status
         FROM mes_work_orders
         WHERE equipment_id = %s
           AND start_time <= %s
+          AND (end_time >= %s OR end_time IS NULL)
         ORDER BY start_time DESC
         LIMIT 1
     """
     with conn.cursor() as cur:
-        cur.execute(sql, (equipment_id, timestamp))
+        cur.execute(sql, (equipment_id, timestamp, timestamp))
         row = cur.fetchone()
 
     if row is None:
@@ -125,17 +131,25 @@ def _query_maintenance(
     ]
 
 
-def _query_inventory(conn) -> list[InventoryItem]:
-    """전체 부품의 최신 재고 (가장 최근 snapshot_date 기준)"""
+def _query_inventory(conn, alarm_time: datetime) -> list[InventoryItem]:
+    """알람 시점 이전의 최신 재고 스냅샷 조회
+
+    pipeline-design.md 스펙:
+    snapshot_date = MAX(snapshot_date WHERE snapshot_date <= alarm_time)
+    → W5(2/12) 알람 시 W5 재고를 반환 (P003 Coolant = 0 시나리오 테스트 가능)
+    """
     sql = """
         SELECT e.part_id, p.part_name, e.stock_quantity, e.reorder_point, e.lead_time_days
         FROM erp_inventory e
         JOIN parts p ON e.part_id = p.part_id
-        WHERE e.snapshot_date = (SELECT MAX(snapshot_date) FROM erp_inventory)
+        WHERE e.snapshot_date = (
+            SELECT MAX(snapshot_date) FROM erp_inventory
+            WHERE snapshot_date <= %s
+        )
         ORDER BY e.part_id
     """
     with conn.cursor() as cur:
-        cur.execute(sql)
+        cur.execute(sql, (alarm_time,))
         rows = cur.fetchall()
 
     return [
