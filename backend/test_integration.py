@@ -176,11 +176,20 @@ def test_spindle_overheat_scenario():
         ("DOC-004 매뉴얼 참조", any(d.manual_id == "DOC-004" for d in f4_rag.related_documents)),
     ]
 
+    all_pass = True
     for label, passed in checks:
         logger.info(f"  {'✅' if passed else '❌'} {label}")
+        if not passed:
+            all_pass = False
+    return all_pass
 
 
 if __name__ == "__main__":
-    test_w5_coolant_scenario()
-    test_spindle_overheat_scenario()
+    result1 = test_w5_coolant_scenario()
+    result2 = test_spindle_overheat_scenario()
     logger.info("\n=== 통합 테스트 완료 ===")
+
+    # CI에서 실패 감지 가능하도록 assert + exit code
+    assert result1, "W5 Coolant 시나리오 실패!"
+    assert result2, "Spindle 시나리오 실패!"
+    logger.info("모든 시나리오 통과!")

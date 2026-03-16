@@ -8,9 +8,9 @@ LLM_PROVIDER 설정:
 - "tbd": 규칙 기반 Mock (LLM 없이)
 - "openai": OpenAI GPT-4o-mini API 호출
 """
+import asyncio
 import json
 import logging
-import time
 from datetime import datetime
 from typing import Optional
 
@@ -31,7 +31,7 @@ from app.models.schemas import (
 logger = logging.getLogger(__name__)
 
 
-def generate_action(
+async def generate_action(
     f2_result: AnomalyResult,
     f3_context: ITOTSyncResponse,
     f4_rag_result: GraphRAGResponse,
@@ -43,7 +43,7 @@ def generate_action(
     """
     if settings.LLM_PROVIDER != "tbd":
         # 실제 LLM API 호출 (Phase 3 후반)
-        return _call_llm_api(f2_result, f3_context, f4_rag_result)
+        return await _call_llm_api(f2_result, f3_context, f4_rag_result)
     else:
         # 규칙 기반 판단 (LLM 없이)
         return _rule_based_action(f2_result, f3_context, f4_rag_result)
@@ -320,7 +320,7 @@ def _validate_llm_response(data: dict) -> list[str]:
     return errors
 
 
-def _call_llm_api(
+async def _call_llm_api(
     f2: AnomalyResult,
     f3: ITOTSyncResponse,
     f4: GraphRAGResponse,
@@ -362,7 +362,7 @@ def _call_llm_api(
             if validation_errors:
                 logger.warning(f"F5 환각 감지: {validation_errors}")
                 if attempt < max_retries:
-                    time.sleep(2 ** attempt)
+                    await asyncio.sleep(2 ** attempt)
                     continue  # 재시도
                 else:
                     logger.error("F5 환각 재시도 실패 — 규칙 기반 폴백")
@@ -400,7 +400,7 @@ def _call_llm_api(
                 return _rule_based_action(f2, f3, f4)
             backoff = 2 ** attempt  # 1초 → 2초 → 4초
             logger.info(f"  {backoff}초 대기 후 재시도...")
-            time.sleep(backoff)
+            await asyncio.sleep(backoff)
 
         except Exception as e:
             logger.error(f"F5 LLM 예외: {e}")

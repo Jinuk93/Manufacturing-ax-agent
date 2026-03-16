@@ -109,7 +109,7 @@ async def gen_action(req: LLMActionRequest):
         # #1 수정: llm_generate_action alias 사용
         # #3 수정: equipment_id도 로그에 명시
         logger.info(f"F5 판단 요청: {req.equipment_id}")
-        result = llm_generate_action(
+        result = await llm_generate_action(
             f2_result=req.f2_result,
             f3_context=req.f3_context,
             f4_rag_result=req.f4_rag_result,
