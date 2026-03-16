@@ -1,22 +1,27 @@
 """
-FastAPI 라우터 — 13개 엔드포인트 (mock 응답)
-Phase 3에서 실제 로직으로 교체 예정
+FastAPI 라우터 — 13개 엔드포인트
+F3/F4/F5는 실제 서비스 호출, 나머지는 mock (순차 교체 예정)
 """
+import logging
 from datetime import datetime
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.models.schemas import (
     SensorCollectRequest, SensorCollectResponse,
     AnomalyDetectRequest, AnomalyDetectResponse, AnomalyResult,
     AnomalyHistoryResponse,
-    ITOTSyncRequest, ITOTSyncResponse, WorkOrderInfo, InventoryItem, MaintenanceRecord,
-    GraphRAGRequest, GraphRAGResponse, RelatedPart, RelatedDocument, PastMaintenance,
-    LLMActionRequest, LLMActionResponse, PartNeeded,
+    ITOTSyncRequest, ITOTSyncResponse,
+    GraphRAGRequest, GraphRAGResponse,
+    LLMActionRequest, LLMActionResponse,
     DashboardSummary, EquipmentStatus,
     AlarmFeedResponse, AlarmEvent,
     HealthResponse,
 )
+from app.services.itot_sync import sync_itot_context
+from app.services.graphrag import search_graphrag
+from app.services.llm_agent import generate_action
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api")
 
 
@@ -24,7 +29,7 @@ router = APIRouter(prefix="/api")
 @router.post("/f1/collect", response_model=SensorCollectResponse)
 async def collect_sensor(req: SensorCollectRequest):
     """센서 값 수집 + 전처리 → sensor_readings INSERT"""
-    # TODO: 실제 DB INSERT + 전처리 로직
+    # TODO: simulator.py의 insert_sensor_readings 연결
     return SensorCollectResponse(
         status="ok",
         rows_inserted=1,
@@ -37,7 +42,7 @@ async def collect_sensor(req: SensorCollectRequest):
 @router.post("/f2/detect", response_model=AnomalyDetectResponse)
 async def detect_anomaly(req: AnomalyDetectRequest):
     """이상탐지 모델 추론 → anomaly_scores INSERT"""
-    # TODO: 실제 모델 추론 로직
+    # TODO: anomaly_detector.py 연결 (모델 로드 + predict)
     return AnomalyDetectResponse(
         status="ok",
         result=AnomalyResult(
@@ -62,91 +67,58 @@ async def anomaly_history(equipment_id: str):
     )
 
 
-# ── F3: IT/OT 동기화 ──
+# ── F3: IT/OT 동기화 (실제 서비스 연결) ──
 @router.post("/f3/sync", response_model=ITOTSyncResponse)
 async def sync_itot(req: ITOTSyncRequest):
     """이상 감지 시 IT 데이터(MES+CMMS+ERP) 조회"""
-    # TODO: 실제 3개 SQL 쿼리
-    return ITOTSyncResponse(
-        equipment_id=req.equipment_id,
-        timestamp=req.timestamp,
-        latest_work_order=WorkOrderInfo(
-            work_order_id="WO-2024-008",
-            product_type="WAX_BLOCK_6MM",
-            due_date=datetime(2024, 1, 22, 10, 30),
-            priority="urgent",
-            status="completed",
-        ),
-        work_order_note=None,
-        recent_maintenance=[
-            MaintenanceRecord(
-                event_id="MT-2024-007",
-                failure_code="SPINDLE_OVERHEAT_001",
-                event_type="corrective",
-                duration_min=75,
-                parts_used="P002",
-            )
-        ],
-        inventory=[
-            InventoryItem(part_id="P001", part_name="Endmill 6mm Carbide", stock_quantity=12, reorder_point=5, lead_time_days=3),
-            InventoryItem(part_id="P002", part_name="Spindle Bearing Set", stock_quantity=2, reorder_point=2, lead_time_days=7),
-            InventoryItem(part_id="P003", part_name="Coolant 20L", stock_quantity=8, reorder_point=3, lead_time_days=2),
-            InventoryItem(part_id="P004", part_name="Clamp Bolt Set", stock_quantity=9, reorder_point=4, lead_time_days=1),
-            InventoryItem(part_id="P005", part_name="Air Filter", stock_quantity=5, reorder_point=3, lead_time_days=1),
-        ],
-    )
+    try:
+        result = sync_itot_context(
+            equipment_id=req.equipment_id,
+            timestamp=req.timestamp,
+            predicted_failure_code=req.predicted_failure_code,
+        )
+        return result
+    except Exception as e:
+        logger.error(f"F3 동기화 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"F3 sync error: {e}")
 
 
-# ── F4: GraphRAG ──
+# ── F4: GraphRAG (실제 서비스 연결) ──
 @router.post("/f4/search", response_model=GraphRAGResponse)
-async def search_graphrag(req: GraphRAGRequest):
+async def search_rag(req: GraphRAGRequest):
     """Neo4j 그래프 순회 + pgvector 의미 검색"""
-    # TODO: 실제 Neo4j + pgvector 쿼리
-    return GraphRAGResponse(
-        failure_code=req.failure_code,
-        related_parts=[
-            RelatedPart(part_id="P002", part_name="Spindle Bearing Set", quantity=1, urgency="high"),
-        ],
-        related_documents=[
-            RelatedDocument(manual_id="DOC-004", title="스핀들 베어링 교체 절차서", hybrid_score=0.92),
-            RelatedDocument(manual_id="DOC-006", title="스핀들 과열 트러블슈팅 가이드", hybrid_score=0.87),
-        ],
-        past_maintenance=[
-            PastMaintenance(event_id="MT-2024-007", event_type="corrective", duration_min=75, parts_used="P002"),
-        ],
-    )
+    try:
+        result = search_graphrag(
+            failure_code=req.failure_code,
+            equipment_id=req.equipment_id,
+        )
+        return result
+    except Exception as e:
+        logger.error(f"F4 검색 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"F4 search error: {e}")
 
 
-# ── F5: LLM 판단 ──
+# ── F5: LLM 판단 (실제 서비스 연결) ──
 @router.post("/f5/generate-action", response_model=LLMActionResponse)
-async def generate_action(req: LLMActionRequest):
-    """F2+F3+F4 결과를 LLM에게 전달 → 조치 권고"""
-    # TODO: 실제 LLM API 호출
-    return LLMActionResponse(
-        equipment_id=req.equipment_id,
-        timestamp=datetime.now(),
-        recommendation="REDUCE",
-        confidence=0.85,
-        reasoning="anomaly_score 0.87, 과거 동일 고장 평균 75분 소요. 현재 urgent 작업이나 납기까지 2시간 여유 있어 감속 운전 후 정비 권장.",
-        action_steps=[
-            "feedrate를 50% 감속",
-            "현재 작업 완료까지 감속 운전 유지",
-            "작업 완료 후 DOC-004 절차에 따라 베어링 교체",
-            "P002 스핀들 베어링 1세트 준비",
-        ],
-        parts_needed=[
-            PartNeeded(part_id="P002", quantity=1, in_stock=True),
-        ],
-        predicted_failure_code="SPINDLE_OVERHEAT_001",
-        estimated_downtime_min=75,
-    )
+async def gen_action(req: LLMActionRequest):
+    """F2+F3+F4 결과를 종합하여 조치 권고"""
+    try:
+        result = generate_action(
+            f2_result=req.f2_result,
+            f3_context=req.f3_context,
+            f4_rag_result=req.f4_rag_result,
+        )
+        return result
+    except Exception as e:
+        logger.error(f"F5 판단 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"F5 action error: {e}")
 
 
 # ── F6: 대시보드 ──
 @router.get("/f6/summary", response_model=DashboardSummary)
 async def dashboard_summary():
     """CNC 3대 상태 요약"""
-    # TODO: 실제 DB 조회
+    # TODO: 실제 DB 조회 (anomaly_scores 최신값)
     now = datetime.now()
     return DashboardSummary(
         equipments=[
@@ -194,7 +166,7 @@ async def action_report(equipment_id: str):
 @router.get("/f6/alarms", response_model=AlarmFeedResponse)
 async def alarm_feed(limit: int = 20):
     """전체 알람 피드 (최근 N건)"""
-    # TODO: anomaly_scores에서 is_anomaly=true인 것 조회
+    # TODO: anomaly_scores에서 is_anomaly=true 조회
     return AlarmFeedResponse(alarms=[], total=0)
 
 
