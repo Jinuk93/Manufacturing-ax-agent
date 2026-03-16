@@ -80,6 +80,13 @@ export interface MaintenanceRecord {
   event_type: string
   duration_min: number
   parts_used?: string
+  event_time?: string
+}
+
+// F2 — 이상탐지 이력
+export interface AnomalyHistoryResponse {
+  equipment_id: string
+  history: AnomalyResult[]
 }
 
 // F6 — 센서 시계열
@@ -118,6 +125,23 @@ export interface WorkOrderOverlayResponse {
   equipment_id: string
   work_order?: WorkOrderDetail
   inventory: InventoryItem[]
+  recent_maintenance?: MaintenanceRecord[]
+}
+
+// 헬스 체크
+export interface HealthResponse {
+  status: string
+  postgres: boolean
+  neo4j: boolean
+  timestamp: string
+}
+
+// F4 — GraphRAG 검색 응답 (참조 문서용)
+export interface GraphRAGResponse {
+  failure_code: string
+  related_documents: RelatedDocument[]
+  related_parts: { part_id: string; part_name: string; quantity: number; urgency: string }[]
+  past_maintenance: { event_id: string; event_type: string; duration_min: number; parts_used?: string }[]
 }
 
 // 챗봇
