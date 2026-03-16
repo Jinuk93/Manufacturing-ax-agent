@@ -1078,7 +1078,7 @@
 
     <h3>실제 시나리오로 따라가 보기</h3>
     <div class="arch-card">
-      <p style="font-size:13px;color:#ddd;margin-bottom:12px;">CNC-002에서 스핀들 진동이 발생하는 상황을 6단계로 추적합니다.</p>
+      <p style="font-size:13px;color:#ddd;margin-bottom:12px;">CNC-002에서 스핀들 과열이 발생하는 상황을 6단계로 추적합니다.</p>
       <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:16px;font-size:13px;color:#ddd;line-height:2.2;">
         <span style="color:#f59e0b;font-weight:800;">08:00:00</span> <strong>F1</strong>이 CNC-002의 센서 42개 값을 읽어 DB에 저장<br>
         <span style="color:#f59e0b;font-weight:800;">08:00:05</span> F1 반복. <strong>F2</strong>가 최근 30초 데이터를 분석 &mdash; <span style="color:#4ade80;">정상</span><br>
@@ -1137,8 +1137,8 @@
           <p style="font-size:13px;color:#bbb;margin:0;">worn 상태에서 X1_CurrentFeedback이 unworn 대비 <strong>47% 감소</strong>. 마모가 진행되면 절삭 저항이 줄어 전류가 지속적으로 하락합니다.</p>
         </div>
         <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
-          <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">SPINDLE_VIBR_004 &mdash; 스핀들 진동</p>
-          <p style="font-size:13px;color:#bbb;margin:0;">feedrate=20(고속) + worn인 exp07, exp16이 <strong>중단</strong>됨. 고속 가공 시 S1_OutputCurrent가 상승하며 베어링 마찰 및 진동이 누적됩니다.</p>
+          <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">SPINDLE_OVERHEAT_001 &mdash; 스핀들 과열</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">feedrate=20(고속) + worn인 exp07, exp16이 <strong>중단</strong>됨. 고속 가공 시 S1_OutputCurrent가 상승하며 베어링 마찰열이 누적됩니다.</p>
         </div>
         <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
           <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">CLAMP_PRESSURE_001 &mdash; 클램프 이상</p>
@@ -1176,7 +1176,7 @@
         </div>
       </div>
       <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px 16px;margin-top:12px;">
-        <p style="font-size:13px;margin:0;"><strong>현실의 문제:</strong> 대부분의 공장에서 OT(SCADA)와 IT(MES/ERP)는 <strong>서로 다른 시스템, 다른 DB, 다른 부서</strong>가 관리합니다. "스핀들 진동!"이라는 알람이 울려도, "지금 이 설비가 긴급 작업 중인지"를 확인하려면 MES 시스템에 별도로 로그인해야 합니다. F3은 이 <strong>칸막이를 허물어</strong> 한 번에 합칩니다.</p>
+        <p style="font-size:13px;margin:0;"><strong>현실의 문제:</strong> 대부분의 공장에서 OT(SCADA)와 IT(MES/ERP)는 <strong>서로 다른 시스템, 다른 DB, 다른 부서</strong>가 관리합니다. "스핀들 과열!"이라는 알람이 울려도, "지금 이 설비가 긴급 작업 중인지"를 확인하려면 MES 시스템에 별도로 로그인해야 합니다. F3은 이 <strong>칸막이를 허물어</strong> 한 번에 합칩니다.</p>
       </div>
     </div>
 
@@ -1202,11 +1202,11 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div style="background:rgba(239,68,68,0.06);border-radius:8px;padding:12px 16px;">
           <p style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:4px;">F3 없이 (OT만)</p>
-          <p style="font-size:13px;margin:0;">"SPINDLE_VIBR_004 감지! 즉시 정지하세요!"<br><span style="color:#888;">(근데 지금 urgent 작업 중인데... 부품은 있는 건가...?)</span></p>
+          <p style="font-size:13px;margin:0;">"SPINDLE_OVERHEAT_001 감지! 즉시 정지하세요!"<br><span style="color:#888;">(근데 지금 urgent 작업 중인데... 부품은 있는 건가...?)</span></p>
         </div>
         <div style="background:rgba(74,222,128,0.06);border-radius:8px;padding:12px 16px;">
           <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:4px;">F3 있으면 (OT + IT)</p>
-          <p style="font-size:13px;margin:0;">"SPINDLE_VIBR_004 감지!<br>현재: urgent 작업, 납기 2시간 뒤<br>재고: P002 베어링 2세트 있음<br>이력: 과거 같은 고장 정비 평균 75분"</p>
+          <p style="font-size:13px;margin:0;">"SPINDLE_OVERHEAT_001 감지!<br>현재: urgent 작업, 납기 2시간 뒤<br>재고: P002 베어링 2세트 있음<br>이력: 과거 같은 고장 정비 평균 75분"</p>
         </div>
       </div>
       <p style="font-size:14px;color:#d4d4d4;margin-top:12px;">F3의 핵심은 <strong>시간 기준 조인</strong>입니다. OT(센서)는 100ms~5초 간격의 연속 데이터이고, IT(작업/정비/재고)는 비정기 이벤트 데이터입니다. 이상 감지 시점의 timestamp를 기준으로 "그 시간에 진행 중이던 작업", "최근 정비 이력", "현재 부품 재고"를 각각 쿼리하여 하나의 컨텍스트로 합칩니다.</p>
@@ -1226,7 +1226,7 @@
 
     <div class="arch-card">
       <h4 style="margin-top:0;">왜 온톨로지가 필요한가?</h4>
-      <p>"SPINDLE_VIBR_004가 발생했다"는 사실만으로는 부족합니다. LLM이 판단하려면:</p>
+      <p>"SPINDLE_OVERHEAT_001가 발생했다"는 사실만으로는 부족합니다. LLM이 판단하려면:</p>
       <ul style="font-size:13px;padding-left:20px;line-height:2;">
         <li>"이 고장을 고치려면 <strong>어떤 부품</strong>이 필요한가?" &rarr; P002 스핀들 베어링</li>
         <li>"<strong>매뉴얼</strong>에 교체 절차가 있는가?" &rarr; DOC-004, DOC-005, DOC-006</li>
@@ -1267,7 +1267,7 @@
       <h4 style="color:#a78bfa;margin-top:12px;">1단계 &mdash; Neo4j 그래프 순회 (구조적 검색)</h4>
       <p>고장코드에서 출발하여 <strong>관계를 타고 3단계</strong>까지 탐색합니다:</p>
       <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin:8px 0;font-family:monospace;font-size:12px;color:#60a5fa;line-height:2;">
-        SPINDLE_VIBR_004<br>
+        SPINDLE_OVERHEAT_001<br>
         &nbsp;&nbsp;├─ REQUIRES &rarr; <span style="color:#ddd;">P002 (스핀들 베어링, 수량 1, urgency: high)</span><br>
         &nbsp;&nbsp;├─ DESCRIBED_BY &rarr; <span style="color:#ddd;">DOC-004 (교체 절차서), DOC-005 (체크리스트), DOC-006 (트러블슈팅)</span><br>
         &nbsp;&nbsp;└─ RESOLVES &larr; <span style="color:#ddd;">MT-2024-007 (75분, P002 1세트 소모), MT-2024-016 (60분)</span>
@@ -1277,7 +1277,7 @@
       <h4 style="color:#a78bfa;margin-top:16px;">2단계 &mdash; pgvector 의미 검색 (정밀 검색)</h4>
       <p>1단계에서 좁혀진 매뉴얼 3건(DOC-010~012) 안에서 <strong>"베어링 교체 절차"</strong> 같은 구체적 섹션을 벡터 유사도로 찾습니다.</p>
       <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin:8px 0;font-family:monospace;font-size:12px;color:#60a5fa;line-height:2;">
-        검색어: "스핀들 진동 시 베어링 교체 방법"<br>
+        검색어: "스핀들 과열 시 베어링 교체 방법"<br>
         &nbsp;&nbsp;1위: DOC-010 섹션3 "교체 절차" <span style="color:#4ade80;">(cosine=0.92)</span><br>
         &nbsp;&nbsp;2위: DOC-012 섹션2 "조치 방법" <span style="color:#4ade80;">(cosine=0.87)</span><br>
         &nbsp;&nbsp;3위: DOC-011 섹션4 "판정 기준" <span style="color:#fbbf24;">(cosine=0.71)</span>
@@ -1289,7 +1289,7 @@
         <span class="fn-data-tag db">DB: Neo4j (순회) + document_embeddings (벡터)</span>
         <span class="fn-data-tag output">출력: 필요 부품 + 매뉴얼 섹션 + 과거 정비 사례</span>
       </div>
-      <p class="fn-sub"><strong>이게 없으면:</strong> LLM이 "스핀들 진동이면 일반적으로..."라고 답합니다. 우리 설비, 우리 매뉴얼에 맞는 답이 아닙니다.</p>
+      <p class="fn-sub"><strong>이게 없으면:</strong> LLM이 "스핀들 과열이면 일반적으로..."라고 답합니다. 우리 설비, 우리 매뉴얼에 맞는 답이 아닙니다.</p>
     </div>
   </div>
 
@@ -1319,7 +1319,7 @@
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:8px 0;">
         <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;font-size:12px;">
           <div style="color:#f59e0b;font-weight:700;margin-bottom:4px;">F2 이상 정보</div>
-          <div style="color:#ddd;">score: 0.87<br>고장: SPINDLE_VIBR_004<br>확신도: 87%</div>
+          <div style="color:#ddd;">score: 0.87<br>고장: SPINDLE_OVERHEAT_001<br>확신도: 87%</div>
         </div>
         <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;font-size:12px;">
           <div style="color:#ef4444;font-weight:700;margin-bottom:4px;">F3 비즈니스 상황</div>
@@ -1641,7 +1641,7 @@
     <thead><tr><th>코드</th><th>설명</th><th>연관 부품</th><th>심각도</th></tr></thead>
     <tbody>
       <tr><td><strong>TOOL_WEAR_001</strong></td><td>엔드밀 점진 마모</td><td>P001 Endmill</td><td>Medium</td></tr>
-      <tr><td><strong>SPINDLE_VIBR_004</strong></td><td>스핀들 진동</td><td>P002 Bearing Set</td><td>High</td></tr>
+      <tr><td><strong>SPINDLE_OVERHEAT_001</strong></td><td>스핀들 과열</td><td>P002 Bearing Set</td><td>High</td></tr>
       <tr><td><strong>CLAMP_PRESSURE_001</strong></td><td>클램프 압력 이상</td><td>P004 Clamp Bolt</td><td>Medium</td></tr>
       <tr><td><strong>COOLANT_LOW_001</strong></td><td>냉각수 부족</td><td>P003 Coolant</td><td>Low</td></tr>
     </tbody>
@@ -2183,8 +2183,8 @@
         <p style="font-size:12px;color:#888;margin:0;">공구 마모 &mdash; 가장 흔한 고장. 엔드밀 교체 필요</p>
       </div>
       <div style="background:rgba(239,68,68,0.08);border-radius:8px;padding:10px 14px;">
-        <p style="font-size:13px;color:#ef4444;font-weight:700;margin-bottom:2px;">SPINDLE_VIBR_004</p>
-        <p style="font-size:12px;color:#888;margin:0;">스핀들 진동 &mdash; 베어링 마모 또는 진동 이상</p>
+        <p style="font-size:13px;color:#ef4444;font-weight:700;margin-bottom:2px;">SPINDLE_OVERHEAT_001</p>
+        <p style="font-size:12px;color:#888;margin:0;">주축 과열 &mdash; 베어링 마모 또는 냉각 부족</p>
       </div>
       <div style="background:rgba(239,68,68,0.08);border-radius:8px;padding:10px 14px;">
         <p style="font-size:13px;color:#ef4444;font-weight:700;margin-bottom:2px;">CLAMP_PRESSURE_001</p>
@@ -2259,7 +2259,7 @@
         <span class="arch-rel-name">R3 EXPERIENCES</span>
         <span style="font-size:12px;color:#999;">Equipment &rarr; FailureCode &middot; N:M</span>
       </div>
-      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "CNC-002에서 SPINDLE_VIBR_004가 이전에도 발생한 적 있나?" &mdash; 설비별 고장 이력을 추적합니다. 반복 고장이면 근본 원인 분석이 필요하다는 신호입니다.</p>
+      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "CNC-002에서 SPINDLE_OVERHEAT_001가 이전에도 발생한 적 있나?" &mdash; 설비별 고장 이력을 추적합니다. 반복 고장이면 근본 원인 분석이 필요하다는 신호입니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -2275,7 +2275,7 @@
         <span class="arch-rel-name">R5 DESCRIBED_BY</span>
         <span style="font-size:12px;color:#999;">FailureCode &rarr; Document &middot; N:M</span>
       </div>
-      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "SPINDLE_VIBR_004의 정비 절차가 적힌 매뉴얼은?" &mdash; LLM에게 근거 문서를 제공하여 환각을 방지합니다. <span style="color:#888;">속성: relevance_score(관련도). 이게 GraphRAG의 "Graph" 부분입니다.</span></p>
+      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "SPINDLE_OVERHEAT_001의 정비 절차가 적힌 매뉴얼은?" &mdash; LLM에게 근거 문서를 제공하여 환각을 방지합니다. <span style="color:#888;">속성: relevance_score(관련도). 이게 GraphRAG의 "Graph" 부분입니다.</span></p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -2338,7 +2338,7 @@
     <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px 16px;">
       <p style="font-size:14px;font-weight:700;color:#f59e0b;margin-bottom:6px;">경로 3 : 고장 &rarr; 정비 매뉴얼 &rarr; 의미 검색</p>
       <p style="font-family:monospace;font-size:13px;color:#60a5fa;margin-bottom:4px;">FailureCode &mdash;DESCRIBED_BY&rarr; Document &mdash;(pgvector)&rarr; 유사 청크 검색</p>
-      <p style="font-size:12px;color:#888;margin:0;"><strong>용도:</strong> "SPINDLE_VIBR_004 관련 매뉴얼 3건을 찾고, 그 중 '베어링 교체 절차' 섹션을 LLM에게 전달합니다."</p>
+      <p style="font-size:12px;color:#888;margin:0;"><strong>용도:</strong> "SPINDLE_OVERHEAT_001 관련 매뉴얼 3건을 찾고, 그 중 '베어링 교체 절차' 섹션을 LLM에게 전달합니다."</p>
     </div>
   </div>
 
@@ -2365,11 +2365,11 @@
     <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin-top:12px;font-family:monospace;font-size:12px;color:#ccc;line-height:1.8;">
       <span style="color:#888;"># maintenance_events 테이블 (FK를 가진 쪽)</span><br>
       MT-001 | failure_code: <span style="color:#f59e0b;">TOOL_WEAR_001</span> &larr; "failure_codes 테이블 가서 찾아봐!"<br>
-      MT-002 | failure_code: <span style="color:#f59e0b;">SPINDLE_VIBR_004</span><br>
+      MT-002 | failure_code: <span style="color:#f59e0b;">SPINDLE_OVERHEAT_001</span><br>
       <br>
       <span style="color:#888;"># failure_codes 테이블 (PK를 가진 원본)</span><br>
       <span style="color:#60a5fa;">TOOL_WEAR_001</span> (PK) | 설명: 엔드밀 마모 &larr; 여기에 진짜 정보가 있음<br>
-      <span style="color:#60a5fa;">SPINDLE_VIBR_004</span> (PK) | 설명: 스핀들 진동
+      <span style="color:#60a5fa;">SPINDLE_OVERHEAT_001</span> (PK) | 설명: 스핀들 과열
     </div>
     <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">FK 덕분에 "MT-001 이벤트는 어떤 고장이야?" &rarr; failure_codes 테이블에서 바로 찾을 수 있습니다. 데이터를 중복 저장하지 않으면서도 연결하는 방법이에요.</p>
   </div>
@@ -2624,7 +2624,7 @@
       equipment_id: CNC-001<br>
       anomaly_score: <span style="color:#ef4444;">0.87</span> &larr; 1에 가까울수록 이상<br>
       is_anomaly: <span style="color:#ef4444;">true</span><br>
-      predicted_failure_code: <span style="color:#ef4444;">SPINDLE_VIBR_004</span>
+      predicted_failure_code: <span style="color:#ef4444;">SPINDLE_OVERHEAT_001</span>
     </div>
     <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">is_anomaly가 true이면 &rarr; F3&rarr;F4&rarr;F5 이벤트 트리거가 발동합니다.</p>
   </div>
@@ -2684,7 +2684,7 @@
   <div class="arch-card">
     <h4><span style="color:#f59e0b;font-size:13px;margin-right:6px;">10</span> document_embeddings &mdash; 매뉴얼 벡터 검색</h4>
     <p><strong>무엇:</strong> 정비 매뉴얼 12건의 텍스트를 섹션별로 쪼개고(청킹), 각 섹션을 <strong>숫자 벡터(768차원)</strong>로 변환하여 저장합니다.</p>
-    <p><strong>왜 필요한가:</strong> "스핀들 진동 시 베어링 교체 절차"를 찾을 때, 키워드 검색("스핀들")만으로는 정확도가 낮습니다. 벡터로 변환하면 <strong>"진동 발생 시 어떻게 하나요?"</strong>처럼 자연어로 질문해도 의미가 비슷한 섹션을 찾을 수 있습니다.</p>
+    <p><strong>왜 필요한가:</strong> "스핀들 과열 시 베어링 교체 절차"를 찾을 때, 키워드 검색("스핀들")만으로는 정확도가 낮습니다. 벡터로 변환하면 <strong>"과열 시 어떻게 하나요?"</strong>처럼 자연어로 질문해도 의미가 비슷한 섹션을 찾을 수 있습니다.</p>
     <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-top:8px;line-height:1.8;">
       <span style="color:#888;"># 예시: DOC-004의 "3. 교체 절차" 섹션</span><br>
       chunk_id: DOC-004-3<br>
