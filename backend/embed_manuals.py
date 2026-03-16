@@ -2,7 +2,7 @@
 매뉴얼 임베딩 — maintenance_manuals.json → pgvector INSERT
 
 1. JSON에서 12건 × N섹션 = 청크 추출
-2. sentence-transformers로 벡터 변환 (768차원)
+2. sentence-transformers로 벡터 변환 (384차원)
 3. PostgreSQL document_embeddings 테이블에 INSERT
 
 사용법:
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 PROJECT_ROOT = Path(__file__).parent.parent
 MANUALS_PATH = PROJECT_ROOT / "data" / "processed" / "it-data" / "maintenance_manuals.json"
 
-# 임베딩 모델 (768차원, 다국어 지원, 로컬 무료)
+# 임베딩 모델 (384차원, 다국어 지원, 로컬 무료)
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
 
@@ -69,7 +69,7 @@ def load_manuals() -> list[dict]:
 
 
 def generate_embeddings(chunks: list[dict]) -> np.ndarray:
-    """sentence-transformers로 벡터 생성 (768차원)"""
+    """sentence-transformers로 벡터 생성 (384차원)"""
     from sentence_transformers import SentenceTransformer
 
     logger.info(f"모델 로드 중: {MODEL_NAME}")
@@ -149,12 +149,12 @@ def verify():
             query_vec = model.encode("스핀들 과열 시 베어링 교체 방법", normalize_embeddings=True)
             vec_str = "[" + ",".join(str(v) for v in query_vec.tolist()) + "]"
 
-            cur.execute(f"""
-                SELECT chunk_id, title, 1 - (embedding <=> '{vec_str}'::vector) AS similarity
+            cur.execute("""
+                SELECT chunk_id, title, 1 - (embedding <=> %s::vector) AS similarity
                 FROM document_embeddings
-                ORDER BY embedding <=> '{vec_str}'::vector
+                ORDER BY embedding <=> %s::vector
                 LIMIT 5
-            """)
+            """, (vec_str, vec_str))
             for row in cur.fetchall():
                 logger.info(f"  {row[0]} (sim={row[2]:.3f}): {row[1]}")
 
