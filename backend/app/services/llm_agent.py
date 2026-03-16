@@ -4,9 +4,11 @@ F5 LLM 자율 판단 — F2+F3+F4 결과를 종합하여 조치 권고
 입력: 이상 정보(F2) + 비즈니스 컨텍스트(F3) + 지식 검색(F4)
 출력: recommendation(STOP/REDUCE/MONITOR) + action_steps + reasoning
 
-Phase 3 초기: 규칙 기반 Mock (LLM API 연동 전)
-Phase 3 후반: 실제 LLM API 호출로 전환
+LLM_PROVIDER 설정:
+- "tbd": 규칙 기반 Mock (LLM 없이)
+- "openai": OpenAI GPT-4o-mini API 호출
 """
+import json
 import logging
 from datetime import datetime
 from typing import Optional
@@ -239,21 +241,156 @@ USER_PROMPT_TEMPLATE = """현재 상황:
 위 정보를 종합하여 조치를 권고하세요."""
 
 
+def _build_user_prompt(f2: AnomalyResult, f3: ITOTSyncResponse, f4: GraphRAGResponse) -> str:
+    """F2+F3+F4 결과를 USER_PROMPT_TEMPLATE에 채움"""
+    # 작업 정보
+    if f3.latest_work_order:
+        wo = f3.latest_work_order
+        work_order_info = f"{wo.work_order_id} (priority={wo.priority}, 납기={wo.due_date}, status={wo.status})"
+    else:
+        work_order_info = f"없음 ({f3.work_order_note or '해당 시각에 작업 없음'})"
+
+    # 정비 이력
+    maint_lines = []
+    for m in f3.recent_maintenance[:3]:
+        maint_lines.append(f"{m.event_id}: {m.event_type}, {m.duration_min}분, 부품={m.parts_used or '없음'}")
+    maintenance_info = "\n".join(maint_lines) if maint_lines else "최근 이력 없음"
+
+    # 재고
+    inv_lines = []
+    for i in f3.inventory:
+        status = "⚠️ 부족" if i.stock_quantity <= i.reorder_point else "OK"
+        inv_lines.append(f"{i.part_id}({i.part_name}): {i.stock_quantity}개 [{status}]")
+    inventory_info = "\n".join(inv_lines)
+
+    # F4 부품
+    parts_lines = [f"{p.part_id}({p.part_name}): {p.quantity}개, urgency={p.urgency}" for p in f4.related_parts]
+    related_parts = "\n".join(parts_lines) if parts_lines else "없음"
+
+    # F4 문서
+    doc_lines = [f"{d.manual_id}: {d.title} (score={d.hybrid_score})" for d in f4.related_documents]
+    related_documents = "\n".join(doc_lines) if doc_lines else "없음"
+
+    # F4 과거 정비
+    past_lines = [f"{m.event_id}: {m.event_type}, {m.duration_min}분" for m in f4.past_maintenance]
+    past_maintenance = "\n".join(past_lines) if past_lines else "없음"
+
+    return USER_PROMPT_TEMPLATE.format(
+        equipment_id=f2.equipment_id,
+        timestamp=f2.timestamp,
+        anomaly_score=f2.anomaly_score,
+        predicted_failure_code=f2.predicted_failure_code or "UNKNOWN",
+        confidence=f2.confidence or 0.0,
+        work_order_info=work_order_info,
+        maintenance_info=maintenance_info,
+        inventory_info=inventory_info,
+        related_parts=related_parts,
+        related_documents=related_documents,
+        past_maintenance=past_maintenance,
+    )
+
+
+# 유효한 코드 목록 (환각 검증용)
+VALID_FAILURE_CODES = {"TOOL_WEAR_001", "SPINDLE_OVERHEAT_001", "CLAMP_PRESSURE_001", "COOLANT_LOW_001"}
+VALID_PART_IDS = {"P001", "P002", "P003", "P004", "P005"}
+
+
+def _validate_llm_response(data: dict) -> list[str]:
+    """LLM 응답의 환각 검증 — 존재하지 않는 코드 감지"""
+    errors = []
+    fc = data.get("predicted_failure_code", "")
+    if fc and fc not in VALID_FAILURE_CODES:
+        errors.append(f"존재하지 않는 failure_code: {fc}")
+
+    for part in data.get("parts_needed", []):
+        pid = part.get("part_id", "")
+        if pid and pid not in VALID_PART_IDS:
+            errors.append(f"존재하지 않는 part_id: {pid}")
+
+    rec = data.get("recommendation", "")
+    if rec not in ("STOP", "REDUCE", "MONITOR"):
+        errors.append(f"유효하지 않은 recommendation: {rec}")
+
+    return errors
+
+
 def _call_llm_api(
     f2: AnomalyResult,
     f3: ITOTSyncResponse,
     f4: GraphRAGResponse,
+    max_retries: int = 2,
 ) -> LLMActionResponse:
-    """실제 LLM API 호출 (Phase 3 후반에 구현)
+    """OpenAI GPT-4o-mini API 호출
 
-    프롬프트 템플릿은 위의 SYSTEM_PROMPT + USER_PROMPT_TEMPLATE.
-    TODO:
-    - LLM API 호출 (temperature=0.1)
-    - JSON 응답 파싱
-    - 환각 검증 (failure_code, part_id 존재 확인)
-    - 재시도 로직 (E4, E6 에러 대응)
+    에러 대응 (pipeline-design.md E4, E6):
+    - E4 타임아웃/429: 최대 max_retries회 재시도
+    - E6 환각: failure_code/part_id 검증 → 실패 시 재시도
     """
-    raise NotImplementedError(
-        f"LLM API 연동은 Phase 3 후반에 구현 예정. "
-        f"현재 config.LLM_PROVIDER={settings.LLM_PROVIDER}"
-    )
+    import openai
+
+    client = openai.OpenAI()  # OPENAI_API_KEY 환경변수에서 자동 로드
+
+    user_prompt = _build_user_prompt(f2, f3, f4)
+
+    for attempt in range(max_retries + 1):
+        try:
+            logger.info(f"F5 LLM 호출 (시도 {attempt + 1}/{max_retries + 1})")
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=settings.TEMPERATURE,
+                response_format={"type": "json_object"},
+                timeout=30,
+            )
+
+            raw_text = response.choices[0].message.content
+            data = json.loads(raw_text)
+
+            # 환각 검증 (E6)
+            validation_errors = _validate_llm_response(data)
+            if validation_errors:
+                logger.warning(f"F5 환각 감지: {validation_errors}")
+                if attempt < max_retries:
+                    continue  # 재시도
+                else:
+                    logger.error("F5 환각 재시도 실패 — 규칙 기반 폴백")
+                    return _rule_based_action(f2, f3, f4)
+
+            # 부품 재고 확인 (LLM 응답의 parts_needed에 in_stock 추가)
+            parts_needed = []
+            for part in data.get("parts_needed", []):
+                pid = part.get("part_id", "")
+                qty = part.get("quantity", 1)
+                inv_item = next((i for i in f3.inventory if i.part_id == pid), None)
+                in_stock = inv_item is not None and inv_item.stock_quantity > 0
+                parts_needed.append(PartNeeded(part_id=pid, quantity=qty, in_stock=in_stock))
+
+            result = LLMActionResponse(
+                equipment_id=f2.equipment_id,
+                timestamp=datetime.now(),
+                recommendation=data.get("recommendation", "MONITOR"),
+                confidence=float(data.get("confidence", 0.5)),
+                reasoning=data.get("reasoning", ""),
+                action_steps=data.get("action_steps", []),
+                parts_needed=parts_needed,
+                predicted_failure_code=data.get("predicted_failure_code", f2.predicted_failure_code or "UNKNOWN"),
+                estimated_downtime_min=data.get("estimated_downtime_min"),
+            )
+
+            logger.info(f"F5 LLM 판단 완료: {result.recommendation} (confidence={result.confidence})")
+            return result
+
+        except (openai.APITimeoutError, openai.RateLimitError) as e:
+            # E4: 타임아웃/429 → 재시도
+            logger.warning(f"F5 LLM API 오류 (시도 {attempt + 1}): {e}")
+            if attempt >= max_retries:
+                logger.error("F5 LLM 재시도 실패 — 규칙 기반 폴백")
+                return _rule_based_action(f2, f3, f4)
+
+        except Exception as e:
+            logger.error(f"F5 LLM 예외: {e}")
+            return _rule_based_action(f2, f3, f4)
