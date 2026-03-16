@@ -1,0 +1,47 @@
+# Manufacturing AX Agent — Docker Compose
+# PostgreSQL (TimescaleDB + pgvector) + Neo4j
+# 실행: docker-compose up -d
+
+services:
+  # PostgreSQL + TimescaleDB + pgvector
+  postgres:
+    image: timescale/timescaledb-ha:pg16
+    container_name: ax-postgres
+    environment:
+      POSTGRES_DB: ax_agent
+      POSTGRES_USER: ax_user
+      POSTGRES_PASSWORD: ax_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/home/postgres/pgdata/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ax_user -d ax_agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Neo4j (온톨로지 지식 그래프)
+  neo4j:
+    image: neo4j:5-community
+    container_name: ax-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/ax_password
+      NEO4J_PLUGINS: '["apoc"]'
+    ports:
+      - "7474:7474"   # 브라우저 UI
+      - "7687:7687"   # Bolt 프로토콜
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  neo4j_data:
