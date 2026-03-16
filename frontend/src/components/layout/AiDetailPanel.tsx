@@ -1,33 +1,36 @@
 // ============================================================
 // AiDetailPanel — AI 분석 결과 패널 (320px)
-// 이상 점수 게이지 + AI 조치 리포트 + GraphRAG 근거 문서 + 판단 투명성
+// F2 이상점수 게이지 + F5 LLM 조치 리포트 + 부품 재고 현황
 // ============================================================
 
 import { useQuery } from '@tanstack/react-query'
 import { useDashboardStore } from '@/stores/dashboardStore'
-import { getEquipmentDetail, getRelatedDocuments } from '@/lib/api/endpoints'
+import { getActionReport, getEquipmentAnomaly } from '@/lib/api/endpoints'
 import type { ActionType } from '@/types'
 
 const ACTION_COLORS: Record<ActionType, string> = {
   STOP:    'var(--red5)',
   REDUCE:  'var(--yellow5)',
   MONITOR: 'var(--blue4)',
-  NORMAL:  'var(--green5)',
 }
 
 export default function AiDetailPanel() {
   const { selectedEquipmentId } = useDashboardStore()
 
-  const { data: detail } = useQuery({
-    queryKey: ['equipment-detail', selectedEquipmentId],
-    queryFn: () => getEquipmentDetail(selectedEquipmentId!),
+  const { data: anomaly } = useQuery({
+    queryKey: ['anomaly', selectedEquipmentId],
+    queryFn: () => getEquipmentAnomaly(selectedEquipmentId!),
     enabled: !!selectedEquipmentId,
+    refetchInterval: 5000,
+    retry: false,
   })
 
-  const { data: documents } = useQuery({
-    queryKey: ['related-docs', selectedEquipmentId],
-    queryFn: () => getRelatedDocuments(selectedEquipmentId!),
+  const { data: actionReport, isLoading: actionLoading } = useQuery({
+    queryKey: ['action-report', selectedEquipmentId],
+    queryFn: () => getActionReport(selectedEquipmentId!),
     enabled: !!selectedEquipmentId,
+    retry: false,
+    staleTime: 30_000,     // 30초 캐시 — LLM 호출 비용 절감
   })
 
   if (!selectedEquipmentId) {
@@ -47,6 +50,10 @@ export default function AiDetailPanel() {
     )
   }
 
+  const recommendation = actionReport?.recommendation ?? 'MONITOR'
+  const actionColor = ACTION_COLORS[recommendation]
+  const score = anomaly?.anomaly_score ?? 0
+
   return (
     <div
       className="flex flex-col flex-shrink-0 overflow-y-auto"
@@ -56,7 +63,7 @@ export default function AiDetailPanel() {
         borderRight: '2px solid var(--border-mid)',
       }}
     >
-      {/* 그룹 구분선 */}
+      {/* 헤더 */}
       <div
         className="flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider"
         style={{
@@ -73,102 +80,122 @@ export default function AiDetailPanel() {
 
       <div className="p-3 space-y-4">
         {/* 이상 점수 게이지 */}
-        {detail && (
-          <div>
-            <div className="flex justify-between items-baseline mb-1">
-              <span className="text-xs" style={{ color: 'var(--gray4)' }}>
-                이상 점수
-              </span>
-              <span
-                className="font-mono text-2xl font-bold"
-                style={{ color: ACTION_COLORS[detail.action] }}
-              >
-                {(detail.timestamp ? 0.87 : 0).toFixed(2)}
-              </span>
-            </div>
-            <div
-              className="h-1.5 rounded-full overflow-hidden"
-              style={{ background: 'var(--dg3)' }}
+        <div>
+          <div className="flex justify-between items-baseline mb-1">
+            <span className="text-xs" style={{ color: 'var(--gray4)' }}>
+              이상 점수
+            </span>
+            <span
+              className="font-mono text-2xl font-bold"
+              style={{ color: actionColor }}
             >
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: '87%',
-                  background: ACTION_COLORS[detail.action],
-                }}
-              />
-            </div>
+              {score.toFixed(2)}
+            </span>
           </div>
-        )}
-
-        {/* AI 조치 리포트 */}
-        {detail && (
-          <div>
+          <div
+            className="h-1.5 rounded-full overflow-hidden"
+            style={{ background: 'var(--dg3)' }}
+          >
             <div
-              className="text-xs font-semibold mb-1.5"
-              style={{ color: 'var(--gray4)' }}
-            >
-              AI 조치 판단
-            </div>
-            <div
-              className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold mb-2"
+              className="h-full rounded-full transition-all"
               style={{
-                background: `${ACTION_COLORS[detail.action]}20`,
-                color: ACTION_COLORS[detail.action],
-                border: `1px solid ${ACTION_COLORS[detail.action]}40`,
+                width: `${(score * 100).toFixed(0)}%`,
+                background: actionColor,
               }}
-            >
-              {detail.action}
-            </div>
-            <p className="text-xs leading-relaxed" style={{ color: 'var(--gray4)' }}>
-              {detail.reasoning}
-            </p>
+            />
           </div>
-        )}
+        </div>
 
-        {/* GraphRAG 참조 문서 */}
-        {documents && documents.length > 0 && (
-          <div>
-            <div
-              className="text-xs font-semibold mb-1.5"
-              style={{ color: 'var(--gray4)' }}
-            >
-              참조 문서 (근거)
-            </div>
-            <div className="space-y-1.5">
-              {documents.map((doc) => (
-                <div
-                  key={doc.manual_id}
-                  className="p-2 rounded text-xs"
-                  style={{
-                    background: 'var(--dg3)',
-                    border: '1px solid var(--border-subtle)',
-                  }}
-                >
-                  <div className="flex justify-between mb-0.5">
-                    <span style={{ color: 'var(--blue4)' }}>
-                      {doc.manual_id}
-                    </span>
-                    <span
-                      className="font-mono"
-                      style={{ color: 'var(--gray3)' }}
-                    >
-                      {doc.hybrid_score.toFixed(2)}
-                    </span>
-                  </div>
-                  <div style={{ color: 'var(--gray5)' }}>{doc.title}</div>
-                  {doc.snippet && (
-                    <div
-                      className="mt-1 text-xs leading-relaxed"
-                      style={{ color: 'var(--gray3)' }}
-                    >
-                      {doc.snippet}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+        {/* AI 조치 판단 */}
+        {actionLoading ? (
+          <div className="text-xs" style={{ color: 'var(--gray3)' }}>
+            LLM 분석 중...
           </div>
+        ) : actionReport && (
+          <>
+            <div>
+              <div
+                className="text-xs font-semibold mb-1.5"
+                style={{ color: 'var(--gray4)' }}
+              >
+                AI 조치 판단
+              </div>
+              <div
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold mb-2"
+                style={{
+                  background: `${actionColor}20`,
+                  color: actionColor,
+                  border: `1px solid ${actionColor}40`,
+                }}
+              >
+                {actionReport.recommendation}
+              </div>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--gray4)' }}>
+                {actionReport.reasoning}
+              </p>
+            </div>
+
+            {/* 조치 단계 */}
+            {actionReport.action_steps.length > 0 && (
+              <div>
+                <div
+                  className="text-xs font-semibold mb-1.5"
+                  style={{ color: 'var(--gray4)' }}
+                >
+                  조치 단계
+                </div>
+                <ol className="space-y-1">
+                  {actionReport.action_steps.map((step, i) => (
+                    <li key={i} className="flex gap-2 text-xs" style={{ color: 'var(--gray4)' }}>
+                      <span
+                        className="font-mono flex-shrink-0"
+                        style={{ color: 'var(--blue3)' }}
+                      >
+                        {i + 1}.
+                      </span>
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {/* 필요 부품 */}
+            {actionReport.parts_needed.length > 0 && (
+              <div>
+                <div
+                  className="text-xs font-semibold mb-1.5"
+                  style={{ color: 'var(--gray4)' }}
+                >
+                  필요 부품
+                </div>
+                <div className="space-y-1">
+                  {actionReport.parts_needed.map((part) => (
+                    <div
+                      key={part.part_id}
+                      className="flex items-center justify-between text-xs px-2 py-1 rounded"
+                      style={{ background: 'var(--dg3)' }}
+                    >
+                      <span
+                        className="font-mono"
+                        style={{ color: 'var(--blue4)' }}
+                      >
+                        {part.part_id}
+                      </span>
+                      <span style={{ color: 'var(--gray4)' }}>×{part.quantity}</span>
+                      <span
+                        style={{
+                          color: part.in_stock ? 'var(--green5)' : 'var(--red5)',
+                        }}
+                      >
+                        {part.in_stock ? '재고 있음' : '발주 필요'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -3,12 +3,27 @@
 // 로고 | Critical 배너 | 작업현황 / 재고현황 버튼 | 오버레이
 // ============================================================
 
+import { useQuery } from '@tanstack/react-query'
+import { getDashboardAlarms } from '@/lib/api/endpoints'
 import { useDashboardStore } from '@/stores/dashboardStore'
 import WorkOrderOverlay from '../dashboard/WorkOrderOverlay'
 import InventoryOverlay from '../dashboard/InventoryOverlay'
 
 export default function Topbar() {
   const { activeOverlay, toggleOverlay } = useDashboardStore()
+
+  // 알람 데이터 조회 — critical 알람 있으면 STOP 배너 표시
+  const { data: alarmData } = useQuery({
+    queryKey: ['alarms'],
+    queryFn: getDashboardAlarms,
+    refetchInterval: 5000,
+    retry: false,
+  })
+
+  const criticalAlarms = alarmData?.alarms?.filter(
+    (a) => a.severity === 'critical'
+  ) ?? []
+  const latestCritical = criticalAlarms[0] ?? null
 
   return (
     <div className="relative z-10">
@@ -21,55 +36,63 @@ export default function Topbar() {
           borderBottom: '1px solid var(--border-mid)',
         }}
       >
-        {/* 로고 (Palantir ring 스타일) */}
-        <div className="flex items-center gap-2 mr-4">
-          <div
-            className="relative flex items-center justify-center"
+        {/* 로고 — AX Manufacturing */}
+        <div className="flex items-center gap-0 mr-4 select-none">
+          <span
             style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              border: '2px solid var(--blue4)',
-              boxShadow:
-                '0 0 0 1px rgba(76,144,240,0.15), 0 0 12px rgba(45,114,210,0.25)',
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: '15px',
+              letterSpacing: '-0.01em',
+              color: 'var(--gray6)',
             }}
           >
-            <span
-              className="font-mono font-bold text-xs"
-              style={{ color: 'var(--blue4)' }}
-            >
-              AX
-            </span>
-          </div>
+            AX
+          </span>
           <span
-            className="font-semibold text-xs tracking-widest uppercase"
-            style={{ color: 'var(--gray4)' }}
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 300,
+              fontSize: '13px',
+              letterSpacing: '0.18em',
+              color: 'var(--gray3)',
+              marginLeft: '6px',
+              textTransform: 'uppercase',
+            }}
           >
             Manufacturing
           </span>
         </div>
 
-        {/* Critical 배너 (임시 — 실제로는 알람 상태에 따라 조건부 렌더) */}
-        <div
-          className="flex-1 flex items-center gap-2 px-3 py-1 rounded"
-          style={{
-            background:
-              'linear-gradient(90deg, rgba(197,48,48,0.18) 0%, rgba(197,48,48,0.06) 60%, transparent 100%)',
-            borderLeft: '3px solid var(--red3)',
-          }}
-        >
+        {/* Critical STOP 배너 — 깜빡이는 빨간 배경, 테두리 없음 */}
+        {latestCritical && (
           <div
-            className="rounded-full animate-pulse"
-            style={{
-              width: '10px',
-              height: '10px',
-              background: 'var(--red5)',
-            }}
-          />
-          <span className="text-xs font-medium" style={{ color: 'var(--red5)' }}>
-            CNC-002 이상 감지 — STOP 권고
-          </span>
-        </div>
+            className="stop-banner flex items-center gap-2 px-3 py-1 rounded"
+            style={{ flex: '0 1 auto' }}
+          >
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: 700,
+                fontSize: '11px',
+                letterSpacing: '0.1em',
+                color: 'rgba(255,255,255,0.95)',
+              }}
+            >
+              {latestCritical.equipment_id}
+            </span>
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontWeight: 600,
+                fontSize: '11px',
+                color: 'rgba(255,200,200,0.9)',
+              }}
+            >
+              STOP
+            </span>
+          </div>
+        )}
 
         {/* 오버레이 토글 버튼 */}
         <div className="flex items-center gap-2 ml-auto">
@@ -85,7 +108,6 @@ export default function Topbar() {
               border: '1px solid var(--border-subtle)',
             }}
           >
-            {/* 작업현황 아이콘 */}
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
               <path d="M2 4h12v1.5H2V4zm0 3.5h12V9H2V7.5zm0 3.5h8V12H2v-1z"/>
             </svg>
@@ -105,7 +127,6 @@ export default function Topbar() {
               border: '1px solid var(--border-subtle)',
             }}
           >
-            {/* 재고현황 아이콘 */}
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
               <path d="M2 2h12v3H2V2zm0 4h4v8H2V6zm5 0h4v8H7V6zm5 0h2v8h-2V6z"/>
             </svg>

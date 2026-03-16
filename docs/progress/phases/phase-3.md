@@ -250,3 +250,29 @@ npm install && npm run dev
 | 1 | F2 상세 설계 | 미착수 | ✅ f2-anomaly-detection-design.md 작성 + IF 구현 |
 | 2 | 정비 매뉴얼 합성 | 0건 | ✅ 12건 합성 + 47청크 임베딩 |
 | 3 | CSV→실시간 시뮬레이터 | 미설계 | ✅ batch/stream 2모드 + 메인 폴링 루프 |
+
+---
+
+## Day N (2026-03-17) — 프론트엔드-백엔드 실제 연동
+
+**목표:** 코드로 작성된 프론트엔드를 실제 백엔드 API와 완전히 연결
+
+### 백엔드 수정
+- `/api/f6/action/{equipment_id}` — TODO 스텁 제거, 온디맨드 F2→F3→F4→F5 파이프라인 구현
+- `/api/f6/sensors/{equipment_id}` — `NOW()-interval` 시간 필터 제거 (CSV 2024 타임스탬프 호환)
+
+### 프론트엔드 수정
+| 파일 | 변경 내용 |
+|------|-----------|
+| `types/index.ts` | 백엔드 Pydantic 스키마와 1:1 정합 (전면 재작성) |
+| `endpoints.ts` | 실제 백엔드 6개 엔드포인트로 교체 |
+| `Sidebar.tsx` | TanStack Query v5 버그 수정 (`placeholderData:[]` → `data=[]`) |
+| `Topbar.tsx` | AX Manufacturing 로고 + 실제 알람 데이터 기반 STOP 배너 |
+| `AiDetailPanel.tsx` | `getActionReport` 연동, recommendation/action_steps/parts_needed 표시 |
+| `MonitoringCenter.tsx` | Recharts 센서 시계열 차트 + F1~F5 파이프라인 상태 구현 |
+| `WorkOrderOverlay.tsx` | 실제 `/f6/work-order` API 연동 (3개 설비 고정 hook) |
+| `InventoryOverlay.tsx` | 실제 `/f6/work-order` inventory 연동 |
+
+### 미해결 (후속)
+- ChatFab `/api/chat` 엔드포인트 미구현 (현재 더미 상태)
+- 브라우저 실제 동작 테스트 필요
