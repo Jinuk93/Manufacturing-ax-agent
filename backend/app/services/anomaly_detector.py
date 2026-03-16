@@ -48,10 +48,13 @@ PROCESS_MAP = {
     "end": 9,  # 소문자 변형 대응
 }
 
-# unworn 실험 번호 (정상 패턴 학습용)
-UNWORN_EXPERIMENTS = [1, 2, 3, 4, 5, 11, 17, 18]
-# 참고: exp04, exp05는 unworn이지만 중단됨 (CLAMP_PRESSURE)
-# 학습에 포함해도 IF가 이상으로 분류할 수 있음 → 검증 포인트
+# unworn 실험 번호 (정상 패턴 학습용) — train.csv 기준
+UNWORN_EXPERIMENTS = [1, 2, 3, 4, 5, 11, 12, 17]
+# worn 실험: [6, 7, 8, 9, 10, 13, 14, 15, 16, 18]
+
+# 중단(aborted) 실험 — unworn이지만 CLAMP_PRESSURE로 비정상 중단
+ABORTED_UNWORN = [4, 5]
+# 학습에서 제외하면 "순수 정상"만 학습 가능 (exclude_aborted=True)
 
 
 class AnomalyDetector:
@@ -72,6 +75,9 @@ class AnomalyDetector:
         self.scaler = MinMaxScaler()
         self.is_fitted = False
         self.feature_columns = [c for c in FEATURE_COLUMNS if c != "Machining_Process"]
+        # stream 모드용: fit 시 score 범위 저장
+        self.score_min: float = 0.0
+        self.score_max: float = 1.0
 
     def _prepare_features(self, df: pd.DataFrame) -> np.ndarray:
         """DataFrame → 모델 입력 배열로 변환
@@ -127,7 +133,13 @@ class AnomalyDetector:
         self.model.fit(X_scaled)
         self.is_fitted = True
 
+        # 학습 데이터의 score 범위 저장 (stream 모드에서 정규화 기준으로 사용)
+        train_scores = self.model.score_samples(X_scaled)
+        self.score_min = float(train_scores.min())
+        self.score_max = float(train_scores.max())
+
         logger.info(f"학습 완료: {X_scaled.shape[0]}행 × {X_scaled.shape[1]}피처")
+        logger.info(f"학습 score 범위: [{self.score_min:.4f}, {self.score_max:.4f}]")
 
     def predict(self, df: pd.DataFrame) -> pd.DataFrame:
         """전체 데이터에 이상 점수 산출
@@ -145,11 +157,12 @@ class AnomalyDetector:
         raw_scores = self.model.score_samples(X_scaled)
 
         # 0~1 범위로 변환 (낮은 점수 = 이상 → 높은 anomaly_score)
-        # score_samples의 범위를 기반으로 정규화
-        min_score = raw_scores.min()
-        max_score = raw_scores.max()
-        if max_score - min_score > 0:
-            anomaly_scores = 1 - (raw_scores - min_score) / (max_score - min_score)
+        # fit 시점의 score 범위를 기준으로 정규화 (stream 1행에서도 안정적)
+        score_range = self.score_max - self.score_min
+        if score_range > 0:
+            anomaly_scores = 1 - (raw_scores - self.score_min) / score_range
+            # 범위 밖 값 클리핑 (0~1)
+            anomaly_scores = np.clip(anomaly_scores, 0.0, 1.0)
         else:
             anomaly_scores = np.zeros_like(raw_scores)
 
@@ -198,6 +211,8 @@ class AnomalyDetector:
         x1_current = get_col("X1_CurrentFeedback")
         s1_current = get_col("S1_CurrentFeedback")
         feedrate = get_col("M1_CURRENT_FEEDRATE")
+        x1_actual_pos = get_col("X1_ActualPosition")
+        x1_command_pos = get_col("X1_CommandPosition")
 
         for i in range(len(df)):
             if not is_anomaly[i]:
@@ -214,18 +229,29 @@ class AnomalyDetector:
                     and x1_current.iloc[i] < x1_current.median() * 0.7):
                 codes[i] = "TOOL_WEAR_001"
 
-            # 규칙 3: 기본 → 냉각수 부족 (간접 감지)
+            # 규칙 3: 위치 편차 급변 → 클램프 압력 이상
+            # EDA: exp04(clamp=2.5), exp05(clamp=3.0)이 unworn인데 중단
+            elif (x1_actual_pos is not None and x1_command_pos is not None
+                    and abs(x1_actual_pos.iloc[i] - x1_command_pos.iloc[i]) > 0.5):
+                codes[i] = "CLAMP_PRESSURE_001"
+
+            # 규칙 4: 기본 → 냉각수 부족 (간접 감지)
             else:
                 codes[i] = "COOLANT_LOW_001"
 
         return codes
 
     def save(self, path: str = "models/f2_detector.pkl"):
-        """학습된 모델 저장"""
+        """학습된 모델 저장 (모델 + 스케일러 + score 범위)"""
         save_path = Path(path)
         save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_path, "wb") as f:
-            pickle.dump({"model": self.model, "scaler": self.scaler}, f)
+            pickle.dump({
+                "model": self.model,
+                "scaler": self.scaler,
+                "score_min": self.score_min,
+                "score_max": self.score_max,
+            }, f)
         logger.info(f"모델 저장: {save_path}")
 
     def load(self, path: str = "models/f2_detector.pkl"):
@@ -234,8 +260,10 @@ class AnomalyDetector:
             data = pickle.load(f)
         self.model = data["model"]
         self.scaler = data["scaler"]
+        self.score_min = data.get("score_min", 0.0)
+        self.score_max = data.get("score_max", 1.0)
         self.is_fitted = True
-        logger.info(f"모델 로드: {path}")
+        logger.info(f"모델 로드: {path} (score 범위: [{self.score_min:.4f}, {self.score_max:.4f}])")
 
 
 def train_and_evaluate(data_dir: str):
@@ -260,6 +288,7 @@ def train_and_evaluate(data_dir: str):
     all_dfs = []
     exp_labels = []
 
+    exclude_aborted = True  # 중단 실험(exp04, 05)을 학습에서 제외
     for i in range(1, 19):
         csv_file = data_path / f"experiment_{i:02d}.csv"
         if not csv_file.exists():
@@ -268,6 +297,9 @@ def train_and_evaluate(data_dir: str):
         exp_df["experiment_id"] = i
         all_dfs.append(exp_df)
         if i in UNWORN_EXPERIMENTS:
+            if exclude_aborted and i in ABORTED_UNWORN:
+                logger.info(f"  exp{i:02d} (unworn+중단) — 학습에서 제외")
+                continue
             unworn_dfs.append(exp_df)
 
     df_unworn = pd.concat(unworn_dfs, ignore_index=True)
