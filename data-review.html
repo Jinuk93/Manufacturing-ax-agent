@@ -683,22 +683,22 @@
     <a href="#p1" data-idx="1">목표</a>
     <a href="#p2" data-idx="2">구현 설계</a>
     <a href="#p15" data-idx="3">핵심 기능</a>
-    <a href="#p4" data-idx="9">애자일 목표</a>
+    <a href="#p4" data-idx="4">애자일 목표</a>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section">
     <span class="nav-section-label">Phase별 진행</span>
-    <a href="#p10" data-idx="10">한눈에 보기</a>
-    <a href="#p5" data-idx="11">프로젝트 정의</a>
-    <a href="#p3" data-idx="4">데이터 수집</a>
-    <a href="#p11" data-idx="5">데이터 탐색</a>
+    <a href="#p10" data-idx="5">한눈에 보기</a>
+    <a href="#p5" data-idx="6">프로젝트 정의</a>
+    <a href="#p3" data-idx="7">데이터 수집</a>
+    <a href="#p11" data-idx="8">데이터 탐색</a>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section">
     <span class="nav-section-label">아키텍처</span>
-    <a href="#p12" data-idx="6">온톨로지</a>
-    <a href="#p13" data-idx="7">DB 스키마</a>
-    <a href="#p14" data-idx="8">파이프라인</a>
+    <a href="#p12" data-idx="9">온톨로지</a>
+    <a href="#p13" data-idx="10">DB 스키마</a>
+    <a href="#p14" data-idx="11">파이프라인</a>
   </div>
 </nav>
 
@@ -1427,6 +1427,369 @@
 
 <!-- =============================== -->
 <!-- PAGE 3: Phase 1 — Data Collection -->
+<!-- =============================== -->
+<div class="page" id="p4">
+<div class="inner">
+  <div class="page-title">애자일 목표</div>
+  <p class="page-sub">이 프로젝트에서 애자일이 무엇이고, 왜 이 방식을 선택했으며, 어떻게 실천하는지 정리합니다.</p>
+
+  <h3>왜 애자일인가</h3>
+  <div class="goal-note">
+    <p><strong>1인 개발 + 입문자 수준 + 불확실한 기술 스택</strong>이라는 현실이 있습니다.</p>
+    <p>온톨로지, GraphRAG, LLM 자율 판단 같은 기술을 처음 다루기 때문에 처음부터 완벽한 설계를 할 수 없습니다. 대신 <strong>짧은 Phase 단위로 학습하고, 검증하고, 다음으로 넘기는 방식</strong>이 가장 현실적입니다.</p>
+    <ul>
+      <li><strong>리소스 한계 :</strong> &nbsp;1인이 운영 가능한 최소한으로 결정 (예 : DB 2개로 통합 &mdash; ADR-003)</li>
+      <li><strong>학습 병행 :</strong> &nbsp;완벽한 이해 없이 시작하되, 단계별로 구체화 (예 : 온톨로지는 Phase 0에서 원칙만, Phase 3에서 스키마)</li>
+      <li><strong>조기 검증 :</strong> &nbsp;끝까지 기다리지 않고 중간 결과물로 방향을 확인 (예 : 대시보드 MVP 앞당김 &mdash; ADR-005)</li>
+    </ul>
+  </div>
+
+  <h3>이 프로젝트의 애자일 사이클</h3>
+  <div class="loop-grid">
+    <div class="loop-card">
+      <div class="loop-step">STEP 1</div>
+      <div class="loop-title">가설과 범위를 먼저 고정</div>
+      <div class="loop-desc">이번 단계에서 무엇을 결정할지, 무엇은 아직 미결로 둘지 먼저 나눕니다. 과한 선행 구현을 막습니다.</div>
+    </div>
+    <div class="loop-card">
+      <div class="loop-step">STEP 2</div>
+      <div class="loop-title">실데이터와 실제 제약으로 검증</div>
+      <div class="loop-desc">문서 가설이 실제 데이터와 맞는지 대조합니다. 안 맞는 부분은 갭으로 기록한 뒤 수정합니다.</div>
+    </div>
+    <div class="loop-card">
+      <div class="loop-step">STEP 3</div>
+      <div class="loop-title">결정은 ADR로 남김</div>
+      <div class="loop-desc">왜 이 방향을 택했는지 근거와 대안을 기록합니다. 다음 단계에서 흔들리지 않기 위해서입니다.</div>
+    </div>
+    <div class="loop-card">
+      <div class="loop-step">STEP 4</div>
+      <div class="loop-title">산출물을 다음 단계 입력으로</div>
+      <div class="loop-desc">이번 단계의 산출물이 바로 다음 단계의 입력이 됩니다. Phase가 순차적으로 연결됩니다.</div>
+    </div>
+  </div>
+
+  <h3>실천 원칙 6가지</h3>
+  <div class="impl-grid">
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">01</span> 짧은 Phase, 빠른 사이클</div>
+      <p>Phase 0은 3일 만에 완주했습니다. 완벽하지 않아도 다음 단계로 이동하고, 미결 사항은 Open Items로 명시적으로 관리합니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">02</span> 의사결정은 ADR로 기록</div>
+      <p>"결정했다"만이 아니라 <strong>문제 상황 &rarr; 검토 대안 &rarr; 선택 이유 &rarr; 제약사항</strong>을 모두 남깁니다. 나중에 수정할 때 맥락이 있어야 하기 때문입니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">03</span> 갭 분석으로 가정을 검증</div>
+      <p>문서에 쓴 가정을 실제 데이터와 대조합니다. Phase 0에서만 3회 갭 분석을 실시하여 timestamp 부재, 진동 센서 미포함 등을 발견했습니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">04</span> 제약을 제약으로 받아들임</div>
+      <p>"최선"이 아니라 <strong>"지금 가능한 것"</strong>으로 결정합니다. Kafka 대신 5초 폴링(ADR-004), 다중 DB 대신 PostgreSQL 통합(ADR-003)이 그 예입니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">05</span> 조기 시각화</div>
+      <p>파이프라인 완성을 기다리지 않고 대시보드 MVP를 앞당겼습니다(ADR-005). 부분적 결과물이라도 눈에 보여야 방향이 맞는지 판단할 수 있습니다.</p>
+    </div>
+    <div class="impl-card">
+      <div class="impl-head"><span class="impl-fid">06</span> 살아있는 문서</div>
+      <p>모든 문서는 일회성이 아닙니다. Phase가 진행되면 PRD, Open Items, README가 함께 업데이트됩니다. 문서와 코드의 괴리를 허용하지 않습니다.</p>
+    </div>
+  </div>
+
+  <h3>문서와 구현의 분리</h3>
+  <div class="goal-note">
+    <p>이 프로젝트는 <strong>단계별로 중심 활동이 다릅니다.</strong></p>
+    <ul>
+      <li><strong>Phase 0 (문서 중심) :</strong> &nbsp;PRD, 데이터 전략, ADR, 제약사항 등 의사결정 기록. 코드 없음</li>
+      <li><strong>Phase 1 (분석 중심) :</strong> &nbsp;EDA로 실데이터 검증, 42컬럼 확정, IT 합성 완료 <span style="color:#00a854;">[완료]</span></li>
+      <li><strong>Phase 2 (설계 중심) :</strong> &nbsp;온톨로지 + DB 스키마 + 파이프라인 + API 설계 완료 (리뷰 4회) <span style="color:#00a854;">[완료]</span></li>
+      <li><strong>Phase 3+ (구현 중심) :</strong> &nbsp;FastAPI, PostgreSQL, Neo4j, 대시보드 개발. 코드 규칙 적용 <span style="color:#3182f6;">[다음]</span></li>
+    </ul>
+    <p style="color:#888;font-size:13px;">코드 규칙(타입 힌트, 한국어 주석, Docker Compose 등)은 Phase 2 이후부터 적용됩니다.</p>
+  </div>
+
+  <h3>의사결정과 미결 관리 구조</h3>
+  <div class="goal-note">
+    <p><strong>ADR (Architecture Decision Record)</strong></p>
+    <p>기술 의사결정마다 "Context &rarr; Options &rarr; Decision &rarr; Reasoning &rarr; Consequences" 구조로 기록합니다. 현재까지 6건(ADR-000~005)이 확정되었고, Phase가 진행되면서 추가됩니다.</p>
+  </div>
+  <div class="goal-note">
+    <p><strong>Open Items (미결 사항)</strong></p>
+    <p>지금 결정할 수 없는 것은 Open Items로 명시적으로 분류합니다. 각 항목마다 "왜 미결인가"와 "언제 결정할 것인가"를 기록합니다.</p>
+    <ul>
+      <li><strong>A. 데이터 관련 :</strong> &nbsp;Phase 1 EDA에서 결정 (timestamp 규칙, 매뉴얼 확보 등)</li>
+      <li><strong>B. 모델링 :</strong> &nbsp;Phase 1~2에서 결정 (이상탐지 모델, LSTM 윈도우 등)</li>
+      <li><strong>C. 시스템 :</strong> &nbsp;Phase 2에서 결정 (LLM 선택, 프론트엔드 전략 등)</li>
+      <li><strong>D. 관리 :</strong> &nbsp;Phase 2 완료 후 정의 (장기 마일스톤)</li>
+    </ul>
+    <p style="color:#888;font-size:13px;">Phase 1 완료 시점: 12건 중 일부 해결 (timestamp/equipment_id 합성, IT 합성 시나리오 확정). 나머지는 Phase 2~3에서 순차 해결</p>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 10: Phase 한눈에 보기 -->
+<!-- =============================== -->
+<div class="page" id="p10">
+<div class="inner">
+  <div class="page-title">Phase 한눈에 보기</div>
+  <p class="page-sub">Phase 카드를 클릭하면 해당 단계의 요약, 로그, ADR, 갭 분석을 확인할 수 있습니다.</p>
+
+  <div class="ph-layout">
+    <!-- 좌측 Phase 선택 바 -->
+    <div class="ph-tabs">
+      <button class="ph-tab active" data-ph="phase0">
+        <span class="ph-tab-label">Phase 0</span>
+        <span class="ph-tab-name-kr">프로젝트 정의</span>
+        <span class="ph-tab-state done">완료</span>
+      </button>
+      <span class="ph-tab-arrow">&darr;</span>
+      <button class="ph-tab" data-ph="phase1">
+        <span class="ph-tab-label">Phase 1</span>
+        <span class="ph-tab-name-kr">데이터 탐색</span>
+        <span class="ph-tab-state done">완료</span>
+      </button>
+      <span class="ph-tab-arrow">&darr;</span>
+      <button class="ph-tab" data-ph="phase2">
+        <span class="ph-tab-label">Phase 2</span>
+        <span class="ph-tab-name-kr">아키텍처 설계</span>
+        <span class="ph-tab-state done">완료</span>
+      </button>
+      <span class="ph-tab-arrow">&darr;</span>
+      <button class="ph-tab" data-ph="phase3">
+        <span class="ph-tab-label">Phase 3+</span>
+        <span class="ph-tab-name-kr">구현 및 검증</span>
+        <span class="ph-tab-state current">다음</span>
+      </button>
+    </div>
+
+    <!-- 우측 콘텐츠 -->
+    <div class="ph-content">
+      <div class="ph-main-wrap">
+        <div class="ph-summary" id="ph-summary">
+          <div class="ph-summary-head">
+            <div>
+              <div class="ph-summary-phase" id="ph-summary-phase">Phase 0</div>
+              <div class="ph-summary-title" id="ph-summary-title">Project Definition</div>
+              <div class="ph-summary-subtitle" id="ph-summary-subtitle">프로젝트 정의</div>
+            </div>
+            <div class="ph-summary-meta" id="ph-summary-meta"></div>
+          </div>
+          <p class="ph-summary-desc" id="ph-summary-desc"></p>
+
+          <div class="ph-summary-grid">
+            <div class="ph-summary-box">
+              <div class="ph-summary-box-label">목표</div>
+              <ul id="ph-summary-goal"></ul>
+            </div>
+            <div class="ph-summary-box">
+              <div class="ph-summary-box-label">핵심 산출물</div>
+              <ul id="ph-summary-outputs"></ul>
+            </div>
+            <div class="ph-summary-box">
+              <div class="ph-summary-box-label">다음 단계로 넘기는 것</div>
+              <ul id="ph-summary-handoff"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측 상세보기 세로바 -->
+        <div class="ph-actions-bar" id="ph-actions-bar">
+          <div class="ph-actions-bar-label">상세</div>
+          <div id="ph-actions"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 우측 슬라이드 오버레이 -->
+  <div class="ph-overlay-bg" id="ph-overlay-bg"></div>
+  <div class="ph-overlay" id="ph-overlay">
+    <div class="ph-overlay-header">
+      <div class="ph-overlay-title" id="ph-overlay-title"></div>
+      <button class="ph-overlay-close" id="ph-overlay-close">&times;</button>
+    </div>
+    <div class="ph-overlay-body" id="ph-overlay-body"></div>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 5: Phase 0 -->
+<!-- =============================== -->
+<div class="page" id="p5">
+<div class="inner">
+  <div class="page-title">Phase 0 : 프로젝트 정의</div>
+  <p class="page-sub">무엇을 만들지, 어떤 데이터로, 어떤 제약 아래에서 만들지를 3일간 정리한 단계입니다.</p>
+
+  <!-- 목표와 범위 -->
+  <div class="goal-note" style="margin-bottom:28px;">
+    <p><strong>목표</strong></p>
+    <p>Phase 1 EDA가 검증할 기준선을 만든다 &mdash; 문제 정의, 범위 확정, 데이터 전략, 핵심 의사결정(ADR), 미결사항을 정리하여 이후 단계가 흔들리지 않는 기초를 세운다.</p>
+    <p style="margin-top:12px;"><strong>기간</strong>&nbsp; 2026-03-08 ~ 2026-03-10 (3일) &nbsp;&nbsp;<strong>상태</strong>&nbsp; 완료</p>
+  </div>
+
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
+
+  <!-- 핵심 결정 사항 -->
+  <h3>Phase 0에서 정한 것</h3>
+  <div class="p0-decisions">
+    <div class="p0-dec">
+      <div class="p0-dec-label">문제 정의</div>
+      <div class="p0-dec-title">PRD v1.0</div>
+      <ul>
+        <li>CNC 설비 예지보전 + 온톨로지 + LLM 자율 판단</li>
+        <li>6개 Feature Pipeline (F1~F6)</li>
+        <li>상시 레이어 + 독립 모듈 + 관제 자동화</li>
+      </ul>
+    </div>
+    <div class="p0-dec">
+      <div class="p0-dec-label">도메인</div>
+      <div class="p0-dec-title">CNC 단일 도메인</div>
+      <ul>
+        <li>NASA 터보팬 등 다중 도메인 배제 (ADR-000)</li>
+        <li>다중 도메인 혼합 시 조인 키 충돌 + LLM 환각</li>
+        <li>향후 확장은 별도 프로젝트로</li>
+      </ul>
+    </div>
+    <div class="p0-dec">
+      <div class="p0-dec-label">예측 방식</div>
+      <div class="p0-dec-title">Forecasting 기반</div>
+      <ul>
+        <li>RUL(잔여수명) 포기 (ADR-001)</li>
+        <li>미래값 예측 후 임계치 돌파 방식</li>
+        <li>"언제 위험해질까"만 판단</li>
+      </ul>
+    </div>
+    <div class="p0-dec">
+      <div class="p0-dec-label">데이터 전략</div>
+      <div class="p0-dec-title">Kaggle CNC Mill + 합성</div>
+      <ul>
+        <li>핵심: Kaggle CNC Mill (48컬럼, 18실험)</li>
+        <li>MES/ERP는 Python으로 합성 (ADR-002)</li>
+        <li>설계 원칙 5개 확정 (Canonical Model 포함)</li>
+      </ul>
+    </div>
+    <div class="p0-dec">
+      <div class="p0-dec-label">인프라</div>
+      <div class="p0-dec-title">PostgreSQL + Neo4j</div>
+      <ul>
+        <li>PostgreSQL에 TimescaleDB + pgvector 통합 (ADR-003)</li>
+        <li>온톨로지만 Neo4j 별도</li>
+        <li>5초 폴링, Kafka 미사용 (ADR-004)</li>
+      </ul>
+    </div>
+    <div class="p0-dec">
+      <div class="p0-dec-label">대시보드</div>
+      <div class="p0-dec-title">MVP 조기 착수</div>
+      <ul>
+        <li>파이프라인 완성 전 대시보드 먼저 (ADR-005)</li>
+        <li>시각적 결과물로 방향 검증</li>
+        <li>초기에는 정적 데이터 기반</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
+
+  <!-- 산출물 요약 -->
+  <h3>산출물</h3>
+  <div class="impl-grid" style="margin-bottom:28px;">
+    <div class="impl-card">
+      <div class="impl-num" style="font-size:10px;font-weight:800;color:#e8770e;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">문서</div>
+      <ul>
+        <li><strong>prd-v1.0.md</strong> &mdash; 제품 요구사항</li>
+        <li><strong>data-collection-strategy.md</strong> &mdash; 데이터 수집 전략 (v2)</li>
+        <li><strong>required-data-summary.md</strong> &mdash; F1~F6 데이터 매핑</li>
+        <li><strong>constraints.md</strong> &mdash; 제약사항 + 범위</li>
+        <li><strong>open-items.md</strong> &mdash; 미결사항 11건</li>
+      </ul>
+    </div>
+    <div class="impl-card">
+      <div class="impl-num" style="font-size:10px;font-weight:800;color:#e8770e;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">의사결정 + 데이터</div>
+      <ul>
+        <li><strong>ADR-000~005</strong> &mdash; 핵심 기술 의사결정 6건</li>
+        <li><strong>data/raw/</strong> &mdash; 외부 데이터셋 2종 (Kaggle CNC Mill + Bosch CNC)</li>
+        <li><strong>갭 분석 4건</strong> &mdash; 전략 vs 실제 불일치 발견/해결</li>
+        <li><strong>비전 문서</strong> &mdash; Palantir 스타일 온보딩 전략</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
+
+  <!-- 일자별 로그 (압축 타임라인) -->
+  <h3>일자별 진행 로그</h3>
+  <div class="p0-timeline">
+    <div class="p0-day">
+      <div class="p0-day-left">
+        <div class="p0-day-badge">Day 1</div>
+        <div class="p0-day-date">2026-03-08</div>
+      </div>
+      <div class="p0-day-body">
+        <h4>프로젝트 정의 및 핵심 의사결정</h4>
+        <ul>
+          <li><strong>PRD v1.0 작성</strong> &mdash; Problem &rarr; Solution &rarr; 6개 Feature Pipeline + System Pipeline 구조</li>
+          <li><strong>데이터셋 전략 초안</strong> &mdash; 5종 데이터셋 정의, 기능별 필수/중요/보강 분류 <span style="color:#888;font-size:12px;">(이후 Phase 1에서 2종으로 정리)</span></li>
+          <li><strong>ADR 5건 확정</strong> &mdash; 단일 도메인, Forecasting, 합성 MES/ERP, PostgreSQL 통합, 5초 폴링</li>
+          <li><strong>미결사항 11건 정리</strong></li>
+        </ul>
+        <div class="p0-day-outputs"><strong>산출물:</strong> prd-v1.0.md, data-collection-strategy.md (초안), open-items.md</div>
+      </div>
+    </div>
+
+    <div class="p0-day">
+      <div class="p0-day-left">
+        <div class="p0-day-badge">Day 2</div>
+        <div class="p0-day-date">2026-03-09</div>
+      </div>
+      <div class="p0-day-body">
+        <h4>데이터 전략 고도화 및 설계 원칙 확립</h4>
+        <ul>
+          <li><strong>데이터 전략 크로스 리뷰</strong> &mdash; 6개 품질 이슈 수정, 중복 섹션 통합, 데이터 맵 5종 추가</li>
+          <li><strong>설계 원칙 5번째 추가</strong> &mdash; 내부 표준 형식(Canonical Model), 고객사 확장 시 Onboarding Layer만 추가</li>
+          <li><strong>제품화 비전 논의</strong> &mdash; Palantir 스타일 자동 프로파일링 &rarr; 온톨로지 인스턴스 생성 흐름</li>
+          <li><strong>ADR-005</strong> &mdash; 대시보드 MVP 조기 착수 결정</li>
+        </ul>
+        <div class="p0-day-outputs"><strong>산출물:</strong> data-collection-strategy.md (v2), customer-onboarding-ontology-strategy.md, docs/progress/ 구조</div>
+      </div>
+    </div>
+
+    <div class="p0-day">
+      <div class="p0-day-left">
+        <div class="p0-day-badge">Day 3</div>
+        <div class="p0-day-date">2026-03-10</div>
+      </div>
+      <div class="p0-day-body">
+        <h4>데이터셋 수집 완료 및 정합성 검증</h4>
+        <ul>
+          <li><strong>외부 데이터셋 4종 수집</strong> &mdash; Kaggle CNC Mill, Bosch CNC, Multi-Sensor, Milling RUL + KAMP 카탈로그 <span style="color:#888;font-size:12px;">(이후 3종 삭제)</span></li>
+          <li><strong>크로스 리뷰 4건</strong> &mdash; ZIP 정리, KAMP 실체 확인, HDF5 포맷 메모, RUL 미사용 반영</li>
+          <li><strong>갭 분석 3회</strong> &mdash; timestamp/equipment_id 부재, 진동/온도 미포함, 합성 데이터 의심 발견</li>
+          <li><strong>문서 수정</strong> &mdash; KAMP &rarr; Kaggle 핵심 변경, 센서 목록 전면 재작성, open-items 업데이트</li>
+        </ul>
+        <div class="p0-day-outputs"><strong>산출물:</strong> .gitignore, required-data-summary.md (매핑표), constraints.md (범위), data/raw/ 5개 폴더</div>
+      </div>
+    </div>
+  </div>
+
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
+
+  <!-- Phase 0 핸드오프 -->
+  <div class="goal-note">
+    <p><strong>Phase 1으로 넘기는 것</strong></p>
+    <ul>
+      <li><strong>EDA에서 검증할 가설</strong> &mdash; 유효 센서 42개, 상수/0값 컬럼 제거 후 실제 사용 가능한 피처 확정</li>
+      <li><strong>timestamp/equipment_id 합성 과제</strong> &mdash; sequence &times; 100ms &rarr; datetime, experiment &rarr; CNC-001 매핑</li>
+      <li><strong>주력 데이터셋 기준</strong> &mdash; Kaggle CNC Mill 단일 기준, 보조 2종은 참고용</li>
+      <li><strong>제약사항</strong> &mdash; 진동/온도 없이 전류/전력/속도 중심 설계, 공개 학술 데이터의 한계 인지</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 6: 갭 분석 -->
 <!-- =============================== -->
 <div class="page" id="p3">
 <div class="inner">
@@ -2954,369 +3317,6 @@
 </div>
 
 <!-- PAGE 4: 애자일 목표 -->
-<!-- =============================== -->
-<div class="page" id="p4">
-<div class="inner">
-  <div class="page-title">애자일 목표</div>
-  <p class="page-sub">이 프로젝트에서 애자일이 무엇이고, 왜 이 방식을 선택했으며, 어떻게 실천하는지 정리합니다.</p>
-
-  <h3>왜 애자일인가</h3>
-  <div class="goal-note">
-    <p><strong>1인 개발 + 입문자 수준 + 불확실한 기술 스택</strong>이라는 현실이 있습니다.</p>
-    <p>온톨로지, GraphRAG, LLM 자율 판단 같은 기술을 처음 다루기 때문에 처음부터 완벽한 설계를 할 수 없습니다. 대신 <strong>짧은 Phase 단위로 학습하고, 검증하고, 다음으로 넘기는 방식</strong>이 가장 현실적입니다.</p>
-    <ul>
-      <li><strong>리소스 한계 :</strong> &nbsp;1인이 운영 가능한 최소한으로 결정 (예 : DB 2개로 통합 &mdash; ADR-003)</li>
-      <li><strong>학습 병행 :</strong> &nbsp;완벽한 이해 없이 시작하되, 단계별로 구체화 (예 : 온톨로지는 Phase 0에서 원칙만, Phase 3에서 스키마)</li>
-      <li><strong>조기 검증 :</strong> &nbsp;끝까지 기다리지 않고 중간 결과물로 방향을 확인 (예 : 대시보드 MVP 앞당김 &mdash; ADR-005)</li>
-    </ul>
-  </div>
-
-  <h3>이 프로젝트의 애자일 사이클</h3>
-  <div class="loop-grid">
-    <div class="loop-card">
-      <div class="loop-step">STEP 1</div>
-      <div class="loop-title">가설과 범위를 먼저 고정</div>
-      <div class="loop-desc">이번 단계에서 무엇을 결정할지, 무엇은 아직 미결로 둘지 먼저 나눕니다. 과한 선행 구현을 막습니다.</div>
-    </div>
-    <div class="loop-card">
-      <div class="loop-step">STEP 2</div>
-      <div class="loop-title">실데이터와 실제 제약으로 검증</div>
-      <div class="loop-desc">문서 가설이 실제 데이터와 맞는지 대조합니다. 안 맞는 부분은 갭으로 기록한 뒤 수정합니다.</div>
-    </div>
-    <div class="loop-card">
-      <div class="loop-step">STEP 3</div>
-      <div class="loop-title">결정은 ADR로 남김</div>
-      <div class="loop-desc">왜 이 방향을 택했는지 근거와 대안을 기록합니다. 다음 단계에서 흔들리지 않기 위해서입니다.</div>
-    </div>
-    <div class="loop-card">
-      <div class="loop-step">STEP 4</div>
-      <div class="loop-title">산출물을 다음 단계 입력으로</div>
-      <div class="loop-desc">이번 단계의 산출물이 바로 다음 단계의 입력이 됩니다. Phase가 순차적으로 연결됩니다.</div>
-    </div>
-  </div>
-
-  <h3>실천 원칙 6가지</h3>
-  <div class="impl-grid">
-    <div class="impl-card">
-      <div class="impl-head"><span class="impl-fid">01</span> 짧은 Phase, 빠른 사이클</div>
-      <p>Phase 0은 3일 만에 완주했습니다. 완벽하지 않아도 다음 단계로 이동하고, 미결 사항은 Open Items로 명시적으로 관리합니다.</p>
-    </div>
-    <div class="impl-card">
-      <div class="impl-head"><span class="impl-fid">02</span> 의사결정은 ADR로 기록</div>
-      <p>"결정했다"만이 아니라 <strong>문제 상황 &rarr; 검토 대안 &rarr; 선택 이유 &rarr; 제약사항</strong>을 모두 남깁니다. 나중에 수정할 때 맥락이 있어야 하기 때문입니다.</p>
-    </div>
-    <div class="impl-card">
-      <div class="impl-head"><span class="impl-fid">03</span> 갭 분석으로 가정을 검증</div>
-      <p>문서에 쓴 가정을 실제 데이터와 대조합니다. Phase 0에서만 3회 갭 분석을 실시하여 timestamp 부재, 진동 센서 미포함 등을 발견했습니다.</p>
-    </div>
-    <div class="impl-card">
-      <div class="impl-head"><span class="impl-fid">04</span> 제약을 제약으로 받아들임</div>
-      <p>"최선"이 아니라 <strong>"지금 가능한 것"</strong>으로 결정합니다. Kafka 대신 5초 폴링(ADR-004), 다중 DB 대신 PostgreSQL 통합(ADR-003)이 그 예입니다.</p>
-    </div>
-    <div class="impl-card">
-      <div class="impl-head"><span class="impl-fid">05</span> 조기 시각화</div>
-      <p>파이프라인 완성을 기다리지 않고 대시보드 MVP를 앞당겼습니다(ADR-005). 부분적 결과물이라도 눈에 보여야 방향이 맞는지 판단할 수 있습니다.</p>
-    </div>
-    <div class="impl-card">
-      <div class="impl-head"><span class="impl-fid">06</span> 살아있는 문서</div>
-      <p>모든 문서는 일회성이 아닙니다. Phase가 진행되면 PRD, Open Items, README가 함께 업데이트됩니다. 문서와 코드의 괴리를 허용하지 않습니다.</p>
-    </div>
-  </div>
-
-  <h3>문서와 구현의 분리</h3>
-  <div class="goal-note">
-    <p>이 프로젝트는 <strong>단계별로 중심 활동이 다릅니다.</strong></p>
-    <ul>
-      <li><strong>Phase 0 (문서 중심) :</strong> &nbsp;PRD, 데이터 전략, ADR, 제약사항 등 의사결정 기록. 코드 없음</li>
-      <li><strong>Phase 1 (분석 중심) :</strong> &nbsp;EDA로 실데이터 검증, 42컬럼 확정, IT 합성 완료 <span style="color:#00a854;">[완료]</span></li>
-      <li><strong>Phase 2 (설계 중심) :</strong> &nbsp;온톨로지 + DB 스키마 + 파이프라인 + API 설계 완료 (리뷰 4회) <span style="color:#00a854;">[완료]</span></li>
-      <li><strong>Phase 3+ (구현 중심) :</strong> &nbsp;FastAPI, PostgreSQL, Neo4j, 대시보드 개발. 코드 규칙 적용 <span style="color:#3182f6;">[다음]</span></li>
-    </ul>
-    <p style="color:#888;font-size:13px;">코드 규칙(타입 힌트, 한국어 주석, Docker Compose 등)은 Phase 2 이후부터 적용됩니다.</p>
-  </div>
-
-  <h3>의사결정과 미결 관리 구조</h3>
-  <div class="goal-note">
-    <p><strong>ADR (Architecture Decision Record)</strong></p>
-    <p>기술 의사결정마다 "Context &rarr; Options &rarr; Decision &rarr; Reasoning &rarr; Consequences" 구조로 기록합니다. 현재까지 6건(ADR-000~005)이 확정되었고, Phase가 진행되면서 추가됩니다.</p>
-  </div>
-  <div class="goal-note">
-    <p><strong>Open Items (미결 사항)</strong></p>
-    <p>지금 결정할 수 없는 것은 Open Items로 명시적으로 분류합니다. 각 항목마다 "왜 미결인가"와 "언제 결정할 것인가"를 기록합니다.</p>
-    <ul>
-      <li><strong>A. 데이터 관련 :</strong> &nbsp;Phase 1 EDA에서 결정 (timestamp 규칙, 매뉴얼 확보 등)</li>
-      <li><strong>B. 모델링 :</strong> &nbsp;Phase 1~2에서 결정 (이상탐지 모델, LSTM 윈도우 등)</li>
-      <li><strong>C. 시스템 :</strong> &nbsp;Phase 2에서 결정 (LLM 선택, 프론트엔드 전략 등)</li>
-      <li><strong>D. 관리 :</strong> &nbsp;Phase 2 완료 후 정의 (장기 마일스톤)</li>
-    </ul>
-    <p style="color:#888;font-size:13px;">Phase 1 완료 시점: 12건 중 일부 해결 (timestamp/equipment_id 합성, IT 합성 시나리오 확정). 나머지는 Phase 2~3에서 순차 해결</p>
-  </div>
-</div>
-</div>
-
-<!-- =============================== -->
-<!-- PAGE 10: Phase 한눈에 보기 -->
-<!-- =============================== -->
-<div class="page" id="p10">
-<div class="inner">
-  <div class="page-title">Phase 한눈에 보기</div>
-  <p class="page-sub">Phase 카드를 클릭하면 해당 단계의 요약, 로그, ADR, 갭 분석을 확인할 수 있습니다.</p>
-
-  <div class="ph-layout">
-    <!-- 좌측 Phase 선택 바 -->
-    <div class="ph-tabs">
-      <button class="ph-tab active" data-ph="phase0">
-        <span class="ph-tab-label">Phase 0</span>
-        <span class="ph-tab-name-kr">프로젝트 정의</span>
-        <span class="ph-tab-state done">완료</span>
-      </button>
-      <span class="ph-tab-arrow">&darr;</span>
-      <button class="ph-tab" data-ph="phase1">
-        <span class="ph-tab-label">Phase 1</span>
-        <span class="ph-tab-name-kr">데이터 탐색</span>
-        <span class="ph-tab-state done">완료</span>
-      </button>
-      <span class="ph-tab-arrow">&darr;</span>
-      <button class="ph-tab" data-ph="phase2">
-        <span class="ph-tab-label">Phase 2</span>
-        <span class="ph-tab-name-kr">아키텍처 설계</span>
-        <span class="ph-tab-state done">완료</span>
-      </button>
-      <span class="ph-tab-arrow">&darr;</span>
-      <button class="ph-tab" data-ph="phase3">
-        <span class="ph-tab-label">Phase 3+</span>
-        <span class="ph-tab-name-kr">구현 및 검증</span>
-        <span class="ph-tab-state current">다음</span>
-      </button>
-    </div>
-
-    <!-- 우측 콘텐츠 -->
-    <div class="ph-content">
-      <div class="ph-main-wrap">
-        <div class="ph-summary" id="ph-summary">
-          <div class="ph-summary-head">
-            <div>
-              <div class="ph-summary-phase" id="ph-summary-phase">Phase 0</div>
-              <div class="ph-summary-title" id="ph-summary-title">Project Definition</div>
-              <div class="ph-summary-subtitle" id="ph-summary-subtitle">프로젝트 정의</div>
-            </div>
-            <div class="ph-summary-meta" id="ph-summary-meta"></div>
-          </div>
-          <p class="ph-summary-desc" id="ph-summary-desc"></p>
-
-          <div class="ph-summary-grid">
-            <div class="ph-summary-box">
-              <div class="ph-summary-box-label">목표</div>
-              <ul id="ph-summary-goal"></ul>
-            </div>
-            <div class="ph-summary-box">
-              <div class="ph-summary-box-label">핵심 산출물</div>
-              <ul id="ph-summary-outputs"></ul>
-            </div>
-            <div class="ph-summary-box">
-              <div class="ph-summary-box-label">다음 단계로 넘기는 것</div>
-              <ul id="ph-summary-handoff"></ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- 우측 상세보기 세로바 -->
-        <div class="ph-actions-bar" id="ph-actions-bar">
-          <div class="ph-actions-bar-label">상세</div>
-          <div id="ph-actions"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 우측 슬라이드 오버레이 -->
-  <div class="ph-overlay-bg" id="ph-overlay-bg"></div>
-  <div class="ph-overlay" id="ph-overlay">
-    <div class="ph-overlay-header">
-      <div class="ph-overlay-title" id="ph-overlay-title"></div>
-      <button class="ph-overlay-close" id="ph-overlay-close">&times;</button>
-    </div>
-    <div class="ph-overlay-body" id="ph-overlay-body"></div>
-  </div>
-</div>
-</div>
-
-<!-- =============================== -->
-<!-- PAGE 5: Phase 0 -->
-<!-- =============================== -->
-<div class="page" id="p5">
-<div class="inner">
-  <div class="page-title">Phase 0 : 프로젝트 정의</div>
-  <p class="page-sub">무엇을 만들지, 어떤 데이터로, 어떤 제약 아래에서 만들지를 3일간 정리한 단계입니다.</p>
-
-  <!-- 목표와 범위 -->
-  <div class="goal-note" style="margin-bottom:28px;">
-    <p><strong>목표</strong></p>
-    <p>Phase 1 EDA가 검증할 기준선을 만든다 &mdash; 문제 정의, 범위 확정, 데이터 전략, 핵심 의사결정(ADR), 미결사항을 정리하여 이후 단계가 흔들리지 않는 기초를 세운다.</p>
-    <p style="margin-top:12px;"><strong>기간</strong>&nbsp; 2026-03-08 ~ 2026-03-10 (3일) &nbsp;&nbsp;<strong>상태</strong>&nbsp; 완료</p>
-  </div>
-
-  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
-
-  <!-- 핵심 결정 사항 -->
-  <h3>Phase 0에서 정한 것</h3>
-  <div class="p0-decisions">
-    <div class="p0-dec">
-      <div class="p0-dec-label">문제 정의</div>
-      <div class="p0-dec-title">PRD v1.0</div>
-      <ul>
-        <li>CNC 설비 예지보전 + 온톨로지 + LLM 자율 판단</li>
-        <li>6개 Feature Pipeline (F1~F6)</li>
-        <li>상시 레이어 + 독립 모듈 + 관제 자동화</li>
-      </ul>
-    </div>
-    <div class="p0-dec">
-      <div class="p0-dec-label">도메인</div>
-      <div class="p0-dec-title">CNC 단일 도메인</div>
-      <ul>
-        <li>NASA 터보팬 등 다중 도메인 배제 (ADR-000)</li>
-        <li>다중 도메인 혼합 시 조인 키 충돌 + LLM 환각</li>
-        <li>향후 확장은 별도 프로젝트로</li>
-      </ul>
-    </div>
-    <div class="p0-dec">
-      <div class="p0-dec-label">예측 방식</div>
-      <div class="p0-dec-title">Forecasting 기반</div>
-      <ul>
-        <li>RUL(잔여수명) 포기 (ADR-001)</li>
-        <li>미래값 예측 후 임계치 돌파 방식</li>
-        <li>"언제 위험해질까"만 판단</li>
-      </ul>
-    </div>
-    <div class="p0-dec">
-      <div class="p0-dec-label">데이터 전략</div>
-      <div class="p0-dec-title">Kaggle CNC Mill + 합성</div>
-      <ul>
-        <li>핵심: Kaggle CNC Mill (48컬럼, 18실험)</li>
-        <li>MES/ERP는 Python으로 합성 (ADR-002)</li>
-        <li>설계 원칙 5개 확정 (Canonical Model 포함)</li>
-      </ul>
-    </div>
-    <div class="p0-dec">
-      <div class="p0-dec-label">인프라</div>
-      <div class="p0-dec-title">PostgreSQL + Neo4j</div>
-      <ul>
-        <li>PostgreSQL에 TimescaleDB + pgvector 통합 (ADR-003)</li>
-        <li>온톨로지만 Neo4j 별도</li>
-        <li>5초 폴링, Kafka 미사용 (ADR-004)</li>
-      </ul>
-    </div>
-    <div class="p0-dec">
-      <div class="p0-dec-label">대시보드</div>
-      <div class="p0-dec-title">MVP 조기 착수</div>
-      <ul>
-        <li>파이프라인 완성 전 대시보드 먼저 (ADR-005)</li>
-        <li>시각적 결과물로 방향 검증</li>
-        <li>초기에는 정적 데이터 기반</li>
-      </ul>
-    </div>
-  </div>
-
-  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
-
-  <!-- 산출물 요약 -->
-  <h3>산출물</h3>
-  <div class="impl-grid" style="margin-bottom:28px;">
-    <div class="impl-card">
-      <div class="impl-num" style="font-size:10px;font-weight:800;color:#e8770e;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">문서</div>
-      <ul>
-        <li><strong>prd-v1.0.md</strong> &mdash; 제품 요구사항</li>
-        <li><strong>data-collection-strategy.md</strong> &mdash; 데이터 수집 전략 (v2)</li>
-        <li><strong>required-data-summary.md</strong> &mdash; F1~F6 데이터 매핑</li>
-        <li><strong>constraints.md</strong> &mdash; 제약사항 + 범위</li>
-        <li><strong>open-items.md</strong> &mdash; 미결사항 11건</li>
-      </ul>
-    </div>
-    <div class="impl-card">
-      <div class="impl-num" style="font-size:10px;font-weight:800;color:#e8770e;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">의사결정 + 데이터</div>
-      <ul>
-        <li><strong>ADR-000~005</strong> &mdash; 핵심 기술 의사결정 6건</li>
-        <li><strong>data/raw/</strong> &mdash; 외부 데이터셋 2종 (Kaggle CNC Mill + Bosch CNC)</li>
-        <li><strong>갭 분석 4건</strong> &mdash; 전략 vs 실제 불일치 발견/해결</li>
-        <li><strong>비전 문서</strong> &mdash; Palantir 스타일 온보딩 전략</li>
-      </ul>
-    </div>
-  </div>
-
-  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
-
-  <!-- 일자별 로그 (압축 타임라인) -->
-  <h3>일자별 진행 로그</h3>
-  <div class="p0-timeline">
-    <div class="p0-day">
-      <div class="p0-day-left">
-        <div class="p0-day-badge">Day 1</div>
-        <div class="p0-day-date">2026-03-08</div>
-      </div>
-      <div class="p0-day-body">
-        <h4>프로젝트 정의 및 핵심 의사결정</h4>
-        <ul>
-          <li><strong>PRD v1.0 작성</strong> &mdash; Problem &rarr; Solution &rarr; 6개 Feature Pipeline + System Pipeline 구조</li>
-          <li><strong>데이터셋 전략 초안</strong> &mdash; 5종 데이터셋 정의, 기능별 필수/중요/보강 분류 <span style="color:#888;font-size:12px;">(이후 Phase 1에서 2종으로 정리)</span></li>
-          <li><strong>ADR 5건 확정</strong> &mdash; 단일 도메인, Forecasting, 합성 MES/ERP, PostgreSQL 통합, 5초 폴링</li>
-          <li><strong>미결사항 11건 정리</strong></li>
-        </ul>
-        <div class="p0-day-outputs"><strong>산출물:</strong> prd-v1.0.md, data-collection-strategy.md (초안), open-items.md</div>
-      </div>
-    </div>
-
-    <div class="p0-day">
-      <div class="p0-day-left">
-        <div class="p0-day-badge">Day 2</div>
-        <div class="p0-day-date">2026-03-09</div>
-      </div>
-      <div class="p0-day-body">
-        <h4>데이터 전략 고도화 및 설계 원칙 확립</h4>
-        <ul>
-          <li><strong>데이터 전략 크로스 리뷰</strong> &mdash; 6개 품질 이슈 수정, 중복 섹션 통합, 데이터 맵 5종 추가</li>
-          <li><strong>설계 원칙 5번째 추가</strong> &mdash; 내부 표준 형식(Canonical Model), 고객사 확장 시 Onboarding Layer만 추가</li>
-          <li><strong>제품화 비전 논의</strong> &mdash; Palantir 스타일 자동 프로파일링 &rarr; 온톨로지 인스턴스 생성 흐름</li>
-          <li><strong>ADR-005</strong> &mdash; 대시보드 MVP 조기 착수 결정</li>
-        </ul>
-        <div class="p0-day-outputs"><strong>산출물:</strong> data-collection-strategy.md (v2), customer-onboarding-ontology-strategy.md, docs/progress/ 구조</div>
-      </div>
-    </div>
-
-    <div class="p0-day">
-      <div class="p0-day-left">
-        <div class="p0-day-badge">Day 3</div>
-        <div class="p0-day-date">2026-03-10</div>
-      </div>
-      <div class="p0-day-body">
-        <h4>데이터셋 수집 완료 및 정합성 검증</h4>
-        <ul>
-          <li><strong>외부 데이터셋 4종 수집</strong> &mdash; Kaggle CNC Mill, Bosch CNC, Multi-Sensor, Milling RUL + KAMP 카탈로그 <span style="color:#888;font-size:12px;">(이후 3종 삭제)</span></li>
-          <li><strong>크로스 리뷰 4건</strong> &mdash; ZIP 정리, KAMP 실체 확인, HDF5 포맷 메모, RUL 미사용 반영</li>
-          <li><strong>갭 분석 3회</strong> &mdash; timestamp/equipment_id 부재, 진동/온도 미포함, 합성 데이터 의심 발견</li>
-          <li><strong>문서 수정</strong> &mdash; KAMP &rarr; Kaggle 핵심 변경, 센서 목록 전면 재작성, open-items 업데이트</li>
-        </ul>
-        <div class="p0-day-outputs"><strong>산출물:</strong> .gitignore, required-data-summary.md (매핑표), constraints.md (범위), data/raw/ 5개 폴더</div>
-      </div>
-    </div>
-  </div>
-
-  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:28px 0;">
-
-  <!-- Phase 0 핸드오프 -->
-  <div class="goal-note">
-    <p><strong>Phase 1으로 넘기는 것</strong></p>
-    <ul>
-      <li><strong>EDA에서 검증할 가설</strong> &mdash; 유효 센서 42개, 상수/0값 컬럼 제거 후 실제 사용 가능한 피처 확정</li>
-      <li><strong>timestamp/equipment_id 합성 과제</strong> &mdash; sequence &times; 100ms &rarr; datetime, experiment &rarr; CNC-001 매핑</li>
-      <li><strong>주력 데이터셋 기준</strong> &mdash; Kaggle CNC Mill 단일 기준, 보조 2종은 참고용</li>
-      <li><strong>제약사항</strong> &mdash; 진동/온도 없이 전류/전력/속도 중심 설계, 공개 학술 데이터의 한계 인지</li>
-    </ul>
-  </div>
-</div>
-</div>
-
-<!-- =============================== -->
-<!-- PAGE 6: 갭 분석 -->
 <!-- =============================== -->
 <div class="page" id="p6">
 <div class="inner">
