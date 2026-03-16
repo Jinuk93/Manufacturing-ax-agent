@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     REDUCE_THRESHOLD: float = 0.6       # Phase 3 검증
     LLM_PROVIDER: str = "openai"         # OpenAI GPT-4o-mini
     OPENAI_MODEL: str = "gpt-4o-mini"    # 비용 효율적 + JSON mode 지원
+    OPENAI_API_KEY: str = ""             # .env에서 로드
 
     class Config:
         env_file = ".env"
