@@ -23,6 +23,8 @@
 | 11 | `/api/f6/action/{equipment_id}` | GET | LLM 조치 리포트 | 알람 시 |
 | 12 | `/api/health` | GET | 헬스 체크 (PG + Neo4j 상태) | 모니터링 |
 | 13 | `/api/f6/alarms` | GET | 전체 설비 알람 피드 (3대 통합) | 대시보드 폴링 |
+| 14 | `/api/f6/maintenance/{equipment_id}` | GET | 설비별 정비 이력 타임라인 | 대시보드 폴링 (60초) |
+| 15 | `/api/f6/alarms/{alarm_id}/acknowledge` | POST | 알람 확인 처리 (Audit trail) | 사용자 액션 시 |
 
 ---
 
@@ -142,6 +144,7 @@ class RelatedDocument(BaseModel):
     bm25_score: float
     vector_score: float
     text_preview: Optional[str] = None
+    snippet: Optional[str] = None           # UI 표시용 관련 청크 텍스트 (최대 200자)
 
 class PastMaintenance(BaseModel):
     event_id: str
@@ -368,6 +371,7 @@ async def llm_action(equipment_id: str) -> LLMActionResponse:
 
 ### 3.8 `GET /api/f6/alarms`
 
+
 전체 설비(3대) 알람 피드를 단일 엔드포인트로 제공.
 대시보드 AlarmFeed 컴포넌트가 설비별 × 3 호출 대신 이 엔드포인트 1회만 호출.
 
@@ -388,7 +392,50 @@ async def alarm_feed(
 | 성공 응답 | 200 + `AlarmFeedResponse` |
 | 알람 없음 | 200 + `{"alarms": [], "total_count": 0}` |
 
-### 3.10 `GET /api/health`
+### 3.9 `GET /api/f6/maintenance/{equipment_id}`
+
+설비별 정비 이력을 타임라인 형태로 반환. Center 패널 하단 정비 이력 표시용.
+
+```python
+class MaintenanceTimelineItem(BaseModel):
+    event_id: str
+    failure_code: str
+    event_type: str                      # corrective / preventive
+    started_at: datetime
+    duration_min: int
+    parts_used: str
+    resolution: Optional[str] = None
+
+class MaintenanceTimelineResponse(BaseModel):
+    equipment_id: str
+    records: List[MaintenanceTimelineItem]  # 최신 순 정렬
+
+@app.get("/api/f6/maintenance/{equipment_id}", response_model=MaintenanceTimelineResponse)
+async def maintenance_timeline(equipment_id: str, limit: int = 10):
+    # maintenance_events 테이블에서 해당 설비 최근 N건 조회
+    pass
+```
+
+| 항목 | 값 |
+|------|-----|
+| 폴링 주기 | 60초 (정비 이력은 자주 안 바뀜) |
+| 성공 응답 | 200 + `MaintenanceTimelineResponse` |
+
+### 3.10 `POST /api/f6/alarms/{alarm_id}/acknowledge`
+
+알람 확인 처리. 운영 감사 추적(Audit trail)용. Phase 3 구현 예약.
+
+```python
+@app.post("/api/f6/alarms/{alarm_id}/acknowledge")
+async def acknowledge_alarm(alarm_id: str):
+    # anomaly_scores 테이블에 acknowledged_at, acknowledged_by 컬럼 추가 필요
+    # Phase 3에서 구현
+    pass
+```
+
+> **Phase 3 구현 예약:** DB 스키마에 `acknowledged_at` / `acknowledged_by` 컬럼 추가 필요.
+
+### 3.11 `GET /api/health`
 
 ```python
 @app.get("/api/health")

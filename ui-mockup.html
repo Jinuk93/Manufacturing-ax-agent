@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CNC 관제 시스템 — Palantir Style Mockup v2</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ── Palantir Blueprint Token System ──────────────── */
+:root {
+  --black:      #111418;
+  --dg1:        #1C2127;
+  --dg2:        #252A31;
+  --dg3:        #2F343C;
+  --dg4:        #383E47;
+  --dg5:        #404854;
+  --gray1:      #5F6B7C;
+  --gray2:      #738091;
+  --gray3:      #8F99A8;
+  --gray4:      #ABB3BF;
+  --gray5:      #C5CBD3;
+  --white:      #FFFFFF;
+
+  --blue3:      #2D72D2;
+  --blue4:      #4C90F0;
+  --blue5:      #8ABBFF;
+
+  --green3:     #238551;
+  --green5:     #72CA9B;
+
+  --orange3:    #C87619;
+  --orange5:    #FBB360;
+
+  --red3:       #CD4246;
+  --red5:       #FA999C;
+
+  --gold3:      #D4AC0D;
+  --gold5:      #FFE39F;
+
+  --border:     rgba(255,255,255,0.08);
+  --border-md:  rgba(255,255,255,0.12);
+
+  --sidebar-w:  240px;
+  --right-w:    360px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--black);
+  color: var(--gray5);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+/* ── TOPBAR ───────────────────────────────────────── */
+.topbar {
+  height: 50px;
+  background: var(--dg1);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  position: relative;
+  z-index: 100;
+  flex-shrink: 0;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 700; color: var(--white);
+  letter-spacing: -0.02em;
+}
+.logo-sq {
+  width: 28px; height: 28px;
+  background: var(--blue3);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; color: #fff;
+}
+.topbar-sep { width: 1px; height: 20px; background: var(--border-md); margin: 0 4px; }
+.topbar-breadcrumb { font-size: 13px; color: var(--gray2); }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.db-status { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--gray3); }
+.db-dot { display: flex; align-items: center; gap: 5px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot-ok  { background: var(--green5); box-shadow: 0 0 5px var(--green3); }
+.dot-err { background: var(--red5); }
+.dot-warn{ background: var(--orange5); }
+.clock { font-size: 12px; color: var(--gray1); font-variant-numeric: tabular-nums; }
+.clock span { color: var(--gray3); }
+
+/* ── APP SHELL ────────────────────────────────────── */
+.app-shell {
+  display: flex;
+  height: calc(100vh - 50px);
+  overflow: hidden;
+}
+
+/* ── LEFT SIDEBAR ─────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--dg1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.sidebar-section {
+  padding: 12px 0 4px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray1);
+  padding: 0 16px;
+  margin-bottom: 6px;
+}
+.eq-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+.eq-item:hover { background: var(--dg2); }
+.eq-item.active {
+  background: var(--dg2);
+  border-left-color: var(--blue3);
+}
+.eq-item.active-critical { border-left-color: var(--red3); }
+.eq-indicator { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.eq-indicator.ok  { background: var(--green5); }
+.eq-indicator.warn { background: var(--orange5); box-shadow: 0 0 6px var(--orange3); }
+.eq-indicator.crit { background: var(--red5); box-shadow: 0 0 8px var(--red3); animation: blink 1.4s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.eq-item-info { flex: 1; min-width: 0; }
+.eq-item-name { font-size: 13px; font-weight: 600; color: var(--gray5); }
+.eq-item-score { font-size: 11px; color: var(--gray2); }
+.eq-item-badge {
+  font-size: 10px; font-weight: 700;
+  padding: 2px 6px; border-radius: 2px;
+  flex-shrink: 0;
+}
+.badge-ok  { background: rgba(35,133,81,0.2); color: var(--green5); }
+.badge-warn { background: rgba(200,118,25,0.2); color: var(--orange5); }
+.badge-crit { background: rgba(205,66,70,0.25); color: var(--red5); }
+
+/* Pipeline Status */
+.pipeline-grid {
+  padding: 10px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+.pipe-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--gray3);
+}
+.pipe-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Alarm Feed in sidebar */
+.alarm-mini-list { padding: 4px 0 8px; }
+.alarm-mini {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: background 0.1s;
+}
+.alarm-mini:hover { background: var(--dg2); }
+.alarm-mini.crit { border-left-color: var(--red3); }
+.alarm-mini.warn { border-left-color: var(--orange3); }
+.alarm-mini-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 3px; flex-shrink: 0; }
+.alarm-mini-body { flex: 1; min-width: 0; }
+.alarm-mini-eq  { font-size: 12px; font-weight: 600; color: var(--gray5); }
+.alarm-mini-code { font-size: 11px; color: var(--gray2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alarm-mini-time { font-size: 10px; color: var(--gray1); margin-top: 1px; }
+.alarm-mini-score {
+  font-size: 11px; font-weight: 700;
+  padding: 1px 5px; border-radius: 2px; flex-shrink: 0; margin-top: 1px;
+}
+
+/* ── CENTER PANEL ─────────────────────────────────── */
+.center {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--dg1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Critical Banner */
+.critical-banner {
+  background: rgba(205,66,70,0.12);
+  border-bottom: 1px solid rgba(205,66,70,0.3);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.critical-banner.hidden { display: none; }
+.crit-icon { font-size: 18px; }
+.crit-text { flex: 1; }
+.crit-title { font-size: 13px; font-weight: 700; color: var(--red5); }
+.crit-sub   { font-size: 12px; color: var(--gray3); margin-top: 1px; }
+.ack-btn {
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid var(--red3);
+  color: var(--red5);
+  font-size: 12px; font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.ack-btn:hover { background: rgba(205,66,70,0.15); }
+
+/* Center Content */
+.center-content { padding: 16px 20px; flex: 1; }
+
+/* KPI Row */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.kpi-card {
+  background: var(--dg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 16px;
+}
+.kpi-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gray2); margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 28px; font-weight: 700; line-height: 1;
+  color: var(--white);
+}
+.kpi-value.red   { color: var(--red5); }
+.kpi-value.orange{ color: var(--orange5); }
+.kpi-value.green { color: var(--green5); }
+.kpi-sub { font-size: 11px; color: var(--gray2); margin-top: 4px; }
+
+/* Section header */
+.section-hd {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--gray2);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-hd::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Sensor chart card */
+.chart-card {
+  background: var(--dg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+.chart-controls {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.chart-select {
+  background: var(--dg4);
+  border: 1px solid var(--border-md);
+  color: var(--gray4);
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.chart-tab {
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 12px;
+  color: var(--gray3);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.chart-tab.active { background: var(--blue3); color: #fff; }
+.threshold-legend {
+  margin-left: auto;
+  display: flex; gap: 10px;
+}
+.th-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--gray2); }
+.th-line { width: 16px; height: 2px; border-top: 2px dashed; }
+.th-stop   { border-color: var(--red3); }
+.th-reduce { border-color: var(--orange3); }
+.chart-wrap { height: 180px; position: relative; }
+
+/* Anomaly History */
+.anomaly-history-wrap { height: 100px; position: relative; }
+
+/* Maintenance Timeline */
+.maint-timeline { display: flex; flex-direction: column; gap: 0; }
+.maint-item {
+  display: flex; gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+.maint-item:last-child { border-bottom: none; }
+.maint-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 3px; }
+.maint-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dg4); border: 2px solid var(--gray1); flex-shrink: 0; }
+.maint-line { width: 1px; flex: 1; background: var(--border); margin-top: 3px; min-height: 16px; }
+.maint-body { flex: 1; }
+.maint-code { font-size: 12px; font-weight: 600; color: var(--gray4); }
+.maint-meta { font-size: 11px; color: var(--gray2); margin-top: 2px; }
+.maint-type-badge {
+  font-size: 10px; font-weight: 600;
+  padding: 1px 5px; border-radius: 2px;
+  display: inline-block; margin-right: 4px;
+}
+.type-corr { background: rgba(205,66,70,0.15); color: var(--red5); }
+.type-prev { background: rgba(35,133,81,0.15); color: var(--green5); }
+.maint-time { font-size: 11px; color: var(--gray1); }
+
+/* ── RIGHT PANEL ──────────────────────────────────── */
+.right-panel {
+  width: var(--right-w);
+  min-width: var(--right-w);
+  background: var(--dg1);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.rp-section {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+}
+
+/* Recommendation Banner */
+.rec-banner {
+  border-radius: 2px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-left: 4px solid;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.rec-banner.stop   { background: rgba(205,66,70,0.12); border-left-color: var(--red3); }
+.rec-banner.reduce { background: rgba(200,118,25,0.12); border-left-color: var(--orange3); }
+.rec-banner.monitor{ background: rgba(35,133,81,0.12); border-left-color: var(--green3); }
+.rec-icon { font-size: 16px; margin-top: 1px; }
+.rec-title { font-size: 14px; font-weight: 700; }
+.rec-title.stop    { color: var(--red5); }
+.rec-title.reduce  { color: var(--orange5); }
+.rec-title.monitor { color: var(--green5); }
+.rec-sub { font-size: 11px; color: var(--gray3); margin-top: 2px; }
+.rec-meta { font-size: 11px; color: var(--gray1); display: flex; gap: 10px; margin-top: 4px; }
+
+/* Action Steps */
+.action-steps { display: flex; flex-direction: column; gap: 6px; }
+.action-step {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 7px 10px;
+  background: var(--dg2);
+  border-radius: 2px;
+  border: 1px solid var(--border);
+}
+.step-num {
+  width: 18px; height: 18px;
+  background: var(--dg4);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+  color: var(--blue5); flex-shrink: 0;
+}
+.step-text { font-size: 12px; color: var(--gray4); line-height: 1.5; }
+.step-tag {
+  display: inline-block;
+  background: rgba(45,114,210,0.15);
+  color: var(--blue5);
+  font-size: 10px; font-weight: 600;
+  padding: 1px 5px; border-radius: 2px;
+  font-family: monospace;
+  margin-right: 2px;
+}
+
+/* Reasoning */
+.reasoning-box {
+  background: var(--dg2);
+  border-left: 3px solid var(--blue3);
+  border-radius: 0 2px 2px 0;
+  padding: 10px 12px;
+  font-size: 12px; color: var(--gray3);
+  line-height: 1.7;
+}
+
+/* GraphRAG Docs */
+.doc-card {
+  background: var(--dg2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.doc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.doc-id {
+  font-size: 10px; font-weight: 700;
+  background: rgba(45,114,210,0.15);
+  color: var(--blue5);
+  padding: 1px 6px; border-radius: 2px;
+  font-family: monospace;
+}
+.doc-score {
+  font-size: 10px; color: var(--gray2);
+  margin-left: auto;
+}
+.doc-title { font-size: 12px; font-weight: 600; color: var(--gray5); margin-bottom: 4px; }
+.doc-snippet { font-size: 11px; color: var(--gray2); line-height: 1.6; }
+
+/* Parts needed */
+.part-row {
+  display: flex; align-items: center;
+  padding: 7px 10px;
+  background: var(--dg2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+.part-id {
+  font-size: 11px; font-weight: 600; font-family: monospace;
+  background: var(--dg4);
+  color: var(--gray4);
+  padding: 1px 5px; border-radius: 2px;
+  margin-right: 8px;
+}
+.part-name { font-size: 12px; color: var(--gray4); flex: 1; }
+.part-ok  { font-size: 11px; font-weight: 600; color: var(--green5); }
+.part-no  { font-size: 11px; font-weight: 600; color: var(--red5); }
+
+/* Downtime */
+.downtime-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--gray3);
+  padding: 8px 0 0;
+}
+.downtime-val { font-size: 15px; font-weight: 700; color: var(--orange5); }
+
+/* Anomaly gauge (right panel) */
+.gauge-section { text-align: center; padding: 4px 0 8px; }
+.gauge-big { font-size: 42px; font-weight: 800; line-height: 1; }
+.gauge-big.crit { color: var(--red5); }
+.gauge-big.warn { color: var(--orange5); }
+.gauge-big.ok   { color: var(--green5); }
+.gauge-sub { font-size: 12px; color: var(--gray3); margin-top: 4px; }
+.gauge-code { font-size: 11px; font-weight: 600; font-family: monospace; color: var(--gold5); margin-top: 6px; }
+.gauge-conf { font-size: 11px; color: var(--gray2); }
+
+/* Mini score bar */
+.mini-bars { display: flex; align-items: flex-end; gap: 2px; height: 32px; margin: 10px 0 0; }
+.mini-bar { flex: 1; border-radius: 1px 1px 0 0; min-height: 2px; }
+.mb-ok   { background: var(--dg4); }
+.mb-warn { background: var(--orange3); }
+.mb-crit { background: var(--red3); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--dg1); }
+::-webkit-scrollbar-thumb { background: var(--dg4); border-radius: 2px; }
+
+/* Polled Tag */
+.poll-tag {
+  font-size: 10px; color: var(--gray1);
+  background: var(--dg3);
+  padding: 1px 5px; border-radius: 2px;
+  margin-left: auto;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%;
+  color: var(--gray2); font-size: 13px; gap: 8px;
+}
+.empty-icon { font-size: 32px; opacity: 0.3; }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-sq">C</div>
+    CNC 관제 시스템
+  </div>
+  <div class="topbar-sep"></div>
+  <div class="topbar-breadcrumb">Manufacturing AX Agent</div>
+  <div class="topbar-right">
+    <div class="db-status">
+      <div class="db-dot"><div class="dot dot-ok"></div> PostgreSQL</div>
+      <div class="db-dot"><div class="dot dot-ok"></div> Neo4j</div>
+      <div class="db-dot"><div class="dot dot-ok"></div> LLM API</div>
+    </div>
+    <div class="clock" id="clock"><span>마지막 갱신</span> 00:00:00</div>
+  </div>
+</div>
+
+<!-- ── APP SHELL ─────────────────────────────────────── -->
+<div class="app-shell">
+
+  <!-- ══ LEFT SIDEBAR ══════════════════════════════════ -->
+  <div class="sidebar">
+
+    <!-- 설비 목록 -->
+    <div class="sidebar-section">
+      <div class="sidebar-label">설비 상태</div>
+      <div class="eq-item" id="eq-CNC-001" onclick="selectEq('CNC-001')">
+        <div class="eq-indicator ok"></div>
+        <div class="eq-item-info">
+          <div class="eq-item-name">CNC-001</div>
+          <div class="eq-item-score mono">score: 0.21</div>
+        </div>
+        <div class="eq-item-badge badge-ok">정상</div>
+      </div>
+      <div class="eq-item active active-critical" id="eq-CNC-002" onclick="selectEq('CNC-002')">
+        <div class="eq-indicator crit"></div>
+        <div class="eq-item-info">
+          <div class="eq-item-name">CNC-002</div>
+          <div class="eq-item-score mono" style="color:var(--red5)">score: 0.87</div>
+        </div>
+        <div class="eq-item-badge badge-crit">위험</div>
+      </div>
+      <div class="eq-item" id="eq-CNC-003" onclick="selectEq('CNC-003')">
+        <div class="eq-indicator ok"></div>
+        <div class="eq-item-info">
+          <div class="eq-item-name">CNC-003</div>
+          <div class="eq-item-score mono">score: 0.18</div>
+        </div>
+        <div class="eq-item-badge badge-ok">정상</div>
+      </div>
+    </div>
+
+    <!-- 알람 피드 -->
+    <div class="sidebar-section">
+      <div class="sidebar-label">이상 알람</div>
+      <div class="alarm-mini-list">
+        <div class="alarm-mini crit" onclick="selectEq('CNC-002')">
+          <div class="alarm-mini-dot" style="background:var(--red5);animation:blink 1.4s infinite"></div>
+          <div class="alarm-mini-body">
+            <div class="alarm-mini-eq">CNC-002</div>
+            <div class="alarm-mini-code">SPINDLE_OVERHEAT_001</div>
+            <div class="alarm-mini-time">08:23:01</div>
+          </div>
+          <div class="alarm-mini-score badge-crit mono">0.87</div>
+        </div>
+        <div class="alarm-mini warn">
+          <div class="alarm-mini-dot" style="background:var(--orange5)"></div>
+          <div class="alarm-mini-body">
+            <div class="alarm-mini-eq">CNC-001</div>
+            <div class="alarm-mini-code">TOOL_WEAR_001</div>
+            <div class="alarm-mini-time">07:45:30</div>
+          </div>
+          <div class="alarm-mini-score badge-warn mono">0.63</div>
+        </div>
+        <div class="alarm-mini warn">
+          <div class="alarm-mini-dot" style="background:var(--orange5)"></div>
+          <div class="alarm-mini-body">
+            <div class="alarm-mini-eq">CNC-003</div>
+            <div class="alarm-mini-code">CLAMP_PRESSURE_001</div>
+            <div class="alarm-mini-time">06:12:15</div>
+          </div>
+          <div class="alarm-mini-score badge-warn mono">0.61</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 파이프라인 상태 -->
+    <div class="sidebar-section" style="border-bottom:none;">
+      <div class="sidebar-label">파이프라인 상태</div>
+      <div class="pipeline-grid">
+        <div class="pipe-item"><div class="pipe-dot" style="background:var(--green5)"></div>F1 수집</div>
+        <div class="pipe-item"><div class="pipe-dot" style="background:var(--green5)"></div>F2 탐지</div>
+        <div class="pipe-item"><div class="pipe-dot" style="background:var(--green5)"></div>F3 동기</div>
+        <div class="pipe-item"><div class="pipe-dot" style="background:var(--green5)"></div>F4 RAG</div>
+        <div class="pipe-item"><div class="pipe-dot" style="background:var(--green5)"></div>F5 LLM</div>
+        <div class="pipe-item"><div class="pipe-dot" style="background:var(--green5)"></div>F6 UI</div>
+      </div>
+      <div style="padding:6px 16px 10px; font-size:11px; color:var(--gray1);">폴링 주기: 5초 / 갱신: <span id="poll-tick" style="color:var(--gray3);">정상</span></div>
+    </div>
+
+  </div><!-- /sidebar -->
+
+  <!-- ══ CENTER ════════════════════════════════════════ -->
+  <div class="center" id="center-panel">
+
+    <!-- Critical Banner -->
+    <div class="critical-banner" id="critical-banner">
+      <div class="crit-icon">🔴</div>
+      <div class="crit-text">
+        <div class="crit-title">CNC-002 — 즉시 정지 필요 (anomaly_score: 0.87 ≥ STOP 0.8)</div>
+        <div class="crit-sub">SPINDLE_OVERHEAT_001 예측 · 확신도 91% · 08:23:01 감지</div>
+      </div>
+      <button class="ack-btn" onclick="acknowledgeAlarm()">확인 처리</button>
+    </div>
+
+    <div class="center-content">
+
+      <!-- KPI Row -->
+      <div class="kpi-row" style="margin-bottom:20px;">
+        <div class="kpi-card">
+          <div class="kpi-label">이상 점수</div>
+          <div class="kpi-value red mono" id="kpi-score">0.87</div>
+          <div class="kpi-sub" id="kpi-score-sub" style="color:var(--red5);">STOP 임계치 초과</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">예측 고장코드</div>
+          <div style="font-size:12px;font-weight:700;color:var(--gold5);margin-top:4px;font-family:monospace;line-height:1.3" id="kpi-code">SPINDLE_<br>OVERHEAT_001</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">LLM 확신도</div>
+          <div class="kpi-value orange" id="kpi-conf">91%</div>
+          <div class="kpi-sub">GraphRAG 기반</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">예상 다운타임</div>
+          <div class="kpi-value orange" id="kpi-down">75분</div>
+          <div class="kpi-sub">과거 유사 사례 기준</div>
+        </div>
+      </div>
+
+      <!-- 실시간 센서 차트 -->
+      <div class="section-hd">실시간 센서 <span class="poll-tag">5초 폴링</span></div>
+      <div class="chart-card">
+        <div class="chart-controls">
+          <select class="chart-select" onchange="updateSensorChart(this.value)">
+            <option value="S">S축 (스핀들)</option>
+            <option value="X">X축</option>
+            <option value="Y">Y축</option>
+            <option value="Z">Z축</option>
+          </select>
+          <select class="chart-select">
+            <option>S1_ActualVelocity</option>
+            <option>S1_CurrentFeedback</option>
+            <option>S1_ActualPosition</option>
+          </select>
+          <div class="threshold-legend">
+            <div class="th-item"><div class="th-line th-stop"></div> STOP 0.8</div>
+            <div class="th-item"><div class="th-line th-reduce"></div> REDUCE 0.6</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="sensorChart"></canvas></div>
+      </div>
+
+      <!-- 이상 점수 히스토리 -->
+      <div class="section-hd">이상 점수 추이 (1시간) <span class="poll-tag">5초 폴링</span></div>
+      <div class="chart-card" style="margin-bottom:20px;">
+        <div class="chart-wrap" style="height:120px;"><canvas id="anomalyHistChart"></canvas></div>
+      </div>
+
+      <!-- 정비 이력 타임라인 -->
+      <div class="section-hd">정비 이력 타임라인 <span class="poll-tag">60초 폴링</span></div>
+      <div class="chart-card">
+        <div class="maint-timeline">
+          <div class="maint-item">
+            <div class="maint-dot-col"><div class="maint-dot" style="border-color:var(--red3)"></div><div class="maint-line"></div></div>
+            <div class="maint-body">
+              <div class="maint-code"><span class="maint-type-badge type-corr">수리</span>SPINDLE_OVERHEAT_001</div>
+              <div class="maint-meta">P002 베어링 교체 · 소요: 72분 · 해결: 냉각 시스템 점검 후 교체</div>
+            </div>
+            <div class="maint-time">2주 전</div>
+          </div>
+          <div class="maint-item">
+            <div class="maint-dot-col"><div class="maint-dot" style="border-color:var(--orange3)"></div><div class="maint-line"></div></div>
+            <div class="maint-body">
+              <div class="maint-code"><span class="maint-type-badge type-corr">수리</span>TOOL_WEAR_001</div>
+              <div class="maint-meta">P001 Endmill 교체 · 소요: 28분</div>
+            </div>
+            <div class="maint-time">3주 전</div>
+          </div>
+          <div class="maint-item">
+            <div class="maint-dot-col"><div class="maint-dot" style="border-color:var(--green3)"></div></div>
+            <div class="maint-body">
+              <div class="maint-code"><span class="maint-type-badge type-prev">예방</span>정기 점검</div>
+              <div class="maint-meta">윤활 · 청소 · 소모품 교체</div>
+            </div>
+            <div class="maint-time">1개월 전</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /center-content -->
+  </div><!-- /center -->
+
+  <!-- ══ RIGHT PANEL ════════════════════════════════════ -->
+  <div class="right-panel">
+
+    <!-- 이상 점수 게이지 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">이상 점수 <span class="poll-tag">5초</span></div>
+      <div class="gauge-section">
+        <div class="gauge-big crit mono" id="rp-score">0.87</div>
+        <div class="gauge-sub">STOP 임계치 (0.80) 초과</div>
+        <div class="gauge-code" id="rp-code">SPINDLE_OVERHEAT_001</div>
+        <div class="gauge-conf">확신도 <strong style="color:var(--gray4)">91%</strong></div>
+      </div>
+      <div class="mini-bars" id="miniBars"></div>
+    </div>
+
+    <!-- LLM 조치 리포트 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">AI 조치 리포트 <span class="poll-tag">이벤트</span></div>
+      <div class="rec-banner stop">
+        <div class="rec-icon">⛔</div>
+        <div>
+          <div class="rec-title stop">즉시 정지 (STOP)</div>
+          <div class="rec-sub">anomaly_score ≥ 0.80 — 즉각 조치 필요</div>
+          <div class="rec-meta"><span>생성: 08:23:05</span><span>신뢰도: 85%</span></div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray2);margin-bottom:8px;">조치 단계</div>
+      <div class="action-steps">
+        <div class="action-step"><div class="step-num">1</div><div class="step-text">feedrate 즉시 0으로 감속</div></div>
+        <div class="action-step"><div class="step-num">2</div><div class="step-text">현재 가공 중단 (안전 정지)</div></div>
+        <div class="action-step"><div class="step-num">3</div><div class="step-text"><span class="step-tag">DOC-004</span> 스핀들 점검 절차 실행</div></div>
+        <div class="action-step"><div class="step-num">4</div><div class="step-text"><span class="step-tag">P002</span> 베어링 교체 (재고 2세트 확인)</div></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--gray2);margin:12px 0 6px;">판단 근거</div>
+      <div class="reasoning-box">
+        anomaly_score 0.87, 과거 동일 고장 평균 75분 소요. 현재 urgent 작업이나 납기까지 2시간 여유 있어 즉시 정지 후 정비 권장.
+      </div>
+    </div>
+
+    <!-- GraphRAG 참조 문서 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">GraphRAG 참조 문서 <span class="poll-tag">F4</span></div>
+      <div class="doc-card">
+        <div class="doc-header">
+          <div class="doc-id">DOC-004</div>
+          <div class="doc-score">hybrid: 0.94</div>
+        </div>
+        <div class="doc-title">SPINDLE_OVERHEAT_001 교체절차서</div>
+        <div class="doc-snippet">스핀들 과열 발생 시 즉시 전원 차단 후 냉각 대기. 베어링 마모 확인 후 P002 교체 절차 진행…</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-header">
+          <div class="doc-id">DOC-006</div>
+          <div class="doc-score">hybrid: 0.87</div>
+        </div>
+        <div class="doc-title">SPINDLE_OVERHEAT_001 트러블슈팅가이드</div>
+        <div class="doc-snippet">과열 원인 진단: 냉각수 부족 / 베어링 마모 / 회전수 초과. 각 케이스별 조치 방법…</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-header">
+          <div class="doc-id">DOC-005</div>
+          <div class="doc-score">hybrid: 0.81</div>
+        </div>
+        <div class="doc-title">SPINDLE_OVERHEAT_001 점검체크리스트</div>
+        <div class="doc-snippet">정기 점검 항목: 냉각수 수위, 베어링 온도, 회전 소음, 윤활유 상태 확인…</div>
+      </div>
+    </div>
+
+    <!-- 필요 부품 + 재고 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">필요 부품 · 재고 현황 <span class="poll-tag">30초</span></div>
+      <div class="part-row">
+        <div class="part-id">P002</div>
+        <div class="part-name">Spindle Bearing ×1세트</div>
+        <div class="part-ok">재고 2개 ✓</div>
+      </div>
+      <div class="part-row">
+        <div class="part-id">P003</div>
+        <div class="part-name">Coolant 20L ×1</div>
+        <div class="part-ok">재고 10개 ✓</div>
+      </div>
+      <div class="downtime-row">
+        <span>예상 다운타임</span>
+        <span class="downtime-val">75분</span>
+        <span style="font-size:11px;color:var(--gray2)">과거 사례 기준</span>
+      </div>
+    </div>
+
+    <!-- 작업 현황 -->
+    <div class="rp-section" style="border-bottom:none;">
+      <div class="section-hd" style="margin-bottom:8px;">작업 현황 <span class="poll-tag">30초</span></div>
+      <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:10px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:12px;font-weight:700;color:var(--gray5);">WO-2024-007</div>
+          <div style="font-size:10px;font-weight:700;background:rgba(200,118,25,0.15);color:var(--orange5);padding:2px 6px;border-radius:2px;">urgent</div>
+        </div>
+        <div style="font-size:11px;color:var(--gray2);">납기: 2024-01-22 10:30 · <span style="color:var(--gold5);">⏱ 2시간 16분 남음</span></div>
+        <div style="font-size:11px;color:var(--gray2);margin-top:3px;">상태: completed</div>
+      </div>
+    </div>
+
+  </div><!-- /right-panel -->
+
+</div><!-- /app-shell -->
+
+<script>
+/* ── Clock ─────────────────────────── */
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').innerHTML =
+    `<span>마지막 갱신</span> ${n.toTimeString().slice(0,8)}`;
+}
+setInterval(tick, 1000); tick();
+
+/* ── Poll tick ──────────────────────── */
+let pollCount = 0;
+setInterval(() => {
+  pollCount++;
+  const el = document.getElementById('poll-tick');
+  el.textContent = `정상 (${pollCount}회)`;
+}, 5000);
+
+/* ── Equipment selection ────────────── */
+const EQ_DATA = {
+  'CNC-001': { score: 0.21, code: null, conf: null, down: '—', status: 'ok', rec: 'monitor' },
+  'CNC-002': { score: 0.87, code: 'SPINDLE_OVERHEAT_001', conf: 91, down: '75분', status: 'crit', rec: 'stop' },
+  'CNC-003': { score: 0.18, code: null, conf: null, down: '—', status: 'ok', rec: 'monitor' },
+};
+
+let currentEq = 'CNC-002';
+
+function selectEq(id) {
+  currentEq = id;
+  // sidebar highlight
+  document.querySelectorAll('.eq-item').forEach(el => {
+    el.classList.remove('active','active-critical');
+  });
+  const item = document.getElementById('eq-' + id);
+  item.classList.add('active');
+  if (EQ_DATA[id].status === 'crit') item.classList.add('active-critical');
+
+  const d = EQ_DATA[id];
+
+  // critical banner
+  const banner = document.getElementById('critical-banner');
+  if (d.status === 'crit') {
+    banner.classList.remove('hidden');
+  } else {
+    banner.classList.add('hidden');
+  }
+
+  // KPI
+  document.getElementById('kpi-score').textContent = d.score.toFixed(2);
+  document.getElementById('kpi-score').className = 'kpi-value mono ' + (d.status === 'crit' ? 'red' : d.status === 'warn' ? 'orange' : 'green');
+  document.getElementById('kpi-score-sub').textContent = d.status === 'crit' ? 'STOP 임계치 초과' : d.status === 'warn' ? 'REDUCE 임계치 초과' : '정상 범위';
+  document.getElementById('kpi-score-sub').style.color = d.status === 'crit' ? 'var(--red5)' : d.status === 'warn' ? 'var(--orange5)' : 'var(--green5)';
+  document.getElementById('kpi-code').innerHTML = d.code ? d.code.replace('_',`_<br>`) : '<span style="color:var(--gray2)">—</span>';
+  document.getElementById('kpi-conf').textContent = d.conf ? d.conf + '%' : '—';
+  document.getElementById('kpi-down').textContent = d.down;
+
+  // Right panel score
+  document.getElementById('rp-score').textContent = d.score.toFixed(2);
+  document.getElementById('rp-score').className = 'gauge-big mono ' + (d.status === 'crit' ? 'crit' : d.status === 'warn' ? 'warn' : 'ok');
+  document.getElementById('rp-code').textContent = d.code || '—';
+
+  // Charts
+  initCharts(id);
+  initMiniBars(id);
+}
+
+/* ── Charts ────────────────────────── */
+let sensorChartInst = null, anomalyHistChartInst = null;
+
+function initCharts(eqId) {
+  if (sensorChartInst) { sensorChartInst.destroy(); sensorChartInst = null; }
+  if (anomalyHistChartInst) { anomalyHistChartInst.destroy(); anomalyHistChartInst = null; }
+
+  const d = EQ_DATA[eqId];
+  const n = 60;
+  const labels = [];
+  const normal = [], anom = [];
+  const anomScores = [];
+
+  for (let i = n; i >= 0; i--) {
+    const t = new Date(); t.setMinutes(t.getMinutes() - i);
+    labels.push(i % 10 === 0 ? t.toTimeString().slice(0,5) : '');
+    const base = 3100 + Math.sin(i * 0.15) * 200 + Math.random() * 60;
+    const spike = d.status === 'crit' && i <= 8 ? (8-i) * 110 : 0;
+    normal.push(i > 8 || d.status !== 'crit' ? (d.status === 'ok' ? base * 0.5 : base) : null);
+    anom.push(d.status === 'crit' && i <= 10 ? base + spike : null);
+
+    // anomaly score history
+    if (d.status === 'crit') {
+      anomScores.push(i > 20 ? 0.15 + Math.random()*0.1 : i > 10 ? 0.2 + (20-i)*0.03 : 0.5 + (10-i)*0.04);
+    } else {
+      anomScores.push(0.1 + Math.random()*0.08);
+    }
+  }
+
+  const gridColor = 'rgba(255,255,255,0.06)';
+  const axisColor = '#738091';
+  const baseOpts = {
+    responsive: true, maintainAspectRatio: false,
+    animation: { duration: 0 },
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#2F343C', titleColor: '#C5CBD3', bodyColor: '#8F99A8', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 } },
+    scales: {
+      x: { ticks: { color: axisColor, font: { size: 10 }, maxTicksLimit: 8 }, grid: { color: gridColor } },
+      y: { ticks: { color: axisColor, font: { size: 10 } }, grid: { color: gridColor } }
+    }
+  };
+
+  // Sensor chart with threshold lines
+  const sCtx = document.getElementById('sensorChart').getContext('2d');
+  sensorChartInst = new Chart(sCtx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: '정상', data: normal, borderColor: '#4C90F0', borderWidth: 1.5, pointRadius: 0, tension: 0.3 },
+        { label: '이상 구간', data: anom, borderColor: '#CD4246', backgroundColor: 'rgba(205,66,70,0.08)', borderWidth: 2, pointRadius: 0, tension: 0.3, fill: true },
+      ]
+    },
+    options: {
+      ...baseOpts,
+      plugins: {
+        ...baseOpts.plugins,
+        annotation: undefined
+      }
+    },
+    plugins: [{
+      id: 'thresholds',
+      afterDraw(chart) {
+        const { ctx, chartArea: { top, bottom, left, right }, scales: { y } } = chart;
+        const drawLine = (val, color, label) => {
+          const yPos = y.getPixelForValue(val * (y.max));
+          if (yPos < top || yPos > bottom) return;
+          ctx.save();
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(left, yPos); ctx.lineTo(right, yPos); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = color; ctx.font = '10px monospace';
+          ctx.fillText(label, left + 4, yPos - 3);
+          ctx.restore();
+        };
+        // Skip threshold lines for sensor (draw on anomaly chart)
+      }
+    }]
+  });
+
+  // Anomaly history chart
+  const aCtx = document.getElementById('anomalyHistChart').getContext('2d');
+  anomalyHistChartInst = new Chart(aCtx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: anomScores,
+        borderColor: d.status === 'crit' ? '#CD4246' : d.status === 'warn' ? '#C87619' : '#238551',
+        backgroundColor: d.status === 'crit' ? 'rgba(205,66,70,0.08)' : 'rgba(35,133,81,0.06)',
+        borderWidth: 1.5,
+        pointRadius: 0,
+        tension: 0.4,
+        fill: true,
+      }]
+    },
+    options: {
+      ...baseOpts,
+      scales: {
+        x: { ticks: { color: axisColor, font: { size: 10 }, maxTicksLimit: 8 }, grid: { color: gridColor } },
+        y: { min: 0, max: 1.0, ticks: { color: axisColor, font: { size: 10 }, stepSize: 0.2 }, grid: { color: gridColor } }
+      }
+    },
+    plugins: [{
+      id: 'thresholds',
+      afterDraw(chart) {
+        const { ctx, chartArea: { top, bottom, left, right }, scales: { y } } = chart;
+        [{ v: 0.8, c: '#CD4246', l: 'STOP 0.8' }, { v: 0.6, c: '#C87619', l: 'REDUCE 0.6' }, { v: 0.5, c: '#5F6B7C', l: '0.5' }].forEach(({ v, c, l }) => {
+          const yPos = y.getPixelForValue(v);
+          if (yPos < top || yPos > bottom) return;
+          ctx.save();
+          ctx.setLineDash([5, 4]);
+          ctx.strokeStyle = c; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(left, yPos); ctx.lineTo(right, yPos); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = c; ctx.font = '10px "SFMono-Regular",monospace';
+          ctx.fillText(l, right - 52, yPos - 3);
+          ctx.restore();
+        });
+      }
+    }]
+  });
+}
+
+/* ── Mini Bars ──────────────────────── */
+function initMiniBars(eqId) {
+  const d = EQ_DATA[eqId];
+  const scores = d.status === 'crit'
+    ? [0.14,0.16,0.15,0.18,0.17,0.2,0.22,0.25,0.3,0.38,0.47,0.55,0.63,0.72,0.80,0.87]
+    : [0.12,0.11,0.13,0.10,0.14,0.12,0.11,0.13,0.15,0.12,0.11,0.14,0.13,0.12,0.11,0.18];
+  const el = document.getElementById('miniBars');
+  el.innerHTML = '';
+  scores.forEach(s => {
+    const b = document.createElement('div');
+    b.className = 'mini-bar ' + (s >= 0.8 ? 'mb-crit' : s >= 0.6 ? 'mb-warn' : 'mb-ok');
+    b.style.height = Math.max(2, s * 32) + 'px';
+    el.appendChild(b);
+  });
+}
+
+/* ── Sensor axis change ─────────────── */
+function updateSensorChart(val) { initCharts(currentEq); }
+
+/* ── Acknowledge ────────────────────── */
+function acknowledgeAlarm() {
+  document.getElementById('critical-banner').style.opacity = '0.4';
+  document.querySelector('.ack-btn').textContent = '확인됨 ✓';
+  document.querySelector('.ack-btn').style.borderColor = 'var(--green3)';
+  document.querySelector('.ack-btn').style.color = 'var(--green5)';
+}
+
+/* ── Init ───────────────────────────── */
+selectEq('CNC-002');
+</script>
+</body>
+</html>
