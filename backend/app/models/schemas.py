@@ -184,6 +184,19 @@ class HealthResponse(BaseModel):
     timestamp: datetime
 
 
+# ── 챗봇 ──
+class ChatRequest(BaseModel):
+    message: str
+    equipment_id: Optional[str] = None   # 설비 컨텍스트 (선택)
+
+
+class ChatResponse(BaseModel):
+    role: str = "assistant"
+    content: str
+    timestamp: datetime
+    references: list[str] = []           # 참조 문서 ID 목록
+
+
 # ── 에러 ──
 class ErrorResponse(BaseModel):
     status: str = "error"
