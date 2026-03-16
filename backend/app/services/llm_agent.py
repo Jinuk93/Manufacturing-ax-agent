@@ -125,6 +125,25 @@ def _rule_based_action(
         f"parts={'OK' if all(p.in_stock for p in parts_needed) else 'SHORTAGE'}"
     )
 
+    # 판단 투명성 데이터
+    input_summary = {
+        "anomaly_score": score,
+        "failure_code": failure_code,
+        "work_order": f3.latest_work_order.work_order_id if f3.latest_work_order else None,
+        "priority": f3.latest_work_order.priority if f3.latest_work_order else None,
+        "inventory_count": len(f3.inventory),
+        "maintenance_history": len(f3.recent_maintenance),
+    }
+    rag_docs = [d.title for d in f4.related_documents[:3]]
+
+    alt = ""
+    if recommendation == "STOP" and has_urgent_work:
+        alt = "REDUCE도 고려했으나, anomaly_score가 충분히 높아 STOP 유지."
+    elif recommendation == "REDUCE":
+        alt = f"STOP은 score {score:.2f} < 0.95이고 urgent 작업 중이라 REDUCE로 완화."
+    elif recommendation == "MONITOR":
+        alt = f"score {score:.2f}이 REDUCE 임계치(0.6) 미만이라 MONITOR 유지."
+
     return LLMActionResponse(
         equipment_id=f2.equipment_id,
         timestamp=datetime.now(),
@@ -135,6 +154,10 @@ def _rule_based_action(
         parts_needed=parts_needed,
         predicted_failure_code=failure_code,
         estimated_downtime_min=avg_duration,
+        input_summary=input_summary,
+        rag_documents=rag_docs,
+        alternatives_considered=alt,
+        full_reasoning=reasoning,
     )
 
 

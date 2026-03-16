@@ -15,6 +15,7 @@ export default function InventoryOverlay({ open }: Props) {
     enabled: open,
     retry: false,
     staleTime: 60_000,
+    refetchInterval: open ? 60_000 : false,
   })
 
   const inventory = data?.inventory ?? []

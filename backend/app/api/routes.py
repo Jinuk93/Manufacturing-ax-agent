@@ -16,6 +16,7 @@ from app.models.schemas import (
     AlarmFeedResponse, AlarmEvent,
     HealthResponse,
     ChatRequest, ChatResponse,
+    WorkOrderStatusResponse,
 )
 from app.services.db import get_connection
 from app.services.itot_sync import sync_itot_context
@@ -287,7 +288,7 @@ async def anomaly_status(equipment_id: str):
         raise HTTPException(status_code=500, detail="F6 anomaly 실패.")
 
 
-@router.get("/f6/work-order/{equipment_id}")
+@router.get("/f6/work-order/{equipment_id}", response_model=WorkOrderStatusResponse)
 async def work_order_status(equipment_id: str):
     """작업 + 재고 현황"""
     try:
@@ -309,12 +310,26 @@ async def work_order_status(equipment_id: str):
                     ORDER BY e.part_id
                 """)
                 inv = cur.fetchall()
+                # 최근 정비 이력 (5건)
+                cur.execute("""
+                    SELECT event_id, failure_code, event_type, duration_min, parts_used,
+                           event_time
+                    FROM maintenance_events
+                    WHERE equipment_id = %s
+                    ORDER BY event_time DESC LIMIT 5
+                """, (equipment_id,))
+                maint = cur.fetchall()
         finally:
             conn.close()
         return {
             "equipment_id": equipment_id,
             "work_order": {"work_order_id": wo[0], "product_type": wo[1], "due_date": str(wo[2]), "priority": wo[3], "status": wo[4]} if wo else None,
             "inventory": [{"part_id": r[0], "part_name": r[1], "stock_quantity": r[2], "reorder_point": r[3]} for r in inv],
+            "recent_maintenance": [
+                {"event_id": r[0], "failure_code": r[1], "event_type": r[2],
+                 "duration_min": r[3], "parts_used": r[4], "event_time": str(r[5])}
+                for r in maint
+            ],
         }
     except Exception as e:
         logger.error(f"F6 work-order 실패: {e}", exc_info=True)

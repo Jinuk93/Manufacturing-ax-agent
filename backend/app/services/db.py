@@ -1,16 +1,35 @@
 """
-DB 연결 관리 — PostgreSQL (psycopg2 동기)
-시뮬레이터 및 배치 작업에서 사용
+DB 연결 관리 — PostgreSQL (psycopg2 동기 + 커넥션 풀)
 """
 import psycopg2
+from psycopg2 import pool
 from psycopg2.extras import execute_values
 
 from app.config import settings
 
+# 커넥션 풀 (최소 2, 최대 10 연결)
+_pool = None
+
+
+def _get_pool():
+    """커넥션 풀 싱글턴"""
+    global _pool
+    if _pool is None:
+        _pool = pool.SimpleConnectionPool(
+            minconn=2, maxconn=10,
+            dsn=settings.DATABASE_URL_SYNC,
+        )
+    return _pool
+
 
 def get_connection():
-    """PostgreSQL 동기 연결 반환"""
-    return psycopg2.connect(settings.DATABASE_URL_SYNC)
+    """커넥션 풀에서 연결 반환 (사용 후 반드시 close 호출)"""
+    return _get_pool().getconn()
+
+
+def release_connection(conn):
+    """커넥션을 풀에 반환 (close 대신 사용 권장)"""
+    _get_pool().putconn(conn)
 
 
 def insert_sensor_readings(conn, rows: list[dict]):

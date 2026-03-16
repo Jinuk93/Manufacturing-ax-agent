@@ -1,6 +1,6 @@
 """
 설정값 관리 — 코드 수정 없이 동작 변경 가능
-pipeline-design.md의 설정값 11개 + DB 연결 정보
+pipeline-design.md의 설정값 + DB 연결 + 모델 하이퍼파라미터
 """
 from pydantic_settings import BaseSettings
 
@@ -14,29 +14,40 @@ class Settings(BaseSettings):
     NEO4J_PASSWORD: str = "ax_password"
 
     # F1 설정
-    POLL_INTERVAL_SEC: int = 5          # ADR-004 확정
-    WINDOW_SIZE_SEC: int = 30           # Phase 3 조정
+    POLL_INTERVAL_SEC: int = 5              # ADR-004 확정
+    WINDOW_SIZE_SEC: int = 30               # 슬라이딩 윈도우
 
     # F2 설정
-    PREDICTION_WINDOW_MIN: int = 30     # Phase 3 실험
-    ANOMALY_THRESHOLD: float = 0.5      # Phase 3 PR곡선
-    MODEL_TYPE: str = "isolation_forest" # Phase 3 비교
+    PREDICTION_WINDOW_MIN: int = 30
+    ANOMALY_THRESHOLD: float = 0.5
+    MODEL_TYPE: str = "isolation_forest"
+    IF_CONTAMINATION: float = 0.1           # IF 이상 비율 추정
+    IF_N_ESTIMATORS: int = 200              # IF 트리 수
+    SPINDLE_CURRENT_RATIO: float = 1.3      # 고장분류: S1 전류 비율
+    SPINDLE_FEEDRATE_MIN: float = 15.0      # 고장분류: 고속 기준
+    TOOL_WEAR_RATIO: float = 0.7            # 고장분류: X1 전류 비율
+    CLAMP_POSITION_THRESHOLD: float = 0.5   # 고장분류: 위치 편차 (mm)
 
     # F4 설정
-    HYBRID_ALPHA: float = 0.5           # Phase 3 조정
+    HYBRID_ALPHA: float = 0.5
     TOP_K_DOCS: int = 5
-    MAX_GRAPH_HOPS: int = 3             # 확정
+    MAX_GRAPH_HOPS: int = 3
+    EMBED_MODEL: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 
     # F5 설정
-    TEMPERATURE: float = 0.1            # 확정 (일관성)
-    STOP_THRESHOLD: float = 0.8         # Phase 3 검증
-    REDUCE_THRESHOLD: float = 0.6       # Phase 3 검증
-    LLM_PROVIDER: str = "openai"         # OpenAI GPT-4o-mini
-    OPENAI_MODEL: str = "gpt-4o-mini"    # 비용 효율적 + JSON mode 지원
-    OPENAI_API_KEY: str = ""             # .env에서 로드
+    TEMPERATURE: float = 0.1
+    STOP_THRESHOLD: float = 0.8
+    REDUCE_THRESHOLD: float = 0.6
+    LLM_PROVIDER: str = "openai"
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_API_KEY: str = ""
+    LLM_MAX_RETRIES: int = 2
+    LLM_TIMEOUT: int = 30
+
+    # CORS
+    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:5174"
 
     class Config:
-        # uvicorn 실행 위치(backend/ or 프로젝트 루트) 모두 대응
         env_file = (".env", "../.env")
 
 

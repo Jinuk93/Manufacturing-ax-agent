@@ -63,7 +63,7 @@ export interface AlarmEvent {
   timestamp: string
   equipment_id: string
   anomaly_score: number
-  predicted_failure_code: string
+  predicted_failure_code: string | null  // 백엔드 Optional → null 허용
   confidence: number
   severity: AlarmSeverity
 }
@@ -80,6 +80,13 @@ export interface MaintenanceRecord {
   event_type: string
   duration_min: number
   parts_used?: string
+  event_time?: string
+}
+
+// F2 — 이상탐지 이력
+export interface AnomalyHistoryResponse {
+  equipment_id: string
+  history: AnomalyResult[]
 }
 
 // F6 — 센서 시계열
@@ -118,6 +125,38 @@ export interface WorkOrderOverlayResponse {
   equipment_id: string
   work_order?: WorkOrderDetail
   inventory: InventoryItem[]
+  recent_maintenance?: MaintenanceRecord[]
+}
+
+// 헬스 체크
+export interface HealthResponse {
+  status: 'ok' | 'degraded'
+  postgres: boolean
+  neo4j: boolean
+  timestamp: string
+}
+
+// F4 — GraphRAG 관련 타입
+export interface RelatedPart {
+  part_id: string
+  part_name: string
+  quantity: number
+  urgency: string
+}
+
+export interface PastMaintenanceEvent {
+  event_id: string
+  event_type: string
+  duration_min: number
+  parts_used?: string
+}
+
+// F4 — GraphRAG 검색 응답 (참조 문서용)
+export interface GraphRAGResponse {
+  failure_code: string
+  related_documents: RelatedDocument[]
+  related_parts: RelatedPart[]
+  past_maintenance: PastMaintenanceEvent[]
 }
 
 // 챗봇
