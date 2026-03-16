@@ -116,6 +116,7 @@ class MaintenanceRecord(BaseModel):
 class ITOTSyncResponse(BaseModel):
     alarm: Dict
     latest_work_order: Optional[WorkOrderInfo]  # None = 현재 작업 없음
+    work_order_note: str                        # "현재 진행 중인 작업 없음" 등 상태 설명
     inventory: List[InventoryItem]
     recent_maintenance: List[MaintenanceRecord]
 ```
@@ -346,8 +347,9 @@ async def work_order_status(equipment_id: str):
     pass
 
 @app.get("/api/f6/action/{equipment_id}")
-async def llm_action(equipment_id: str):
+async def llm_action(equipment_id: str) -> LLMActionResponse:
     # 가장 최근 LLM 조치 리포트 (알람 시에만 존재)
+    # F5의 LLMActionResponse 모델을 그대로 반환 (별도 모델 불필요)
     pass
 ```
 

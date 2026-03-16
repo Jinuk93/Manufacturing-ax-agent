@@ -220,9 +220,9 @@
     "product_type": "WAX_BLOCK_6MM",
     "due_date": "2024-01-22T13:00:00Z",
     "priority": "urgent",
-    "status": "completed",
-    "note": "가장 최근 작업 (이미 완료됨, 현재 진행 중 작업 없음)"
+    "status": "completed"
   },
+  "work_order_note": "가장 최근 작업 (이미 완료됨, 현재 진행 중 작업 없음)",
   "inventory": [
     {"part_id": "P001", "stock": 18, "reorder_point": 5, "lead_time_days": 3},
     {"part_id": "P002", "stock": 3,  "reorder_point": 2, "lead_time_days": 7},
@@ -235,6 +235,15 @@
   ]
 }
 ```
+
+> **`latest_work_order` = null 케이스:**
+> 작업 간 빈 시간이거나 모든 작업이 완료된 상태에서 알람이 발생한 경우.
+> 이때 `work_order_note`는 `"현재 진행 중인 작업 없음"` 으로 설정되며,
+> F5 LLM에게 작업 컨텍스트 없이 센서+정비 이력만으로 판단하도록 안내합니다.
+> ```json
+> "latest_work_order": null,
+> "work_order_note": "현재 진행 중인 작업 없음"
+> ```
 
 ---
 
@@ -528,40 +537,51 @@ async def main_loop():
     neo4j = Neo4jClient()
 
     while True:
-        # F1: 수집 + 전처리
-        sensor_data = f1_collector.poll_and_preprocess()
-        pg.insert_sensor_readings(sensor_data)
+        for eq_id in EQUIPMENT_IDS:  # ["CNC-001", "CNC-002", "CNC-003"]
+            # F1: 수집 + 전처리
+            sensor_data = f1_collector.poll_and_preprocess(eq_id)
+            pg.insert_sensor_readings(sensor_data)
 
-        # F2: 이상탐지
-        anomaly_result = f2_detector.detect(sensor_data)
-        pg.insert_anomaly_scores(anomaly_result)
+            # F2: 이상탐지
+            anomaly_result = f2_detector.detect(eq_id, sensor_data)
+            pg.insert_anomaly_scores(anomaly_result)
 
-        # F3~F5: 알람 시에만 실행
-        if anomaly_result.is_anomaly:
-            # F3: IT/OT 동기화
-            context = f3_sync.build_context(
-                anomaly_result.timestamp,
-                anomaly_result.equipment_id,
-                pg
-            )
+            # F3~F5: 알람 시에만 실행
+            if anomaly_result.is_anomaly:
+                # F5는 LLM API 호출(2~10초)로 병목 → 비동기 분리
+                # 대시보드 갱신을 블로킹하지 않도록 create_task로 처리
+                asyncio.create_task(
+                    process_alarm(eq_id, anomaly_result, pg, neo4j)
+                    # 내부: F3→F4→F5→push_alert 순차 실행
+                )
 
-            # F4: GraphRAG 검색
-            rag_result = f4_graphrag.search(
-                anomaly_result.predicted_failure_code,
-                neo4j, pg
-            )
-
-            # F5: LLM 조치 생성
-            action = f5_llm.generate_action(context, rag_result)
-
-            # F6로 전달
-            f6_dashboard.push_alert(anomaly_result, context, rag_result, action)
-
-        # F6: 항상 최신 데이터 갱신
-        f6_dashboard.update_sensors(sensor_data, anomaly_result)
+            # F6: 항상 최신 데이터 갱신 (매 폴링)
+            f6_dashboard.update(eq_id, sensor_data, anomaly_result)
 
         await asyncio.sleep(POLL_INTERVAL_SEC)
+
+
+async def process_alarm(eq_id, anomaly_result, pg, neo4j):
+    """알람 발생 시 F3→F4→F5 순차 처리 (비동기 태스크)"""
+    # F3: IT/OT 동기화
+    context = f3_sync.build_context(
+        anomaly_result.timestamp, eq_id, pg
+    )
+
+    # F4: GraphRAG 검색
+    rag_result = f4_graphrag.search(
+        anomaly_result.predicted_failure_code, neo4j, pg
+    )
+
+    # F5: LLM 조치 생성
+    action = f5_llm.generate_action(context, rag_result)
+
+    # F6로 알림 전달
+    f6_dashboard.push_alert(anomaly_result, context, rag_result, action)
 ```
+
+> **api-design.md와 동일한 비동기 패턴:** F3→F4→F5를 `asyncio.create_task()`로 분리하여
+> 메인 루프의 F6 갱신이 LLM 호출(2~10초)에 블로킹되지 않도록 합니다.
 
 ---
 
