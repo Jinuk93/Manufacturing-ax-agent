@@ -232,15 +232,16 @@ async def sensor_timeseries(equipment_id: str, duration_hours: int = 1):
         conn = get_connection()
         try:
             with conn.cursor() as cur:
+                # CSV 데이터는 과거 타임스탬프이므로 NOW() 필터 대신
+                # 최신 N행을 내림차순 조회 후 역정렬하여 시계열 반환
                 cur.execute("""
                     SELECT timestamp, x1_current_feedback, y1_current_feedback,
                            s1_current_feedback, x1_output_power, s1_output_power
                     FROM sensor_readings
                     WHERE equipment_id = %s
-                      AND timestamp >= NOW() - INTERVAL '%s hours'
-                    ORDER BY timestamp
-                    LIMIT 1000
-                """, (equipment_id, duration_hours))
+                    ORDER BY timestamp DESC
+                    LIMIT 300
+                """, (equipment_id,))
                 columns = [desc[0] for desc in cur.description]
                 rows = cur.fetchall()
         finally:
@@ -318,11 +319,60 @@ async def work_order_status(equipment_id: str):
         raise HTTPException(status_code=500, detail="F6 work-order 실패.")
 
 
-@router.get("/f6/action/{equipment_id}")
+@router.get("/f6/action/{equipment_id}", response_model=LLMActionResponse)
 async def action_report(equipment_id: str):
-    """LLM 조치 리포트 — 현재는 최신 통합 테스트 결과를 반환 가능한 구조"""
-    # TODO: F5 결과를 DB에 저장하고 여기서 조회하는 구조로 전환
-    return {"equipment_id": equipment_id, "report": None, "note": "F5 결과 저장 테이블 구현 후 연동 예정"}
+    """온디맨드 F2→F3→F4→F5 파이프라인 실행 후 LLM 조치 리포트 반환"""
+    try:
+        # F2: 최신 이상 점수 조회
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT timestamp, equipment_id, anomaly_score, is_anomaly,
+                           model_version, predicted_failure_code, confidence
+                    FROM anomaly_scores
+                    WHERE equipment_id = %s
+                    ORDER BY timestamp DESC LIMIT 1
+                """, (equipment_id,))
+                row = cur.fetchone()
+        finally:
+            conn.close()
+
+        if not row:
+            raise HTTPException(status_code=404, detail="이상탐지 데이터 없음")
+
+        f2_result = AnomalyResult(
+            timestamp=row[0], equipment_id=row[1], anomaly_score=row[2],
+            is_anomaly=row[3], model_version=row[4],
+            predicted_failure_code=row[5], confidence=row[6],
+        )
+        failure_code = f2_result.predicted_failure_code or "TOOL_WEAR_001"
+
+        # F3: IT/OT 동기화
+        f3_context = sync_itot_context(
+            equipment_id=equipment_id,
+            timestamp=f2_result.timestamp,
+            predicted_failure_code=failure_code,
+        )
+
+        # F4: GraphRAG 검색
+        f4_rag_result = graphrag_search(
+            failure_code=failure_code,
+            equipment_id=equipment_id,
+        )
+
+        # F5: LLM 판단
+        return await llm_generate_action(
+            f2_result=f2_result,
+            f3_context=f3_context,
+            f4_rag_result=f4_rag_result,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"F6 action 실패 ({equipment_id}): {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="F6 action 실패.")
 
 
 @router.get("/f6/alarms", response_model=AlarmFeedResponse)

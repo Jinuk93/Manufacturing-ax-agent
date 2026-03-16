@@ -1,51 +1,40 @@
 // ============================================================
-// API 엔드포인트 함수 — api-design.md의 엔드포인트와 1:1 대응
+// API 엔드포인트 함수 — 실제 백엔드 라우트와 1:1 대응
 // ============================================================
 
 import { api } from './client'
 import type {
+  DashboardSummary,
   Equipment,
   LLMActionResponse,
-  RelatedDocument,
-  Alarm,
-  MaintenanceRecord,
-  PartInventory,
-  WorkOrder,
-  ChatMessage,
+  AnomalyResult,
+  AlarmFeedResponse,
+  SensorTimeseriesResponse,
+  WorkOrderOverlayResponse,
 } from '@/types'
 
-// F6 — 설비 목록 + 요약 (5초 폴링)
-export const getEquipmentSummary = () =>
-  api.get<Equipment[]>('/f6/summary')
+// F6 — 설비 요약 (DashboardSummary → equipments 배열 추출)
+export const getEquipmentSummary = async (): Promise<Equipment[]> => {
+  const res = await api.get<DashboardSummary>('/f6/summary')
+  return res.equipments
+}
 
-// F6 — 특정 설비 이상탐지 + LLM 판단 결과 (이벤트 기반)
-export const getEquipmentDetail = (equipmentId: string) =>
-  api.get<LLMActionResponse>(`/f6/equipment/${equipmentId}`)
+// F6 — 특정 설비 현재 이상 점수
+export const getEquipmentAnomaly = (equipmentId: string) =>
+  api.get<AnomalyResult>(`/f6/anomaly/${equipmentId}`)
 
-// F4 — GraphRAG 참조 문서
-export const getRelatedDocuments = (equipmentId: string) =>
-  api.get<RelatedDocument[]>(`/f4/documents/${equipmentId}`)
+// F6 — 온디맨드 F2→F3→F4→F5 파이프라인 (LLM 조치 리포트)
+export const getActionReport = (equipmentId: string) =>
+  api.get<LLMActionResponse>(`/f6/action/${equipmentId}`)
 
-// F6 — 알람 목록 (5초 폴링)
-export const getAlarms = () =>
-  api.get<Alarm[]>('/f6/alarms')
+// F6 — 센서 시계열
+export const getSensorTimeseries = (equipmentId: string) =>
+  api.get<SensorTimeseriesResponse>(`/f6/sensors/${equipmentId}`)
 
-// F6 — 알람 확인(Acknowledge)
-export const acknowledgeAlarm = (alarmId: string) =>
-  api.post<void>(`/f6/alarms/${alarmId}/acknowledge`, {})
+// F6 — 알람 피드
+export const getDashboardAlarms = () =>
+  api.get<AlarmFeedResponse>('/f6/alarms')
 
-// F6 — 정비 이력 (60초 폴링)
-export const getMaintenanceHistory = (equipmentId: string) =>
-  api.get<MaintenanceRecord[]>(`/f6/maintenance/${equipmentId}`)
-
-// ERP — 부품 재고 (30초 폴링)
-export const getInventory = () =>
-  api.get<PartInventory[]>('/erp/inventory')
-
-// MES — 작업지시 (30초 폴링)
-export const getWorkOrders = () =>
-  api.get<WorkOrder[]>('/mes/workorders')
-
-// 챗봇
-export const sendChatMessage = (message: string, equipmentId?: string) =>
-  api.post<ChatMessage>('/chat', { message, equipment_id: equipmentId })
+// F6 — 작업 + 재고 현황
+export const getWorkOrderStatus = (equipmentId: string) =>
+  api.get<WorkOrderOverlayResponse>(`/f6/work-order/${equipmentId}`)

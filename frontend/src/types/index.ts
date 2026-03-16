@@ -1,100 +1,128 @@
 // ============================================================
-// 공통 타입 정의 — api-design.md의 Pydantic 모델과 대응
+// 공통 타입 정의 — 백엔드 Pydantic 스키마와 1:1 대응
 // ============================================================
 
-// 설비 상태 (F6 summary 응답)
+// F6 — 설비 상태 요약
 export type EquipmentStatus = 'normal' | 'warning' | 'critical' | 'offline'
 
 export interface Equipment {
-  equipment_id: string        // 예: 'CNC-001'
+  equipment_id: string
   status: EquipmentStatus
-  anomaly_score: number       // 0.0 ~ 1.0
-  last_updated: string        // ISO 8601
+  anomaly_score: number
+  predicted_failure_code?: string
+  last_updated: string          // ISO 8601
 }
 
-// F2 이상탐지 결과
+export interface DashboardSummary {
+  equipments: Equipment[]
+}
+
+// F2 — 이상탐지 결과
 export interface AnomalyResult {
-  equipment_id: string
   timestamp: string
+  equipment_id: string
   anomaly_score: number
   is_anomaly: boolean
-  sensor_contributions: Record<string, number>
+  predicted_failure_code?: string
+  confidence?: number
+  model_version?: string
 }
 
-// F5 LLM 판단 결과
-export type ActionType = 'STOP' | 'REDUCE' | 'MONITOR' | 'NORMAL'
+// F5 — LLM 판단 결과
+export type ActionType = 'STOP' | 'REDUCE' | 'MONITOR'
+
+export interface PartNeeded {
+  part_id: string
+  quantity: number
+  in_stock: boolean
+}
 
 export interface LLMActionResponse {
   equipment_id: string
   timestamp: string
-  action: ActionType
+  recommendation: ActionType
+  confidence: number
   reasoning: string
-  steps: string[]
-  // 판단 투명성 (섹션 10)
-  input_summary?: Record<string, unknown>
-  rag_documents?: string[]
-  alternatives_considered?: string
-  full_reasoning?: string
+  action_steps: string[]
+  parts_needed: PartNeeded[]
+  predicted_failure_code: string
+  estimated_downtime_min?: number
 }
 
-// GraphRAG 참조 문서 (F4)
+// F4 — GraphRAG 참조 문서
 export interface RelatedDocument {
   manual_id: string
   title: string
   hybrid_score: number
-  bm25_score: number
-  vector_score: number
-  snippet?: string            // UI 표시용 최대 200자
 }
 
-// 알람
-export type AlarmSeverity = 'critical' | 'warning' | 'info'
+// F6 — 알람
+export type AlarmSeverity = 'critical' | 'warning'
 
-export interface Alarm {
-  alarm_id: string
-  equipment_id: string
-  severity: AlarmSeverity
-  message: string
+export interface AlarmEvent {
   timestamp: string
-  acknowledged: boolean
+  equipment_id: string
+  anomaly_score: number
+  predicted_failure_code: string
+  confidence: number
+  severity: AlarmSeverity
 }
 
-// 정비 이력 (섹션 9)
+export interface AlarmFeedResponse {
+  alarms: AlarmEvent[]
+  total: number
+}
+
+// F3 — 정비 이력
 export interface MaintenanceRecord {
-  record_id: string
-  equipment_id: string
-  failure_code: string
-  date: string
+  event_id: string
+  failure_code?: string
+  event_type: string
   duration_min: number
-  parts_used: string[]
-  type: 'repair' | 'preventive'
+  parts_used?: string
 }
 
-// 부품 재고 (ERP)
-export interface PartInventory {
-  part_id: string             // 예: 'P001'
-  name: string
-  stock: number
-  min_stock: number
-  unit: string
+// F6 — 센서 시계열
+export interface SensorPoint {
+  timestamp: string
+  x1_current_feedback?: number
+  y1_current_feedback?: number
+  s1_current_feedback?: number
+  x1_output_power?: number
+  s1_output_power?: number
 }
 
-// 작업지시 (MES)
-export type WorkOrderUrgency = 'urgent' | 'normal' | 'low'
-
-export interface WorkOrder {
-  wo_id: string
+export interface SensorTimeseriesResponse {
   equipment_id: string
-  product: string
-  urgency: WorkOrderUrgency
-  deadline: string
+  duration_hours: number
+  series: SensorPoint[]
+}
+
+// F6 — 작업지시 / 재고
+export interface WorkOrderDetail {
+  work_order_id: string
+  product_type: string
+  due_date: string
+  priority: string
   status: string
+}
+
+export interface InventoryItem {
+  part_id: string
+  part_name: string
+  stock_quantity: number
+  reorder_point: number
+}
+
+export interface WorkOrderOverlayResponse {
+  equipment_id: string
+  work_order?: WorkOrderDetail
+  inventory: InventoryItem[]
 }
 
 // 챗봇
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
-  references?: string[]       // 참조 문서 ID 목록
   timestamp: string
 }

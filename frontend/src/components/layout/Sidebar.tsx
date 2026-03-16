@@ -76,11 +76,11 @@ function EquipmentRow({ eq }: { eq: Equipment }) {
 }
 
 export default function Sidebar() {
-  const { data: equipmentList } = useQuery({
+  const { data: equipmentList = [] } = useQuery({
     queryKey: ['equipment-summary'],
     queryFn: getEquipmentSummary,
     refetchInterval: 5000,   // 5초 폴링
-    placeholderData: [],
+    retry: false,
   })
 
   return (
@@ -105,7 +105,7 @@ export default function Sidebar() {
 
       {/* 설비 목록 */}
       <div className="flex-1 overflow-y-auto">
-        {equipmentList?.map((eq) => (
+        {Array.isArray(equipmentList) && equipmentList.map((eq) => (
           <EquipmentRow key={eq.equipment_id} eq={eq} />
         ))}
       </div>
