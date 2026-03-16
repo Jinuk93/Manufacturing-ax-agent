@@ -36,7 +36,8 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""             # .env에서 로드
 
     class Config:
-        env_file = ".env"
+        # uvicorn 실행 위치(backend/ or 프로젝트 루트) 모두 대응
+        env_file = (".env", "../.env")
 
 
 settings = Settings()

@@ -113,7 +113,7 @@ async def _call_chat_llm(
 질문: {message}"""
 
     try:
-        client = openai.AsyncOpenAI()
+        client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)  # pydantic-settings에서 로드
         response = await client.chat.completions.create(
             model=settings.OPENAI_MODEL,
             messages=[

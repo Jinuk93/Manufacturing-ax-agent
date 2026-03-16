@@ -4,7 +4,21 @@
       "Bash(git add .gitignore .claude/settings.json docs/progress/constraints.md docs/0-project-definition/required-data-summary.md)",
       "Bash(git commit:*)",
       "Bash(git push origin main)",
-      "Read(//c/Users/nugikim/Downloads/**)"
+      "Read(//c/Users/nugikim/Downloads/**)",
+      "Bash(curl -s http://localhost:8000/api/health)",
+      "Bash(curl -s http://localhost:8000/api/f6/summary)",
+      "Bash(curl -s \"http://localhost:8000/api/f6/action/CNC-002\")",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s \"http://localhost:8000/api/f6/sensors/CNC-002?limit=5\")",
+      "Bash(python -c \":*)",
+      "Bash(npx tsc:*)",
+      "Bash(gh pr:*)",
+      "Bash(c:/Users/nugikim/Desktop/workspace/Manufacturing-ax-agent/docs/progress/phases/phase-3.md:*)",
+      "Bash(curl -s \"http://localhost:8000/api/f6/sensors/CNC-002\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f''''series 개수: {len\\(d[\"\"series\"\"]\\)}, 첫 타임스탬프: {d[\"\"series\"\"][0][\"\"timestamp\"\"] if d[\"\"series\"\"] else \"\"없음\"\"}''''\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(''''series:'''', len\\(d[''''series'''']\\)\\)\")",
+      "Bash(pkill -f \"uvicorn\")",
+      "Bash(taskkill /F /IM python.exe /T)"
     ],
     "defaultMode": "bypassPermissions",
     "additionalDirectories": [

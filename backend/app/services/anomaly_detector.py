@@ -96,14 +96,23 @@ class AnomalyDetector:
         else:
             df_feat["machining_process_num"] = 0
 
-        # 피처 선택
+        # 피처 선택 (CSV 원본 CamelCase / DB snake_case 모두 대응)
+        import re
+        def to_snake(name: str) -> str:
+            """X1_CurrentFeedback → x1_current_feedback"""
+            s1 = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', name)
+            return re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
         use_cols = []
         for col in self.feature_columns:
-            # CSV 원본 또는 DB 소문자 컬럼명 모두 대응
             if col in df_feat.columns:
                 use_cols.append(col)
             elif col.lower() in df_feat.columns:
                 df_feat[col] = df_feat[col.lower()]
+                use_cols.append(col)
+            elif to_snake(col) in df_feat.columns:
+                # PascalCase → snake_case 변환 (DB 컬럼명 대응)
+                df_feat[col] = df_feat[to_snake(col)]
                 use_cols.append(col)
 
         use_cols.append("machining_process_num")

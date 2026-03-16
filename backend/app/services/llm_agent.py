@@ -335,7 +335,7 @@ async def _call_llm_api(
     if openai is None:
         raise ImportError("openai 패키지가 설치되지 않았습니다. pip install openai")
 
-    client = openai.OpenAI()  # OPENAI_API_KEY 환경변수에서 자동 로드
+    client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)  # pydantic-settings에서 로드
 
     user_prompt = _build_user_prompt(f2, f3, f4)
 
