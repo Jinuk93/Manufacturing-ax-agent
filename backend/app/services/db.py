@@ -60,10 +60,15 @@ def insert_sensor_readings(conn, rows: list[dict]):
     return len(values)
 
 
+ALLOWED_TABLES = {"mes_work_orders", "maintenance_events", "erp_inventory"}
+
+
 def insert_it_data(conn, table: str, rows: list[dict]):
     """IT 데이터(MES/Maintenance/ERP) INSERT"""
     if not rows:
         return 0
+    if table not in ALLOWED_TABLES:
+        raise ValueError(f"허용되지 않은 테이블: {table}")
 
     columns = list(rows[0].keys())
     values = [tuple(row[col] for col in columns) for row in rows]
