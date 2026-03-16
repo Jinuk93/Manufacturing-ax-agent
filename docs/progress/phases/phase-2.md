@@ -20,8 +20,9 @@ Phase 1에서 확보한 데이터(OT 42컬럼 + IT 합성 3종)를 기반으로,
 | 1 | 온톨로지 설계 | `docs/2-architecture/ontology-design.md` | Neo4j 7노드/10관계/속성 정의 | ✅ 완료 (리뷰 1회) |
 | 2 | DB 스키마 설계 | `docs/2-architecture/db-schema-design.md` | PostgreSQL 10테이블 + TimescaleDB + Neo4j 매핑 | ✅ 완료 (리뷰 1회) |
 | 3 | 파이프라인 설계 | `docs/2-architecture/pipeline-design.md` | F1~F6 데이터 흐름 + 에러 처리 6시나리오 | ✅ 완료 (리뷰 1회) |
-| 4 | API 설계 | `docs/2-architecture/api-design.md` | FastAPI 12엔드포인트 + Pydantic 모델 | ✅ 완료 (리뷰 1회) |
+| 4 | API 설계 | `docs/2-architecture/api-design.md` | FastAPI 13엔드포인트 + Pydantic 모델 | ✅ 완료 (리뷰 2회) |
 | 5 | ADR (필요 시) | `docs/adr/adr-006-*.md` 등 | 설계 과정에서 결정이 필요한 사항 | 해당 없음 (기존 ADR로 충분) |
+| 6 | UI 설계 | `docs/2-architecture/ui-design.md` | F6 대시보드 컴포넌트 8종 + 폴링 전략 + Next.js 스택 | ✅ 완료 (리뷰 1회) |
 
 ---
 
@@ -158,6 +159,7 @@ Phase 1에서 확보한 데이터(OT 42컬럼 + IT 합성 3종)를 기반으로,
 - `docs/2-architecture/db-schema-design.md`
 - `docs/2-architecture/pipeline-design.md`
 - `docs/2-architecture/api-design.md`
+- `docs/2-architecture/ui-design.md`
 - `docs/progress/phases/phase-2.md` (이 파일)
 
 ---

@@ -1226,7 +1226,7 @@
 
     <div class="arch-card">
       <h4 style="margin-top:0;">왜 온톨로지가 필요한가?</h4>
-      <p>"SPINDLE_OVERHEAT_001가 발생했다"는 사실만으로는 부족합니다. LLM이 판단하려면:</p>
+      <p>"SPINDLE_OVERHEAT_001이 발생했다"는 사실만으로는 부족합니다. LLM이 판단하려면:</p>
       <ul style="font-size:13px;padding-left:20px;line-height:2;">
         <li>"이 고장을 고치려면 <strong>어떤 부품</strong>이 필요한가?" &rarr; P002 스핀들 베어링</li>
         <li>"<strong>매뉴얼</strong>에 교체 절차가 있는가?" &rarr; DOC-004, DOC-005, DOC-006</li>
@@ -1275,12 +1275,12 @@
       <p style="color:#888;font-size:12px;">"이 고장과 <strong>구조적으로</strong> 연결된 모든 것"을 정확히 찾음</p>
 
       <h4 style="color:#a78bfa;margin-top:16px;">2단계 &mdash; pgvector 의미 검색 (정밀 검색)</h4>
-      <p>1단계에서 좁혀진 매뉴얼 3건(DOC-010~012) 안에서 <strong>"베어링 교체 절차"</strong> 같은 구체적 섹션을 벡터 유사도로 찾습니다.</p>
+      <p>1단계에서 좁혀진 매뉴얼 3건(DOC-004~006) 안에서 <strong>"베어링 교체 절차"</strong> 같은 구체적 섹션을 벡터 유사도로 찾습니다.</p>
       <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin:8px 0;font-family:monospace;font-size:12px;color:#60a5fa;line-height:2;">
         검색어: "스핀들 과열 시 베어링 교체 방법"<br>
-        &nbsp;&nbsp;1위: DOC-010 섹션3 "교체 절차" <span style="color:#4ade80;">(cosine=0.92)</span><br>
-        &nbsp;&nbsp;2위: DOC-012 섹션2 "조치 방법" <span style="color:#4ade80;">(cosine=0.87)</span><br>
-        &nbsp;&nbsp;3위: DOC-011 섹션4 "판정 기준" <span style="color:#fbbf24;">(cosine=0.71)</span>
+        &nbsp;&nbsp;1위: DOC-004 섹션3 "교체 절차" <span style="color:#4ade80;">(cosine=0.92)</span><br>
+        &nbsp;&nbsp;2위: DOC-006 섹션2 "조치 방법" <span style="color:#4ade80;">(cosine=0.87)</span><br>
+        &nbsp;&nbsp;3위: DOC-005 섹션4 "판정 기준" <span style="color:#fbbf24;">(cosine=0.71)</span>
       </div>
       <p style="color:#888;font-size:12px;">자연어로 질문해도 <strong>의미가 비슷한</strong> 매뉴얼 섹션을 찾을 수 있음</p>
 
@@ -2259,7 +2259,7 @@
         <span class="arch-rel-name">R3 EXPERIENCES</span>
         <span style="font-size:12px;color:#999;">Equipment &rarr; FailureCode &middot; N:M</span>
       </div>
-      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "CNC-002에서 SPINDLE_OVERHEAT_001가 이전에도 발생한 적 있나?" &mdash; 설비별 고장 이력을 추적합니다. 반복 고장이면 근본 원인 분석이 필요하다는 신호입니다.</p>
+      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "CNC-002에서 SPINDLE_OVERHEAT_001이 이전에도 발생한 적 있나?" &mdash; 설비별 고장 이력을 추적합니다. 반복 고장이면 근본 원인 분석이 필요하다는 신호입니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -2769,149 +2769,186 @@
 <div class="page" id="p14">
 <div class="inner">
   <div class="page-title">Phase 2 : 파이프라인 &amp; API</div>
-  <p class="page-sub">F1~F6 데이터 흐름, FastAPI 12개 엔드포인트, 에러 대응 전략입니다.</p>
+  <p class="page-sub">F1~F6이 실제로 어떻게 연결되고, 외부에서는 어떻게 접근하며, 문제가 생기면 어떻게 대응하는지를 정의합니다.</p>
 
-  <h3>파이프라인 흐름</h3>
-  <div class="arch-card">
-    <h4 style="margin-bottom:12px;">5초 폴링 루프 (F1 &rarr; F2 &rarr; F6)</h4>
-    <div class="arch-flow" style="justify-content:center;">
-      <div class="arch-flow-box active">F1<br><span style="font-size:11px;color:#888;">수집/전처리</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box active">F2<br><span style="font-size:11px;color:#888;">이상탐지/예측</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F6<br><span style="font-size:11px;color:#888;">대시보드 갱신</span></div>
+  <!-- ── 파이프라인 구조 ── -->
+  <h3>파이프라인이란?</h3>
+  <div class="fn-detail">
+    <p>파이프라인은 <strong>"데이터가 처리되는 순서와 경로"</strong>입니다. 수도관(pipe)처럼 데이터가 한 단계씩 흘러가면서 가공됩니다.</p>
+    <p>우리 파이프라인은 <strong>두 가지 모드</strong>로 동작합니다:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">모드 1 &mdash; 상시 감시 (매 5초)</p>
+        <div class="arch-flow" style="justify-content:center;margin:8px 0;">
+          <div class="arch-flow-box" style="min-width:70px;">F1</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:70px;">F2</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:70px;">F6</div>
+        </div>
+        <p style="font-size:13px;">센서를 읽고(F1), 이상 여부를 판단하고(F2), 대시보드를 갱신(F6)합니다. 이상이 없으면 여기서 끝나고 5초 후 다시 반복합니다.</p>
+        <p style="font-size:12px;color:#999;margin-bottom:0;">하루 약 17,280 사이클 (86,400초 &divide; 5초). 설비 3대 합산 약 51,840행/일. 대부분의 시간은 이 모드.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">모드 2 &mdash; 이상 대응 (이벤트 트리거)</p>
+        <div class="arch-flow" style="justify-content:center;margin:8px 0;">
+          <div class="arch-flow-box" style="min-width:50px;">F3</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:50px;">F4</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:50px;">F5</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:50px;">F6</div>
+        </div>
+        <p style="font-size:13px;">F2에서 <code>is_anomaly = true</code>가 나올 때만 실행됩니다. 상황 파악(F3) &rarr; 지식 검색(F4) &rarr; LLM 판단(F5) &rarr; 알람 표시(F6).</p>
+        <p style="font-size:12px;color:#999;margin-bottom:0;">드물게 발생. F5는 2~10초 걸리므로 <strong>비동기</strong>로 실행하여 대시보드 갱신을 막지 않음.</p>
+      </div>
     </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">매 5초마다 실행 (ADR-004) &middot; 설비 3대 &times; 센서 42개 = 폴링당 126 값</p>
-
-    <h4 style="margin-top:20px;margin-bottom:12px;">이벤트 트리거 (이상 감지 시에만)</h4>
-    <div class="arch-flow" style="justify-content:center;">
-      <div class="arch-flow-box" style="border-color:#ef4444;color:#ef4444;">이상 감지!</div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F3<br><span style="font-size:11px;color:#888;">IT/OT 동기화</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F4<br><span style="font-size:11px;color:#888;">GraphRAG</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F5<br><span style="font-size:11px;color:#888;">LLM 판단</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F6<br><span style="font-size:11px;color:#888;">알람 표시</span></div>
-    </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">F5는 asyncio.create_task()로 비동기 실행 &mdash; 대시보드 갱신을 블로킹하지 않음</p>
+    <p style="font-size:13px;color:#999;"><strong>왜 두 모드를 나눴는가:</strong> 이상이 없을 때도 F3~F5를 매번 실행하면 불필요한 DB 쿼리 + LLM API 호출이 발생합니다. 5초마다 LLM을 호출하면 비용도, 응답 시간도 감당이 안 됩니다. "감시는 계속, 분석은 필요할 때만" 전략입니다.</p>
   </div>
 
-  <h3>F1~F6 기능 상세</h3>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F1</span> 데이터 수집 + 전처리</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>5초 주기 센서 읽기 (시뮬레이터)</li>
-        <li>정규화 (MinMaxScaler)</li>
-        <li>슬라이딩 윈도우 (30초, 6행)</li>
-        <li>파생 변수: 이동평균, 이동표준편차, 변화율</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">확장 후보: 축 간 편차, FFT</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F2</span> 이상탐지 + 시계열 예측</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>모델: Isolation Forest vs Autoencoder (Phase 3 비교)</li>
-        <li>예측 윈도우: 30분 (설정값)</li>
-        <li>출력: anomaly_score, is_anomaly, predicted_failure_code</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">Phase 3 선결: 피처 선택, 라벨링 전략</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F3</span> IT/OT 데이터 동기화</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>PG 3개 쿼리: MES + Maintenance + ERP</li>
-        <li>timestamp 기준 조인 (범위 매칭)</li>
-        <li>작업 0건 시 null 반환 + work_order_note</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">OT=연속 데이터, IT=이벤트성 비정기 데이터</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F4</span> GraphRAG 하이브리드 검색</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>1단계: Neo4j 구조 순회 (3 hop)</li>
-        <li>2단계: pgvector 의미 검색 (cosine)</li>
-        <li>BM25 + vector 가중 합산 (alpha=0.5)</li>
-        <li>결과: 관련 부품 + 매뉴얼 + 과거 정비</li>
-      </ul>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F5</span> LLM 자율 판단</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>입력: F2 이상 + F3 컨텍스트 + F4 검색</li>
-        <li>출력: recommendation, confidence, action_steps</li>
-        <li>임계치: &ge;0.8 즉시정지, &ge;0.6 감속운전</li>
-        <li>LLM: API 우선 (Phase 3에서 선택)</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">temperature=0.1 고정 (일관성)</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F6</span> 대시보드</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>설비 상태 요약 (3대)</li>
-        <li>실시간 센서 차트 (5초 갱신)</li>
-        <li>이상 점수 + 알람 표시</li>
-        <li>작업 + 재고 현황</li>
-        <li>LLM 조치 리포트</li>
-      </ul>
-    </div>
+  <!-- ── API 엔드포인트 ── -->
+  <h3>API 엔드포인트란?</h3>
+  <div class="fn-detail">
+    <p>API 엔드포인트는 <strong>"프로그램끼리 대화하는 주소"</strong>입니다. 대시보드(F6)가 센서 데이터를 가져오려면 <code>/api/f6/sensors/CNC-001</code>이라는 주소로 요청하면 됩니다. 마치 웹 주소(URL)처럼요.</p>
+    <p>우리 시스템은 <strong>FastAPI</strong>(Python 웹 프레임워크)로 12개 엔드포인트를 제공합니다. 크게 두 종류입니다:</p>
+    <ul style="font-size:14px;line-height:2;">
+      <li><strong>POST</strong> &mdash; "이 데이터를 처리해줘" (F1 수집, F2 감지, F3 동기화, F4 검색, F5 판단)</li>
+      <li><strong>GET</strong> &mdash; "이 데이터를 보여줘" (이력 조회, 대시보드 표시, 헬스 체크)</li>
+    </ul>
   </div>
 
-  <h3>FastAPI 엔드포인트 (12개)</h3>
-  <div style="margin-bottom:20px;">
+  <h3>12개 엔드포인트 상세</h3>
+  <div class="fn-detail">
+    <h4>파이프라인 엔드포인트 (6개) &mdash; F1~F5 내부 동작</h4>
+    <p style="font-size:13px;color:#999;margin-bottom:12px;">메인 루프가 내부적으로 호출합니다. HTTP로도 접근 가능하여 개별 테스트에 유용합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f1/collect</span><span class="ep-desc">센서 수집 + 전처리</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">시뮬레이터(또는 SCADA)에서 센서 값을 받아 정규화, 윈도우 처리 후 <code>sensor_readings</code>에 INSERT합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f2/detect</span><span class="ep-desc">이상탐지 + 예측</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">최근 윈도우 데이터를 모델에 넣어 anomaly_score를 산출하고, 임계치(0.5) 초과 시 이벤트를 트리거합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f2/history/{eq_id}</span><span class="ep-desc">이상 이력 조회</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">특정 설비의 과거 이상 점수 이력을 시간순으로 반환합니다. 대시보드의 이상 트렌드 차트에 사용됩니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f3/sync</span><span class="ep-desc">IT/OT 동기화</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">이상 감지된 설비의 현재 작업(MES), 최근 정비(CMMS), 부품 재고(ERP)를 한 번에 조회하여 통합 컨텍스트를 생성합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f4/search</span><span class="ep-desc">GraphRAG 검색</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">고장코드로 Neo4j 그래프를 순회(부품, 매뉴얼, 과거 정비)한 뒤, pgvector로 매뉴얼 섹션을 정밀 검색합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f5/generate-action</span><span class="ep-desc">LLM 조치 생성</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">F2+F3+F4 결과를 LLM에게 전달하고, 조치 권고(recommendation), 신뢰도(confidence), 구체적 단계(action_steps)를 받습니다.</p>
+  </div>
+
+  <div class="fn-detail">
+    <h4>대시보드 엔드포인트 (5개) &mdash; F6 화면 표시용</h4>
+    <p style="font-size:13px;color:#999;margin-bottom:12px;">프론트엔드(대시보드 화면)가 호출합니다. summary &middot; sensors &middot; anomaly는 5초 폴링, work-order는 필요 시 요청, action은 알람 발생 시에만 갱신합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/summary</span><span class="ep-desc">설비 상태 요약</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">CNC 3대의 현재 상태(정상/경고/위험), 최신 이상 점수, 마지막 정비 일시를 한 번에 반환합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/sensors/{eq_id}</span><span class="ep-desc">실시간 센서 차트</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">특정 설비의 최근 N분간 센서 시계열을 반환합니다. 차트 라이브러리가 이 데이터로 그래프를 그립니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/anomaly/{eq_id}</span><span class="ep-desc">이상 점수 현황</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">현재 이상 점수, 이상 여부, 예측 고장코드를 반환합니다. 대시보드의 게이지/알람 표시에 사용됩니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/work-order/{eq_id}</span><span class="ep-desc">작업 + 재고</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">현재 진행 중인 작업 정보와 관련 부품 재고를 반환합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/action/{eq_id}</span><span class="ep-desc">LLM 조치 리포트</span></div>
-    <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/health</span><span class="ep-desc">PG + Neo4j 헬스</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">F5가 생성한 최신 조치 권고를 반환합니다. LLMActionResponse 모델을 그대로 반환합니다.</p>
   </div>
 
-  <h3>설정값 (config 파라미터화)</h3>
-  <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-bottom:20px;">
-  <table>
-    <thead><tr><th>기능</th><th>파라미터</th><th>기본값</th><th>결정 시점</th></tr></thead>
-    <tbody>
-      <tr><td rowspan="2"><strong>F1</strong></td><td>POLL_INTERVAL_SEC</td><td>5</td><td>ADR-004 확정</td></tr>
-      <tr><td>WINDOW_SIZE_SEC</td><td>30</td><td>Phase 3 조정</td></tr>
-      <tr><td rowspan="3"><strong>F2</strong></td><td>PREDICTION_WINDOW_MIN</td><td>30</td><td>Phase 3 실험</td></tr>
-      <tr><td>ANOMALY_THRESHOLD</td><td>0.5</td><td>Phase 3 PR곡선</td></tr>
-      <tr><td>MODEL_TYPE</td><td>isolation_forest</td><td>Phase 3 비교</td></tr>
-      <tr><td rowspan="3"><strong>F4</strong></td><td>HYBRID_ALPHA</td><td>0.5</td><td>Phase 3 조정</td></tr>
-      <tr><td>TOP_K_DOCS</td><td>5</td><td>필요시</td></tr>
-      <tr><td>MAX_GRAPH_HOPS</td><td>3</td><td>확정</td></tr>
-      <tr><td rowspan="3"><strong>F5</strong></td><td>TEMPERATURE</td><td>0.1</td><td>확정</td></tr>
-      <tr><td>STOP_THRESHOLD</td><td>0.8</td><td>Phase 3 검증</td></tr>
-      <tr><td>REDUCE_THRESHOLD</td><td>0.6</td><td>Phase 3 검증</td></tr>
-    </tbody>
-  </table>
+  <div class="fn-detail">
+    <h4>시스템 엔드포인트 (1개)</h4>
+    <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/health</span><span class="ep-desc">PG + Neo4j 헬스 체크</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">PostgreSQL과 Neo4j 연결 상태를 확인합니다. 모니터링 시스템이 주기적으로 호출하여 DB가 살아있는지 체크합니다.</p>
   </div>
 
-  <h3>에러 대응 시나리오 (6건)</h3>
-  <div class="arch-card" style="padding:16px 20px;">
-    <div class="err-row"><span class="err-code">E1</span><span class="err-impact"><strong>센서 데이터 5초+ 미수신</strong> &mdash; F1&rarr;F2 중단</span><span class="err-fallback">Forward-fill, 3회 연속 시 알림</span></div>
-    <div class="err-row"><span class="err-code">E2</span><span class="err-impact"><strong>F2 모델 추론 실패</strong></span><span class="err-fallback">배치 축소 재시도, 이전 점수 유지</span></div>
-    <div class="err-row"><span class="err-code">E3</span><span class="err-impact"><strong>Neo4j 연결 끊김</strong> &mdash; F4 그래프 순회 불가</span><span class="err-fallback">BM25 only (pgvector 없이)</span></div>
-    <div class="err-row"><span class="err-code">E4</span><span class="err-impact"><strong>LLM API 타임아웃/429</strong> &mdash; F5 판단 불가</span><span class="err-fallback">3&times; 재시도 (지수 백오프)</span></div>
-    <div class="err-row"><span class="err-code">E5</span><span class="err-impact"><strong>PostgreSQL 다운</strong> &mdash; 전체 영향</span><span class="err-fallback">재연결 (백오프), 대시보드 "DB offline"</span></div>
-    <div class="err-row"><span class="err-code">E6</span><span class="err-impact"><strong>LLM 환각</strong> &mdash; 존재하지 않는 고장코드/부품</span><span class="err-fallback">출력 검증 (ID 존재 확인), 재시도 또는 수동 전환</span></div>
-  </div>
-
-  <h3>응답 시간 기대치</h3>
-  <div class="arch-card">
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-      <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:#4ade80;">&lt;100ms</div><div style="font-size:12px;color:#888;">F1 수집 / F3 동기화 / F6 요약</div></div>
-      <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:#fbbf24;">200~500ms</div><div style="font-size:12px;color:#888;">F2 이상탐지 / F4 GraphRAG</div></div>
-      <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:#ef4444;">2~10초</div><div style="font-size:12px;color:#888;">F5 LLM API (병목)</div></div>
+  <!-- ── 설정값 ── -->
+  <h3>설정값 (Config) &mdash; 코드를 안 바꾸고 동작을 바꾸는 방법</h3>
+  <div class="fn-detail">
+    <p>아래 설정값들은 <strong>코드를 수정하지 않고 config 파일이나 환경 변수만 바꿔서</strong> 동작을 조정할 수 있습니다. Phase 3에서 실험할 때 코드를 건드리지 않고 다양한 조합을 테스트할 수 있어요.</p>
+    <p style="font-size:13px;color:#999;">확정된 값은 굵게, Phase 3에서 실험으로 결정할 값은 일반 표기입니다.</p>
+    <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:12px;">
+    <table>
+      <thead><tr><th>기능</th><th>파라미터</th><th>기본값</th><th>의미</th><th>결정 시점</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2"><strong>F1</strong></td><td><strong>POLL_INTERVAL_SEC</strong></td><td><strong>5</strong></td><td>센서를 몇 초마다 읽을지. 짧으면 정밀하지만 DB 부하 증가</td><td>ADR-004 확정</td></tr>
+        <tr><td>WINDOW_SIZE_SEC</td><td>30</td><td>"최근 몇 초의 데이터를 묶어서 볼지". 길면 추세를 잘 보지만 반응 느림</td><td>Phase 3 조정</td></tr>
+        <tr><td rowspan="3"><strong>F2</strong></td><td>PREDICTION_WINDOW_MIN</td><td>30</td><td>"몇 분 뒤의 고장까지 예측할지". 30분 = 조치 준비 시간 확보</td><td>Phase 3 실험</td></tr>
+        <tr><td>ANOMALY_THRESHOLD</td><td>0.5</td><td>이 값 넘으면 "이상"으로 판단. 낮추면 민감(오탐 증가), 높이면 둔감(놓침 증가)</td><td>Phase 3 PR곡선</td></tr>
+        <tr><td>MODEL_TYPE</td><td>isolation_forest</td><td>이상탐지 모델 종류. Autoencoder와 비교 후 성능 좋은 쪽 선택</td><td>Phase 3 비교</td></tr>
+        <tr><td rowspan="3"><strong>F4</strong></td><td>HYBRID_ALPHA</td><td>0.5</td><td>BM25(키워드) vs 벡터(의미) 검색 비중. 0=벡터만, 1=BM25만</td><td>Phase 3 조정</td></tr>
+        <tr><td>TOP_K_DOCS</td><td>5</td><td>검색 결과 상위 몇 개를 LLM에게 전달할지</td><td>필요시</td></tr>
+        <tr><td><strong>MAX_GRAPH_HOPS</strong></td><td><strong>3</strong></td><td>Neo4j에서 관계를 몇 단계까지 따라갈지. 3이면 고장&rarr;부품&rarr;재고까지 도달</td><td>확정</td></tr>
+        <tr><td rowspan="3"><strong>F5</strong></td><td><strong>TEMPERATURE</strong></td><td><strong>0.1</strong></td><td>LLM 응답의 창의성. 0에 가까울수록 일관된 답변 (같은 입력 &rarr; 같은 판단)</td><td>확정</td></tr>
+        <tr><td>STOP_THRESHOLD</td><td>0.8</td><td>anomaly_score가 이 값 이상이면 "즉시 정지" 권고</td><td>Phase 3 검증</td></tr>
+        <tr><td>REDUCE_THRESHOLD</td><td>0.6</td><td>anomaly_score가 이 값 이상이면 "감속 운전" 권고. 미만이면 "모니터링 강화"</td><td>Phase 3 검증</td></tr>
+      </tbody>
+    </table>
     </div>
+  </div>
+
+  <!-- ── 에러 대응 ── -->
+  <h3>에러 대응 시나리오 &mdash; "이것도 고장나면 어떡하지?"</h3>
+  <div class="fn-detail">
+    <p>예지보전 시스템 자체도 고장날 수 있습니다. 센서가 안 읽히거나, DB가 다운되거나, LLM API가 응답을 안 하면? 각 상황별로 <strong>"감지 방법 + 대체 방안(Fallback)"</strong>을 미리 정해둡니다.</p>
+    <div style="margin-top:16px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E1 &mdash; 센서 데이터가 5초 넘게 안 들어옴</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> F1&rarr;F2가 중단됩니다. 이상 감지를 못 합니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> 폴링 타이머에서 타임아웃 체크.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 마지막 정상값으로 빈칸 채우기(Forward-fill). 3회 연속 실패하면 대시보드에 "센서 연결 끊김" 경고 표시.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E2 &mdash; F2 이상탐지 모델 추론 실패</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> 이상 여부를 판단할 수 없습니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> 모델 추론 함수의 try-except.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 입력 데이터 크기를 줄여서 재시도. 실패하면 이전 점수를 유지하고 "모델 오류" 플래그 설정.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E3 &mdash; Neo4j 연결이 끊김</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> F4의 1단계(그래프 순회)를 못 합니다. 관련 부품, 과거 정비를 못 찾습니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> Neo4j 연결 체크 (연결 풀 상태).</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 2단계(pgvector 의미 검색)만으로 진행. 구조적 검색 없이 의미 검색만 하면 정확도는 떨어지지만 완전 중단보다 나음.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E4 &mdash; LLM API 타임아웃 또는 429(요청 한도 초과)</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> F5가 자율 판단을 못 내립니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> HTTP 상태 코드 확인 (408 타임아웃, 429 Rate Limit).</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 3회 재시도 (지수 백오프: 1초&rarr;2초&rarr;4초). 그래도 실패하면 "LLM 판단 불가, 수동 확인 필요" 알람을 대시보드에 표시. 이상 감지 자체(F2)는 계속 작동합니다.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E5 &mdash; PostgreSQL이 다운</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> 거의 모든 기능에 영향. 센서 저장, 이상 기록, IT 데이터 조회, 벡터 검색 전부 불가.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> 연결 풀에서 ConnectionError 발생.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 지수 백오프로 재연결 시도. 대시보드에 "DB offline" 표시. 재연결 성공 시 자동 복구. Docker 컨테이너의 restart 정책으로 자동 재시작도 설정.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E6 &mdash; LLM이 환각(Hallucination)을 일으킴</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> 존재하지 않는 고장코드(예: "MOTOR_FAIL_007")나 부품(예: "P099")을 권고할 수 있습니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> LLM 응답에서 failure_code와 part_id가 실제 마스터 테이블에 존재하는지 DB 조회로 검증.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 존재하지 않는 ID가 포함되면 "환각 감지"로 판단하고 재시도(최대 2회). 재시도에도 실패하면 "자동 판단 불확실, 수동 확인 필요"로 에스컬레이션.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 응답 시간 ── -->
+  <h3>응답 시간 기대치 &mdash; "얼마나 빨라야 하는가?"</h3>
+  <div class="fn-detail">
+    <p>우리 시스템에서 가장 중요한 것은 <strong>"이상 감지부터 판단까지 사람이 알아채기 전에 끝나는 것"</strong>입니다.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#f5f5f5;">&lt;100ms</div>
+        <div style="font-size:13px;color:#d4d4d4;margin-top:6px;">F1 수집 &middot; F3 동기화 &middot; F6 요약</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;">단순 INSERT/SELECT. DB가 가장 잘하는 일.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#f5f5f5;">200~500ms</div>
+        <div style="font-size:13px;color:#d4d4d4;margin-top:6px;">F2 이상탐지 &middot; F4 GraphRAG</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;">모델 추론 + 그래프 순회 + 벡터 검색.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#f5f5f5;">2~10초</div>
+        <div style="font-size:13px;color:#d4d4d4;margin-top:6px;">F5 LLM API 호출</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;"><strong>가장 느린 병목.</strong> 그래서 비동기 처리.</div>
+      </div>
+    </div>
+    <p style="font-size:14px;"><strong>전체 파이프라인 (이상 감지 &rarr; 판단 완료):</strong> 약 3~11초. F5가 병목이지만, 비동기로 실행하므로 대시보드 갱신(F6)은 블로킹되지 않습니다.</p>
+    <p style="font-size:13px;color:#999;margin-bottom:0;"><strong>비교:</strong> 사람이 이상을 인지하고 매뉴얼 찾고 판단하면 최소 10~30분. 시스템은 최대 11초. 이것이 자동화의 가치입니다.</p>
   </div>
 </div>
 </div>
