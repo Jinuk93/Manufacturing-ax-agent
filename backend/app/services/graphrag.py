@@ -2,15 +2,13 @@
 F4 GraphRAG — Neo4j 그래프 순회 + pgvector 의미 검색
 
 2단계 하이브리드 검색:
-1단계: Neo4j에서 고장코드 → 부품/매뉴얼/과거 정비 관계 탐색 (구조적 검색)
-2단계: pgvector에서 관련 매뉴얼 섹션의 의미 유사도 검색 (정밀 검색)
-
-현재 Phase 3 초기 버전:
-- Neo4j 연동 준비 (노드/관계 미구축 시 PG 폴백)
-- pgvector 임베딩 미생성 시 텍스트 기반 폴백
+1단계: Neo4j Cypher로 고장코드 → 부품/매뉴얼/과거 정비 관계 탐색
+2단계: pgvector cosine 유사도로 매뉴얼 섹션 정밀 검색
 """
 import logging
 from typing import Optional
+
+from neo4j import GraphDatabase
 
 from app.services.db import get_connection
 from app.config import settings
@@ -24,139 +22,247 @@ from app.models.schemas import (
 logger = logging.getLogger(__name__)
 
 
+def _get_neo4j_driver():
+    """Neo4j 드라이버 (호출 시 생성)"""
+    return GraphDatabase.driver(
+        settings.NEO4J_URI,
+        auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
+    )
+
+
 def search_graphrag(
     failure_code: str,
     equipment_id: str,
 ) -> GraphRAGResponse:
     """F4 GraphRAG 2단계 검색
 
-    1단계: 고장코드 → 필요 부품 + 관련 매뉴얼 + 과거 정비
-    2단계: 매뉴얼 의미 검색 (pgvector, Phase 3 후반)
+    1단계: Neo4j Cypher — 고장코드에서 관계를 타고 부품/매뉴얼/과거 정비 탐색
+    2단계: pgvector — 매뉴얼 섹션의 의미 유사도 검색
+    """
+    # 1단계: Neo4j 구조적 검색
+    try:
+        driver = _get_neo4j_driver()
+        parts = _neo4j_search_parts(driver, failure_code)
+        documents_neo = _neo4j_search_documents(driver, failure_code)
+        maintenance = _neo4j_search_maintenance(driver, failure_code, equipment_id)
+        driver.close()
+    except Exception as e:
+        # E3 폴백: Neo4j 연결 실패 시 PG로 폴백
+        logger.warning(f"Neo4j 연결 실패, PG 폴백: {e}")
+        conn = get_connection()
+        try:
+            parts = _pg_fallback_parts(conn, failure_code)
+            documents_neo = []
+            maintenance = _pg_fallback_maintenance(conn, failure_code, equipment_id)
+        finally:
+            conn.close()
+
+    # 2단계: pgvector 의미 검색 (Neo4j에서 찾은 매뉴얼 범위 내에서)
+    try:
+        documents = _pgvector_search_documents(failure_code, documents_neo)
+    except Exception as e:
+        logger.warning(f"pgvector 검색 실패, Neo4j 결과만 사용: {e}")
+        documents = [
+            RelatedDocument(manual_id=d["manual_id"], title=d["title"], hybrid_score=0.9)
+            for d in documents_neo
+        ]
+
+    logger.info(
+        f"F4 검색 완료: {failure_code} @ {equipment_id} | "
+        f"부품={len(parts)}종, 문서={len(documents)}건, 정비이력={len(maintenance)}건"
+    )
+
+    return GraphRAGResponse(
+        failure_code=failure_code,
+        related_parts=parts,
+        related_documents=documents,
+        past_maintenance=maintenance,
+    )
+
+
+# ============================================
+# 1단계: Neo4j Cypher 검색
+# ============================================
+
+def _neo4j_search_parts(driver, failure_code: str) -> list[RelatedPart]:
+    """R4 REQUIRES: FailureCode → Part"""
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (f:FailureCode {failure_code: $fc})-[r:REQUIRES]->(p:Part)
+            RETURN p.part_id AS part_id, p.part_name AS part_name,
+                   r.quantity AS quantity, r.urgency AS urgency
+        """, fc=failure_code)
+        parts = []
+        for record in result:
+            parts.append(RelatedPart(
+                part_id=record["part_id"],
+                part_name=record["part_name"],
+                quantity=record["quantity"] or 1,
+                urgency=record["urgency"] or "medium",
+            ))
+    logger.info(f"  Neo4j R4 REQUIRES: {len(parts)}종")
+    return parts
+
+
+def _neo4j_search_documents(driver, failure_code: str) -> list[dict]:
+    """R5 DESCRIBED_BY: FailureCode → Document (메타데이터만)"""
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (f:FailureCode {failure_code: $fc})-[r:DESCRIBED_BY]->(d:Document)
+            RETURN d.manual_id AS manual_id, d.title AS title,
+                   d.document_type AS document_type
+        """, fc=failure_code)
+        docs = []
+        for record in result:
+            docs.append({
+                "manual_id": record["manual_id"],
+                "title": record["title"],
+                "document_type": record["document_type"],
+            })
+    logger.info(f"  Neo4j R5 DESCRIBED_BY: {len(docs)}건")
+    return docs
+
+
+def _neo4j_search_maintenance(driver, failure_code: str, equipment_id: str) -> list[PastMaintenance]:
+    """R8 RESOLVES: MaintenanceAction → FailureCode (해당 설비만)"""
+    with driver.session() as session:
+        result = session.run("""
+            MATCH (m:MaintenanceAction)-[r:RESOLVES]->(f:FailureCode {failure_code: $fc})
+            WHERE EXISTS {
+                MATCH (e:Equipment {equipment_id: $eid})-[:EXECUTES]->(:WorkOrder)-[:TRIGGERS]->(m)
+            } OR EXISTS {
+                MATCH (m) WHERE m.event_id STARTS WITH 'MT-'
+            }
+            RETURN m.event_id AS event_id, m.event_type AS event_type,
+                   r.resolution_time_min AS duration_min
+            ORDER BY m.event_id DESC
+            LIMIT 5
+        """, fc=failure_code, eid=equipment_id)
+        maint = []
+        for record in result:
+            maint.append(PastMaintenance(
+                event_id=record["event_id"],
+                event_type=record["event_type"],
+                duration_min=record["duration_min"] or 0,
+                parts_used=None,
+            ))
+    # parts_used는 R9 CONSUMES에서 보강
+    if maint:
+        _enrich_parts_used(driver, maint)
+    logger.info(f"  Neo4j R8 RESOLVES: {len(maint)}건")
+    return maint
+
+
+def _enrich_parts_used(driver, maint_list: list[PastMaintenance]):
+    """R9 CONSUMES: MaintenanceAction → Part (부품 정보 보강)"""
+    with driver.session() as session:
+        for m in maint_list:
+            result = session.run("""
+                MATCH (ma:MaintenanceAction {event_id: $eid})-[:CONSUMES]->(p:Part)
+                RETURN p.part_id AS part_id
+            """, eid=m.event_id)
+            parts = [r["part_id"] for r in result]
+            m.parts_used = ",".join(parts) if parts else None
+
+
+# ============================================
+# 2단계: pgvector 의미 검색
+# ============================================
+
+def _pgvector_search_documents(
+    failure_code: str,
+    neo4j_docs: list[dict],
+) -> list[RelatedDocument]:
+    """Neo4j에서 좁혀진 매뉴얼 범위 내에서 pgvector 의미 검색
+
+    검색 쿼리: 고장코드의 설명 텍스트
+    범위: Neo4j에서 찾은 manual_id 목록
     """
     conn = get_connection()
     try:
-        # 1단계: 구조적 검색 (현재는 PG에서 조회, Neo4j 구축 후 전환)
-        parts = _search_related_parts(conn, failure_code)
-        documents = _search_related_documents(conn, failure_code)
-        maintenance = _search_past_maintenance(conn, failure_code, equipment_id)
+        # 고장코드 설명을 쿼리로 사용
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT description FROM failure_codes WHERE failure_code = %s",
+                (failure_code,)
+            )
+            row = cur.fetchone()
+            query_text = row[0] if row else failure_code
 
-        logger.info(
-            f"F4 검색 완료: {failure_code} @ {equipment_id} | "
-            f"부품={len(parts)}종, 문서={len(documents)}건, 정비이력={len(maintenance)}건"
-        )
+        # 쿼리 벡터 생성
+        from sentence_transformers import SentenceTransformer
+        model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+        query_vec = model.encode(query_text, normalize_embeddings=True)
+        vec_str = "[" + ",".join(str(v) for v in query_vec.tolist()) + "]"
 
-        return GraphRAGResponse(
-            failure_code=failure_code,
-            related_parts=parts,
-            related_documents=documents,
-            past_maintenance=maintenance,
-        )
+        # Neo4j에서 찾은 manual_id 범위로 필터링
+        manual_ids = [d["manual_id"] for d in neo4j_docs]
+        if not manual_ids:
+            return []
+
+        placeholders = ",".join(["%s"] * len(manual_ids))
+        with conn.cursor() as cur:
+            cur.execute(f"""
+                SELECT DISTINCT ON (manual_id)
+                    manual_id, title,
+                    1 - (embedding <=> %s::vector) AS similarity
+                FROM document_embeddings
+                WHERE manual_id IN ({placeholders})
+                ORDER BY manual_id, embedding <=> %s::vector
+            """, (vec_str, *manual_ids, vec_str))
+            rows = cur.fetchall()
+
+        documents = []
+        for r in rows:
+            documents.append(RelatedDocument(
+                manual_id=r[0],
+                title=r[1],
+                hybrid_score=round(float(r[2]), 3),
+            ))
+
+        # 유사도 내림차순 정렬
+        documents.sort(key=lambda d: d.hybrid_score, reverse=True)
+        logger.info(f"  pgvector 검색: {len(documents)}건 (범위: {len(manual_ids)} 매뉴얼)")
+        return documents
 
     finally:
         conn.close()
 
 
-def _search_related_parts(conn, failure_code: str) -> list[RelatedPart]:
-    """고장코드 → 필요 부품 매핑 (it-data-synthesis-schema.md 기준)
+# ============================================
+# PG 폴백 (Neo4j 연결 실패 시)
+# ============================================
 
-    Neo4j R4 REQUIRES 관계의 PG 폴백 구현.
-    고장코드별 필요 부품은 합성 스키마에서 확정됨.
-    """
-    # 고장코드 → 부품 매핑 (ontology-design.md + it-data-synthesis-schema.md)
+def _pg_fallback_parts(conn, failure_code: str) -> list[RelatedPart]:
+    """PG 폴백: 고장코드 → 부품 매핑"""
     FAILURE_PART_MAP = {
         "TOOL_WEAR_001": [("P001", 1, "high")],
         "SPINDLE_OVERHEAT_001": [("P002", 1, "high")],
         "CLAMP_PRESSURE_001": [("P004", 1, "medium")],
         "COOLANT_LOW_001": [("P003", 1, "medium")],
     }
-
-    part_specs = FAILURE_PART_MAP.get(failure_code, [])
-    if not part_specs:
-        return []
-
+    specs = FAILURE_PART_MAP.get(failure_code, [])
     results = []
-    for part_id, quantity, urgency in part_specs:
-        # 부품 이름은 DB에서 조회
+    for part_id, qty, urgency in specs:
         with conn.cursor() as cur:
             cur.execute("SELECT part_name FROM parts WHERE part_id = %s", (part_id,))
             row = cur.fetchone()
-            part_name = row[0] if row else part_id
-
-        results.append(RelatedPart(
-            part_id=part_id,
-            part_name=part_name,
-            quantity=quantity,
-            urgency=urgency,
-        ))
-
+            name = row[0] if row else part_id
+        results.append(RelatedPart(part_id=part_id, part_name=name, quantity=qty, urgency=urgency))
     return results
 
 
-def _search_related_documents(conn, failure_code: str) -> list[RelatedDocument]:
-    """고장코드 → 관련 매뉴얼 검색
-
-    Neo4j R5 DESCRIBED_BY 관계의 PG 폴백.
-    maintenance_manuals.json에서 failure_code로 필터링.
-    pgvector 임베딩 구축 후에는 의미 검색으로 전환.
-    """
-    # 현재는 maintenance_manuals.json 기반 정적 매핑
-    # Phase 3 후반: document_embeddings 테이블에서 벡터 검색
-    DOC_MAP = {
-        "TOOL_WEAR_001": [
-            ("DOC-001", "엔드밀 공구 교체 절차서", 0.95),
-            ("DOC-002", "공구 마모 점검 체크리스트", 0.90),
-            ("DOC-003", "공구 마모 트러블슈팅 가이드", 0.88),
-        ],
-        "SPINDLE_OVERHEAT_001": [
-            ("DOC-004", "스핀들 베어링 교체 절차서", 0.95),
-            ("DOC-005", "스핀들 과열 점검 체크리스트", 0.90),
-            ("DOC-006", "스핀들 과열 트러블슈팅 가이드", 0.88),
-        ],
-        "CLAMP_PRESSURE_001": [
-            ("DOC-007", "클램프 볼트 교체 절차서", 0.95),
-            ("DOC-008", "클램프 압력 이상 점검 체크리스트", 0.90),
-            ("DOC-009", "클램프 압력 이상 트러블슈팅 가이드", 0.88),
-        ],
-        "COOLANT_LOW_001": [
-            ("DOC-010", "냉각수 보충 및 필터 교체 절차서", 0.95),
-            ("DOC-011", "냉각수 이상 점검 체크리스트", 0.90),
-            ("DOC-012", "냉각수 이상 트러블슈팅 가이드", 0.88),
-        ],
-    }
-
-    docs = DOC_MAP.get(failure_code, [])
-    return [
-        RelatedDocument(manual_id=d[0], title=d[1], hybrid_score=d[2])
-        for d in docs
-    ]
-
-
-def _search_past_maintenance(
-    conn, failure_code: str, equipment_id: str
-) -> list[PastMaintenance]:
-    """해당 설비의 과거 동일 고장코드 정비 이력 조회
-
-    Neo4j R8 RESOLVES 관계의 PG 폴백.
-    설비별로 필터링하여 다른 설비의 이력이 섞이지 않도록 합니다.
-    """
-    sql = """
-        SELECT event_id, event_type, duration_min, parts_used
-        FROM maintenance_events
-        WHERE failure_code = %s
-          AND equipment_id = %s
-        ORDER BY timestamp DESC
-        LIMIT 5
-    """
+def _pg_fallback_maintenance(conn, failure_code: str, equipment_id: str) -> list[PastMaintenance]:
+    """PG 폴백: 과거 정비 이력"""
     with conn.cursor() as cur:
-        cur.execute(sql, (failure_code, equipment_id))
+        cur.execute("""
+            SELECT event_id, event_type, duration_min, parts_used
+            FROM maintenance_events
+            WHERE failure_code = %s AND equipment_id = %s
+            ORDER BY timestamp DESC LIMIT 5
+        """, (failure_code, equipment_id))
         rows = cur.fetchall()
-
     return [
-        PastMaintenance(
-            event_id=r[0],
-            event_type=r[1],
-            duration_min=r[2],
-            parts_used=r[3],
-        )
+        PastMaintenance(event_id=r[0], event_type=r[1], duration_min=r[2], parts_used=r[3])
         for r in rows
     ]
