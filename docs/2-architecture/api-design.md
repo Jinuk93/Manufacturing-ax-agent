@@ -25,6 +25,7 @@
 | 13 | `/api/f6/alarms` | GET | 전체 설비 알람 피드 (3대 통합) | 대시보드 폴링 |
 | 14 | `/api/f6/maintenance/{equipment_id}` | GET | 설비별 정비 이력 타임라인 | 대시보드 폴링 (60초) |
 | 15 | `/api/f6/alarms/{alarm_id}/acknowledge` | POST | 알람 확인 처리 (Audit trail) | 사용자 액션 시 |
+| 16 | `/api/chat` | POST | 챗봇 — 사용자 질문 → F4+F5 재사용 → 답변 반환 | 사용자 입력 시 |
 
 ---
 
@@ -175,10 +176,28 @@ class PartNeeded(BaseModel):
 class LLMActionResponse(BaseModel):
     recommendation: str                  # STOP / REDUCE / MONITOR
     confidence: float
-    reasoning: str
+    reasoning: str                       # 1~2줄 요약 (UI 기본 표시)
     action_steps: List[str]
     estimated_downtime_min: int
     parts_needed: List[PartNeeded]
+    # ── 판단 투명성 필드 (프롬프트 확장으로 추가, F5 구현 시 같이 적용) ──
+    input_summary: Optional[Dict] = None        # F3에서 가져온 컨텍스트 요약
+    rag_documents: Optional[List[str]] = None   # F4 참조 문서 ID 목록
+    alternatives_considered: Optional[str] = None  # "REDUCE도 고려했지만..."
+    full_reasoning: Optional[str] = None        # 전체 판단 과정 (접이식 표시)
+
+
+### 2.8 챗봇
+
+```python
+class ChatRequest(BaseModel):
+    equipment_id: Optional[str] = None  # 현재 선택된 설비 컨텍스트 (없으면 전체)
+    message: str                        # 사용자 질문
+
+class ChatResponse(BaseModel):
+    answer: str                         # LLM 답변
+    sources: Optional[List[str]] = None # 참조한 문서/이력 ID 목록
+    equipment_id: Optional[str] = None
 ```
 
 ### 2.7 F6: 대시보드
@@ -421,7 +440,28 @@ async def maintenance_timeline(equipment_id: str, limit: int = 10):
 | 폴링 주기 | 60초 (정비 이력은 자주 안 바뀜) |
 | 성공 응답 | 200 + `MaintenanceTimelineResponse` |
 
-### 3.10 `POST /api/f6/alarms/{alarm_id}/acknowledge`
+### 3.10 `POST /api/chat`
+
+사용자 질문을 받아 F4(GraphRAG) + LLM으로 답변 생성.
+F5(자율 판단)와 동일한 로직을 재사용하되 트리거가 "사용자 입력"이라는 점만 다름.
+
+```python
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    # 1. equipment_id가 있으면 현재 설비 상태 컨텍스트 로드 (F3)
+    # 2. 질문으로 F4 GraphRAG 검색 (관련 문서/이력)
+    # 3. 컨텍스트 + 검색 결과 + 질문을 LLM에 전달
+    # 4. 답변 + 참조 문서 목록 반환
+    pass
+```
+
+| 항목 | 값 |
+|------|-----|
+| F5와의 차이 | 트리거만 다름 (자동 vs 수동). F4+LLM 로직 재사용 |
+| 구현 시점 | F5 완성 후 (Phase 3 후반) |
+| 응답 시간 | 2~10초 (LLM API 호출) |
+
+### 3.11 `POST /api/f6/alarms/{alarm_id}/acknowledge`
 
 알람 확인 처리. 운영 감사 추적(Audit trail)용. Phase 3 구현 예약.
 

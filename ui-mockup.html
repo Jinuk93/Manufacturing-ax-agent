@@ -786,7 +786,7 @@ body {
     </div>
 
     <!-- 작업 현황 -->
-    <div class="rp-section" style="border-bottom:none;">
+    <div class="rp-section">
       <div class="section-hd" style="margin-bottom:8px;">작업 현황 <span class="poll-tag">30초</span></div>
       <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:10px 12px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -795,6 +795,72 @@ body {
         </div>
         <div style="font-size:11px;color:var(--gray2);">납기: 2024-01-22 10:30 · <span style="color:var(--gold5);">⏱ 2시간 16분 남음</span></div>
         <div style="font-size:11px;color:var(--gray2);margin-top:3px;">상태: completed</div>
+      </div>
+    </div>
+
+    <!-- 판단 투명성 패널 -->
+    <div class="rp-section">
+      <div class="section-hd" style="margin-bottom:8px;">
+        AI 판단 투명성
+        <span class="poll-tag" style="cursor:pointer;" onclick="toggleTransparency()">▼ 펼치기</span>
+      </div>
+      <div id="transparency-panel" style="display:none;">
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">입력 컨텍스트 (F3)</div>
+          <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
+            · 작업지시: WO-2024-007 (urgent, 납기 2시간)<br>
+            · 재고: P002 베어링 2개 (재주문점 이하)<br>
+            · 최근 정비: 2주 전 동일 고장 (72분 소요)
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">참조 문서 (F4 GraphRAG)</div>
+          <div style="display:flex;flex-direction:column;gap:3px;">
+            <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:5px 8px;font-size:11px;color:var(--gray3);display:flex;justify-content:space-between;">
+              <span class="step-tag">DOC-004</span> 교체절차서 <span style="color:var(--gray1);">0.94</span>
+            </div>
+            <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:5px 8px;font-size:11px;color:var(--gray3);display:flex;justify-content:space-between;">
+              <span class="step-tag">DOC-006</span> 트러블슈팅 <span style="color:var(--gray1);">0.87</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">검토한 대안</div>
+          <div style="background:var(--dg2);border-left:3px solid var(--gray1);padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
+            REDUCE 검토 → score 0.87로 STOP 기준 초과, 배제<br>
+            MONITOR 검토 → 납기 여유 있으나 위험도 과다, 배제
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--gray2);margin-bottom:5px;">전체 판단 과정</div>
+          <div style="background:var(--dg2);border-left:3px solid var(--blue3);padding:8px 10px;font-size:11px;color:var(--gray3);line-height:1.7;">
+            anomaly_score가 STOP 임계치(0.80)를 초과하고, 과거 동일 고장 사례에서 방치 시 평균 200분 추가 손실 발생. urgent 작업 납기까지 2시간 여유가 있어 즉시 정지 후 75분 정비가 납기 리스크보다 낮다고 판단.
+          </div>
+        </div>
+      </div>
+      <div id="transparency-closed" style="font-size:11px;color:var(--gray1);">클릭하여 AI 판단 근거 전체 보기</div>
+    </div>
+
+    <!-- 챗봇 패널 -->
+    <div class="rp-section" style="border-bottom:none;flex:1;display:flex;flex-direction:column;">
+      <div class="section-hd" style="margin-bottom:8px;">💬 AI에게 질문 <span class="poll-tag">/api/chat</span></div>
+      <div id="chat-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:220px;">
+        <div style="display:flex;gap:8px;align-items:flex-start;">
+          <div style="width:22px;height:22px;background:var(--blue3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">AI</div>
+          <div style="background:var(--dg2);border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:12px;color:var(--gray4);line-height:1.6;flex:1;">
+            CNC-002의 anomaly_score가 <strong style="color:var(--red5);">0.87</strong>로 STOP 임계치를 초과했습니다. 무엇이 궁금하신가요?
+          </div>
+        </div>
+        <div id="chat-typing" style="display:none;padding:4px 8px;">
+          <span style="font-size:11px;color:var(--gray2);">AI가 생각 중</span>
+          <span style="color:var(--blue5);">●●●</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <input id="chat-input" type="text" placeholder="질문을 입력하세요..." onkeydown="handleChatKey(event)"
+          style="flex:1;background:var(--dg3);border:1px solid var(--border-md);color:var(--gray4);padding:7px 10px;border-radius:2px;font-size:12px;outline:none;" />
+        <button onclick="sendChat()"
+          style="background:var(--blue3);border:none;color:#fff;padding:7px 12px;border-radius:2px;font-size:12px;font-weight:600;cursor:pointer;">▶</button>
       </div>
     </div>
 
@@ -1021,6 +1087,70 @@ function acknowledgeAlarm() {
 
 /* ── Init ───────────────────────────── */
 selectEq('CNC-002');
+
+/* ── 판단 투명성 토글 ───────────────── */
+function toggleTransparency() {
+  const panel = document.getElementById('transparency-panel');
+  const closed = document.getElementById('transparency-closed');
+  const btn = document.querySelector('#transparency-panel').previousElementSibling.querySelector('.poll-tag');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    closed.style.display = 'none';
+    btn.textContent = '▲ 접기';
+  } else {
+    panel.style.display = 'none';
+    closed.style.display = 'block';
+    btn.textContent = '▼ 펼치기';
+  }
+}
+
+/* ── 챗봇 ──────────────────────────── */
+const MOCK_ANSWERS = {
+  '베어링': 'DOC-004 3절 기준:\n1. feedrate 0 설정\n2. 스핀들 완전 정지 확인\n3. 커버 해제 (볼트 6개)\n4. 베어링 탈거 (토크렌치 25Nm)\n5. P002 신품 장착\n6. 테스트 가동 후 온도 확인\n📄 DOC-004 섹션3 참조',
+  '왜': 'anomaly_score 0.87로 STOP 임계치(0.80)를 초과했습니다. 과거 동일 고장에서 방치 시 평균 200분 추가 손실이 발생했고, 현재 납기까지 2시간 여유가 있어 즉시 정지 후 75분 정비가 최선의 판단입니다.',
+  '납기': 'WO-2024-007 납기는 10:30이고 현재 2시간 16분 남았습니다. 예상 정비 시간은 75분이므로 정비 완료 후 약 61분의 여유가 있습니다. 납기 영향 없음으로 판단됩니다.',
+  '반복': 'CNC-002의 SPINDLE_OVERHEAT_001 발생 이력:\n· 2주 전: 72분 정비 (P002 교체)\n· 2개월 전: 85분 정비\n반복 발생 패턴으로 예방 점검 주기 단축을 권장합니다.',
+  '재고': 'P002 Spindle Bearing 현재 재고: 2개 (재주문점 이하 ⚠️)\n교체 후 1개 남으므로 즉시 재주문이 필요합니다. ERP 기준 리드타임: 3일.',
+};
+
+function getMockAnswer(msg) {
+  for (const [key, answer] of Object.entries(MOCK_ANSWERS)) {
+    if (msg.includes(key)) return answer;
+  }
+  return 'F4 GraphRAG 검색 결과와 현재 설비 상태를 종합하면, ' + msg + '에 대해 추가 분석이 필요합니다. 현재는 목업 데이터로 제한된 답변만 가능합니다.';
+}
+
+function appendMsg(role, text) {
+  const box = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:8px;align-items:flex-start;';
+  const avatar = document.createElement('div');
+  avatar.style.cssText = `width:22px;height:22px;background:${role==='AI'?'var(--blue3)':'var(--dg4)'};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;color:#fff;`;
+  avatar.textContent = role === 'AI' ? 'AI' : '나';
+  const bubble = document.createElement('div');
+  bubble.style.cssText = `background:${role==='AI'?'var(--dg2)':'var(--dg3)'};border:1px solid var(--border);border-radius:2px;padding:8px 10px;font-size:12px;color:var(--gray4);line-height:1.6;flex:1;white-space:pre-line;`;
+  bubble.textContent = text;
+  div.appendChild(avatar); div.appendChild(bubble);
+  box.insertBefore(div, document.getElementById('chat-typing'));
+  box.scrollTop = box.scrollHeight;
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendMsg('나', msg);
+  document.getElementById('chat-typing').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('chat-typing').style.display = 'none';
+    appendMsg('AI', getMockAnswer(msg));
+  }, 1200);
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
 </script>
 </body>
 </html>
