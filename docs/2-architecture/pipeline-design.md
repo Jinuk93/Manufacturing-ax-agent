@@ -13,7 +13,7 @@
 │                                                                     │
 │  ┌──────────┐                                                       │
 │  │ F1 수집  │ → sensor_readings (PG, hypertable)                     │
-│  │ 전처리   │   47컬럼 와이드(센서42+컨텍스트3+PK2), 5초 폴링           │
+│  │ 전처리   │   44컬럼 와이드(데이터42+PK2), 5초 폴링                    │
 │  └────┬─────┘                                                       │
 │       ▼                                                             │
 │  ┌──────────┐                                                       │
@@ -630,5 +630,5 @@ async def process_alarm(eq_id, anomaly_result, pg, neo4j):
 4. **F5 임계치 config 추가:** STOP_THRESHOLD, REDUCE_THRESHOLD ✅ 반영
 5. **단일 프로세스 — OK** ✅ 확인
 6. **F3 출력 라벨 변경:** "current_work_order" → "latest_work_order" + 상태 note ✅ 반영
-7. **sensor_readings 컬럼 수:** 44개 → 47개 (센서42 + 컨텍스트3 + PK2) ✅ 반영 (db-schema-design.md)
+7. **sensor_readings 컬럼 수:** 44개 확정 (데이터42 + PK2) ✅ 재확인 완료
 8. **LLM_PROVIDER:** openai → (미정), Phase 3에서 비교 선택 ✅ 반영

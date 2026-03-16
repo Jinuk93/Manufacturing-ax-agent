@@ -22,6 +22,7 @@
 | 10 | `/api/f6/work-order/{equipment_id}` | GET | 작업 + 재고 정보 | 대시보드 폴링 |
 | 11 | `/api/f6/action/{equipment_id}` | GET | LLM 조치 리포트 | 알람 시 |
 | 12 | `/api/health` | GET | 헬스 체크 (PG + Neo4j 상태) | 모니터링 |
+| 13 | `/api/f6/alarms` | GET | 전체 설비 알람 피드 (3대 통합) | 대시보드 폴링 |
 
 ---
 
@@ -202,6 +203,18 @@ class AnomalyStatusResponse(BaseModel):
     is_anomaly: bool
     predicted_failure_code: Optional[str]
     confidence: Optional[float]
+
+class AlarmEvent(BaseModel):
+    timestamp: datetime
+    equipment_id: str                    # "CNC-001" / "CNC-002" / "CNC-003"
+    anomaly_score: float
+    predicted_failure_code: Optional[str]
+    confidence: Optional[float]
+    severity: str                        # "critical" (≥0.8) / "warning" (≥0.6)
+
+class AlarmFeedResponse(BaseModel):
+    alarms: List[AlarmEvent]             # 최신 순 정렬
+    total_count: int
 ```
 
 ---
@@ -353,7 +366,29 @@ async def llm_action(equipment_id: str) -> LLMActionResponse:
     pass
 ```
 
-### 3.8 `GET /api/health`
+### 3.8 `GET /api/f6/alarms`
+
+전체 설비(3대) 알람 피드를 단일 엔드포인트로 제공.
+대시보드 AlarmFeed 컴포넌트가 설비별 × 3 호출 대신 이 엔드포인트 1회만 호출.
+
+```python
+@app.get("/api/f6/alarms", response_model=AlarmFeedResponse)
+async def alarm_feed(
+    limit: int = 20,                 # 최근 N건
+    min_score: float = 0.5           # ANOMALY_THRESHOLD 이상만
+):
+    # anomaly_scores 테이블에서 is_anomaly=True 인 최근 N건 조회
+    # equipment_id 무관하게 timestamp DESC 정렬
+    # severity 계산: anomaly_score >= 0.8 → "critical", >= 0.6 → "warning"
+    pass
+```
+
+| 항목 | 값 |
+|------|-----|
+| 성공 응답 | 200 + `AlarmFeedResponse` |
+| 알람 없음 | 200 + `{"alarms": [], "total_count": 0}` |
+
+### 3.10 `GET /api/health`
 
 ```python
 @app.get("/api/health")
@@ -495,3 +530,9 @@ class ErrorResponse(BaseModel):
 5. **F5 비동기 처리:** 메인 루프에서 `asyncio.create_task()`로 분리 ✅ 반영
 6. **series: List[Dict]:** Phase 3에서 SensorDataPoint 타입 강화 TODO 추가 ✅ 반영
 7. **섹션 번호 불일치:** 인지만, 수정 불필요 ✅ 확인
+
+### 리뷰 #2 (2026-03-16)
+
+1. **AlarmFeed API 비효율:** `/api/f2/history/{equipment_id}` × 3대 호출 → `/api/f6/alarms` 단일 엔드포인트 신규 추가(#13) ✅ 반영
+   - `AlarmEvent`, `AlarmFeedResponse` Pydantic 모델 추가
+   - `severity` 필드 포함 (critical/warning)

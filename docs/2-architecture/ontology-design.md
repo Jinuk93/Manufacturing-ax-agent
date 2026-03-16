@@ -111,7 +111,7 @@ CNC 장비 마스터 데이터. 온톨로지의 중심 허브.
 | `text_representation` | String | (BM25 검색용 전문) | F4용 |
 | `embedding_ref_id` | String | → PostgreSQL pgvector FK | 벡터 검색용 |
 
-**인스턴스:** ~20개 예상 (4 고장코드 × 5 부품 조합)
+**인스턴스:** 12개 확정 (4 고장코드 × 3 문서유형: 교체 절차서, 점검 체크리스트, 트러블슈팅 가이드)
 
 > **참고:** Document의 실제 텍스트와 임베딩 벡터는 PostgreSQL(pgvector)에 저장.
 > Neo4j에는 메타데이터 + 관계만 저장하여 그래프 순회 후 PG에서 상세 검색.
@@ -178,6 +178,14 @@ MES 작업지시. 설비와 정비를 연결하는 컨텍스트 노드.
 >
 > **R2 DETECTS 관계는 구조만 확정, 구체적 인스턴스는 Phase 3에서 생성.**
 > 현재 FailureCode 인스턴스 테이블의 "관련 센서"는 초기 가설이며, F2 이상탐지 모델 결과로 검증 후 확정.
+>
+> **(주2) R7 TRIGGERS 예외:** 예방정비(preventive) 27건은 work_order_id가 비어있음.
+> 작업지시 없이 정기 일정으로 수행되는 정비이므로 WorkOrder와 연결되지 않음.
+> → R7 관계는 교정정비(corrective) 12건에만 생성. 예방정비 27건은 Equipment에서 직접 연결 (R3 EXPERIENCES 경유).
+>
+> **(주3) R8 RESOLVES 예외:** 에어 필터 교체(preventive) 9건(MT-2024-031~039)은 failure_code가 비어있음.
+> 특정 고장코드 없이 2주 주기 정기 교체로 수행되므로 FailureCode와 연결되지 않음.
+> → R8 관계는 failure_code가 있는 30건에만 생성. 9건은 R9(CONSUMES → P005)만 연결.
 
 ### 3.2 관계 다이어그램
 
@@ -201,7 +209,7 @@ MES 작업지시. 설비와 정비를 연결하는 컨텍스트 노드.
                                            ▼
                                     ┌──────────┐
                                     │ Document  │
-                                    │ (~20건)   │
+                                    │ (12건)    │
                                     └──────────┘
 ```
 
@@ -310,8 +318,8 @@ CREATE FULLTEXT INDEX document_search FOR (d:Document) ON EACH [d.text_represent
 | Part 노드 | 5 | IT 합성 ERP |
 | WorkOrder 노드 | 18 | IT 합성 MES |
 | MaintenanceAction 노드 | 39 | IT 합성 Maintenance |
-| Document 노드 | ~20 (예상) | Phase 3 합성 |
-| **총 노드** | **~131** | |
+| Document 노드 | 12 | 합성 완료 (4 고장코드 × 3 문서유형) |
+| **총 노드** | **~123** | |
 | **총 관계** | **~200+ (예상)** | 노드 간 연결 |
 
 > 소규모 그래프이지만, F4 GraphRAG의 핵심은 크기가 아니라 **관계의 정확성**과 **질의 경로의 명확성**이다.

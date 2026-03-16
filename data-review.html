@@ -171,6 +171,41 @@
   #p4 .loop-title{color:#f5f5f5;}
   #p4 .loop-desc{color:#999;}
 
+  /* ===== System Flow Page (p15) ===== */
+  #p15{background:#111;}
+  #p15 .page-title{color:#e8770e;}
+  #p15 .page-sub{color:#999;}
+  #p15 h3{color:#e8770e;}
+  #p15 h4{color:#ddd;}
+  #p15 p{color:#bbb;}
+  #p15 ul{color:#bbb;}
+  #p15 li strong{color:#e0e0e0;}
+  #p15 .inner{max-width:1020px;}
+  #p15 table{border-collapse:collapse;width:100%;font-size:13px;}
+  #p15 th{background:rgba(255,255,255,0.08);color:#ccc;border:1px solid rgba(255,255,255,0.1);padding:10px 12px;text-align:left;font-weight:600;}
+  #p15 td{color:#bbb;border:1px solid rgba(255,255,255,0.08);padding:10px 12px;}
+  #p15 tbody tr:hover{background:rgba(255,255,255,0.06);}
+  .fn-detail{background:#1e1e1e;border-radius:12px;padding:24px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.08);}
+  .fn-detail h4{margin-top:0;color:#f5f5f5;font-size:15px;}
+  .fn-detail p{color:#d4d4d4;font-size:14px;line-height:1.8;}
+  .fn-detail li{color:#d4d4d4;font-size:14px;line-height:2;}
+  .fn-detail strong{color:#f5f5f5;}
+  .fn-detail code{color:#e8770e;background:rgba(232,119,14,0.08);padding:2px 8px;border-radius:4px;font-size:12px;}
+  .fn-num{display:inline-block;font-size:12px;font-weight:800;color:#111;background:#ccc;padding:3px 10px;border-radius:6px;margin-right:8px;}
+  .fn-question{font-size:16px;font-weight:700;color:#f5f5f5;margin-bottom:10px;}
+  .fn-data-tag{display:inline-block;font-size:11px;font-weight:600;padding:4px 12px;border-radius:6px;margin:2px 4px 2px 0;}
+  .fn-data-tag.input{background:rgba(255,255,255,0.06);color:#bbb;border:1px solid rgba(255,255,255,0.1);}
+  .fn-data-tag.output{background:rgba(255,255,255,0.06);color:#bbb;border:1px solid rgba(255,255,255,0.1);}
+  .fn-data-tag.db{background:rgba(255,255,255,0.06);color:#bbb;border:1px solid rgba(255,255,255,0.1);}
+  .fn-sub{font-size:13px;color:#999;margin-top:4px;margin-bottom:0;}
+  /* Feature tabs (p15) */
+  .feat-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+  .feat-tab{appearance:none;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:10px 16px;background:linear-gradient(180deg,#333 0%,#262626 100%);cursor:pointer;transition:all .2s;font:inherit;color:#bbb;font-size:13px;font-weight:600;}
+  .feat-tab:hover{border-color:#666;color:#ddd;transform:translateY(-1px);}
+  .feat-tab.active{border-color:#e8770e;background:linear-gradient(180deg,#3d3020 0%,#2a2218 100%);color:#e8770e;box-shadow:0 0 0 1px #e8770e,0 4px 12px rgba(232,119,14,0.15);}
+  .feat-panel{display:none;}
+  .feat-panel.active{display:block;}
+
   /* ===== Phase 2 Pages (p12, p13, p14) ===== */
   #p12,#p13,#p14{background:#111;}
   #p12 .page-title,#p13 .page-title,#p14 .page-title{color:#e8770e;}
@@ -647,22 +682,23 @@
     <a href="#p0" class="active" data-idx="0">개요</a>
     <a href="#p1" data-idx="1">목표</a>
     <a href="#p2" data-idx="2">구현 설계</a>
-    <a href="#p4" data-idx="8">애자일 목표</a>
+    <a href="#p15" data-idx="3">핵심 기능</a>
+    <a href="#p4" data-idx="9">애자일 목표</a>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section">
     <span class="nav-section-label">Phase별 진행</span>
-    <a href="#p10" data-idx="9">한눈에 보기</a>
-    <a href="#p5" data-idx="10">프로젝트 정의</a>
-    <a href="#p3" data-idx="3">데이터 수집</a>
-    <a href="#p11" data-idx="4">데이터 탐색</a>
+    <a href="#p10" data-idx="10">한눈에 보기</a>
+    <a href="#p5" data-idx="11">프로젝트 정의</a>
+    <a href="#p3" data-idx="4">데이터 수집</a>
+    <a href="#p11" data-idx="5">데이터 탐색</a>
   </div>
   <div class="nav-divider"></div>
   <div class="nav-section">
     <span class="nav-section-label">아키텍처</span>
-    <a href="#p12" data-idx="5">온톨로지</a>
-    <a href="#p13" data-idx="6">DB 스키마</a>
-    <a href="#p14" data-idx="7">파이프라인</a>
+    <a href="#p12" data-idx="6">온톨로지</a>
+    <a href="#p13" data-idx="7">DB 스키마</a>
+    <a href="#p14" data-idx="8">파이프라인</a>
   </div>
 </nav>
 
@@ -948,6 +984,444 @@
     <p>2. <strong>공개 정비 매뉴얼</strong> &rarr; F4 GraphRAG의 텍스트 근거</p>
     <p style="color:#999;font-size:13px;margin-top:4px;">나머지는 전부 합성하거나(F3 MES/ERP, F2 이벤트 로그), 직접 설계하거나(F4 온톨로지),<br>앞 기능의 출력을 이어받는 구조(F5, F6)입니다.</p>
   </div>
+</div>
+</div>
+
+<!-- =============================== -->
+<!-- PAGE 15: 핵심 기능 -->
+<!-- =============================== -->
+<div class="page" id="p15">
+<div class="inner">
+  <div class="page-title">핵심 기능</div>
+  <p class="page-sub">CNC 설비 고장을 막기 위한 5가지 핵심 기능입니다. 각 기능을 클릭하면 상세 동작 원리를 확인할 수 있습니다.</p>
+
+  <div class="feat-tabs" id="feat-tabs">
+    <button class="feat-tab active" data-feat="overview">전체 흐름</button>
+    <button class="feat-tab" data-feat="anomaly">이상탐지 + 예측</button>
+    <button class="feat-tab" data-feat="itot">IT/OT 융합</button>
+    <button class="feat-tab" data-feat="graphrag">온톨로지 + GraphRAG</button>
+    <button class="feat-tab" data-feat="llm">LLM 자율 판단</button>
+    <button class="feat-tab" data-feat="dashboard">관제 대시보드</button>
+  </div>
+  <div id="feat-content">
+
+  <!-- ══ 탭 1: 전체 흐름 ══ -->
+  <div class="feat-panel active" id="feat-overview">
+    <h3>해결하려는 문제</h3>
+    <div class="arch-card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <p style="font-size:15px;font-weight:700;color:#ef4444;margin-bottom:8px;">지금 (예지보전 없이)</p>
+          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:14px 16px;">
+            <p style="font-size:13px;color:#ddd;line-height:1.8;margin:0;">
+              CNC 가공 중 갑자기 이상 소음 발생<br>
+              &rarr; 작업자가 알아챌 때는 이미 공구 파손<br>
+              &rarr; 가공물 불량 + 설비 정지 + 긴급 수리<br>
+              &rarr; <strong style="color:#ef4444;">생산 라인 2~4시간 정지, 수백만 원 손실</strong>
+            </p>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:15px;font-weight:700;color:#4ade80;margin-bottom:8px;">목표 (우리 시스템)</p>
+          <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:14px 16px;">
+            <p style="font-size:13px;color:#ddd;line-height:1.8;margin:0;">
+              센서가 30분 전에 이상 징후 감지<br>
+              &rarr; 시스템이 자동으로 상황 파악 + 매뉴얼 검색<br>
+              &rarr; LLM이 "감속 운전 후 교대 시 엔드밀 교체" 판단<br>
+              &rarr; <strong style="color:#4ade80;">계획된 정비, 생산 중단 없음</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>5가지 핵심 기능</h3>
+    <div class="arch-card">
+      <p style="color:#d4d4d4;font-size:14px;">이 차이를 만드는 5가지 기능입니다. 위 탭을 클릭하면 각 기능의 상세 동작 원리를 볼 수 있습니다.</p>
+      <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:12px;">
+      <table>
+        <thead><tr><th>기능</th><th>담당</th><th>핵심 질문</th><th>이게 없으면</th></tr></thead>
+        <tbody>
+          <tr><td><strong>이상탐지 + 예측</strong></td><td>F1, F2</td><td>"지금 이상한가? 30분 뒤에 고장날까?"</td><td>고장이 터져야 알게 됨</td></tr>
+          <tr><td><strong>IT/OT 융합</strong></td><td>F3</td><td>"지금 뭘 하고 있고, 부품은 있나?"</td><td>맥락 없는 알람만 울림</td></tr>
+          <tr><td><strong>온톨로지 + GraphRAG</strong></td><td>F4</td><td>"과거 경험과 매뉴얼에서 뭘 찾을 수 있나?"</td><td>LLM이 일반 지식으로만 답함</td></tr>
+          <tr><td><strong>LLM 자율 판단</strong></td><td>F5</td><td>"그래서 지금 뭘 해야 하는가?"</td><td>정보는 있는데 판단할 사람 필요</td></tr>
+          <tr><td><strong>관제 대시보드</strong></td><td>F6</td><td>"현장에 전달한다"</td><td>판단 내려도 아무도 모름</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <h3>파이프라인 흐름도</h3>
+    <div class="arch-card">
+      <div style="text-align:center;">
+        <div class="arch-flow" style="justify-content:center;flex-wrap:nowrap;">
+          <div class="arch-flow-box" style="min-width:100px;">F1<br><span style="font-size:10px;color:#888;">센서 수집</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:100px;">F2<br><span style="font-size:10px;color:#888;">이상 감지</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:100px;">F3<br><span style="font-size:10px;color:#888;">상황 파악</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:100px;">F4<br><span style="font-size:10px;color:#888;">지식 검색</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:100px;">F5<br><span style="font-size:10px;color:#888;">자율 판단</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:100px;">F6<br><span style="font-size:10px;color:#888;">대시보드</span></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:40px;margin-top:12px;font-size:12px;color:#999;">
+          <span>F1&rarr;F2 : 매 5초 반복</span>
+          <span>F3&rarr;F5 : 이상 감지 시에만</span>
+          <span>F6 : 항상 최신 표시</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>실제 시나리오로 따라가 보기</h3>
+    <div class="arch-card">
+      <p style="font-size:13px;color:#ddd;margin-bottom:12px;">CNC-002에서 스핀들 과열이 발생하는 상황을 6단계로 추적합니다.</p>
+      <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:16px;font-size:13px;color:#ddd;line-height:2.2;">
+        <span style="color:#f59e0b;font-weight:800;">08:00:00</span> <strong>F1</strong>이 CNC-002의 센서 42개 값을 읽어 DB에 저장<br>
+        <span style="color:#f59e0b;font-weight:800;">08:00:05</span> F1 반복. <strong>F2</strong>가 최근 30초 데이터를 분석 &mdash; <span style="color:#4ade80;">정상</span><br>
+        <span style="color:#888;">... (5초마다 반복, 모두 정상) ...</span><br>
+        <span style="color:#f59e0b;font-weight:800;">08:23:15</span> <strong>F2</strong>가 S1_OutputCurrent 지속 상승 감지 &mdash; <span style="color:#ef4444;font-weight:700;">이상! score=0.87</span><br>
+        <span style="color:#f59e0b;font-weight:800;">08:23:16</span> <strong style="color:#ef4444;">F3</strong> &mdash; MES: urgent 작업, 납기 2시간 / ERP: 베어링 2세트 / 과거 정비 2건<br>
+        <span style="color:#f59e0b;font-weight:800;">08:23:17</span> <strong style="color:#a78bfa;">F4</strong> &mdash; Neo4j: P002 필요(재고&check;) + 과거 평균 75분 / pgvector: DOC-004 검색됨<br>
+        <span style="color:#f59e0b;font-weight:800;">08:23:20</span> <strong style="color:#4ade80;">F5</strong> &mdash; <span style="color:#4ade80;">"감속 운전 후 작업 완료 시 DOC-004 절차에 따라 베어링 교체"</span><br>
+        <span style="color:#f59e0b;font-weight:800;">08:23:21</span> <strong style="color:#60a5fa;">F6</strong> 대시보드에 알람 + 조치 리포트 표시
+      </div>
+      <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;"><strong>전체 소요 시간: 약 6초.</strong> 사람이 알아채기 전에 시스템이 이미 답을 내놓습니다.</p>
+    </div>
+  </div>
+
+  <!-- ══ 탭 2: 이상탐지 + 예측 ══ -->
+  <div class="feat-panel" id="feat-anomaly">
+    <h3>이상탐지 + 예측 (F1, F2)</h3>
+    <p style="color:#ddd;font-size:15px;margin-bottom:20px;">"설비가 지금 정상인가? 30분 뒤에 고장날 것인가?"에 답하는 기능입니다.</p>
+
+    <div class="fn-detail">
+      <div class="fn-question"><span class="fn-num">F1</span> 데이터 수집 + 전처리</div>
+      <p><strong>왜 필요한가:</strong> 고장을 미리 알려면 먼저 설비를 <strong>계속 감시</strong>해야 합니다. 사람이 24시간 지켜볼 수 없으니, 센서가 5초마다 설비 상태를 숫자로 기록합니다.</p>
+      <h4 style="color:#f59e0b;margin-top:16px;">동작 원리</h4>
+      <ol style="font-size:13px;padding-left:20px;line-height:2;">
+        <li>시뮬레이터(실제 현장이면 SCADA)가 CNC 3대의 <strong>센서 42개</strong> 값을 5초마다 읽음</li>
+        <li>PostgreSQL <code>sensor_readings</code> 테이블에 INSERT (와이드 형식, 44컬럼)</li>
+        <li><strong>정규화</strong>(MinMaxScaler) &mdash; 센서마다 단위가 다르므로 0~1 범위로 통일<br><span style="color:#888;">예: 전류는 0~15A, 전압은 0~400V &rarr; 둘 다 0~1로</span></li>
+        <li><strong>슬라이딩 윈도우</strong>(30초 = 6행) &mdash; "최근 30초의 흐름"을 하나의 입력으로 묶음<br><span style="color:#888;">한 시점만 보면 정상인데, 30초간 계속 오르고 있으면 이상</span></li>
+        <li><strong>파생 변수</strong> 생성 &mdash; 이동평균, 이동표준편차, 변화율<br><span style="color:#888;">원본 값 + "얼마나 흔들리는지" + "얼마나 빠르게 변하는지"</span></li>
+      </ol>
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력 : 센서 42개 &times; 3대 (5초마다)</span>
+        <span class="fn-data-tag db">DB : sensor_readings (44컬럼)</span>
+        <span class="fn-data-tag output">출력 : 정규화 + 윈도우 처리된 텐서</span>
+      </div>
+      <p class="fn-sub"><strong>이게 없으면:</strong> 설비 상태를 아예 모릅니다. 고장이 터진 뒤에야 알게 됩니다.</p>
+    </div>
+
+    <div class="fn-detail">
+      <div class="fn-question"><span class="fn-num">F2</span> 이상탐지 + 미래 예측</div>
+      <p><strong>왜 필요한가:</strong> 센서 42개의 숫자를 사람이 매번 해석할 수 없습니다. <strong>기계가 자동으로 "이건 정상이 아니다"를 판단</strong>해야 합니다.</p>
+      <p>이상탐지는 크게 두 가지 접근이 있습니다. <strong>지도 학습</strong>(정상/이상 라벨이 필요)과 <strong>비지도 학습</strong>(라벨 없이 "평소와 다른 패턴"을 찾음). 우리 데이터에는 센서별 이상/정상 라벨이 없으므로 <strong>비지도 학습</strong>을 사용합니다. "정상일 때의 패턴을 학습하고, 거기서 벗어나면 이상"으로 판단하는 방식입니다.</p>
+      <h4 style="color:#f59e0b;margin-top:16px;">동작 원리</h4>
+      <ol style="font-size:13px;padding-left:20px;line-height:2;">
+        <li>F1이 준비한 윈도우 데이터를 <strong>이상탐지 모델</strong>에 넣음</li>
+        <li>모델 후보: <strong>Isolation Forest</strong>(빠르고 간단) vs <strong>Autoencoder</strong>(복잡한 패턴)<br><span style="color:#888;">Phase 3에서 둘 다 실험하고 성능 비교 후 선택</span></li>
+        <li><strong>이상 점수</strong>(anomaly_score) 산출 &mdash; 0(완전 정상) ~ 1(확실한 이상)</li>
+        <li>임계치 0.5 넘으면 <code>is_anomaly = true</code> &rarr; F3~F5 트리거 발동</li>
+        <li><strong>고장 유형 예측</strong> &mdash; 어떤 고장코드(4종)에 해당하는지 분류</li>
+        <li>결과를 <code>anomaly_scores</code> 테이블에 INSERT</li>
+      </ol>
+      <h4 style="color:#f59e0b;margin-top:16px;">Phase 1 EDA에서 발견한 핵심 패턴</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">TOOL_WEAR_001 &mdash; 공구 마모</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">worn 상태에서 X1_CurrentFeedback이 unworn 대비 <strong>47% 감소</strong>. 마모가 진행되면 절삭 저항이 줄어 전류가 지속적으로 하락합니다.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">SPINDLE_OVERHEAT_001 &mdash; 스핀들 과열</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">feedrate=20(고속) + worn인 exp07, exp16이 <strong>중단</strong>됨. 고속 가공 시 S1_OutputCurrent가 상승하며 베어링 마찰열이 누적됩니다.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">CLAMP_PRESSURE_001 &mdash; 클램프 이상</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">clamp_pressure &le; 3.0인 exp04, exp05가 <strong>unworn인데 중단</strong>. 공구가 아니라 공작물 고정 불량이 원인입니다.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#ddd;margin-bottom:4px;">COOLANT_LOW_001 &mdash; 냉각수 부족</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">직접적 센서 패턴 없음 (온도 센서 미보유). 전류/전력 변화량 + 주기적 점검으로 <strong>간접 감지</strong> 설계 예정.</p>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력 : F1의 윈도우 데이터</span>
+        <span class="fn-data-tag db">DB : anomaly_scores (7컬럼 &mdash; 점수, 이상여부, 예측고장, 신뢰도, 모델버전 등)</span>
+        <span class="fn-data-tag output">출력 : 이상점수 + is_anomaly + 예측 고장코드 + 신뢰도</span>
+      </div>
+      <p class="fn-sub"><strong>이게 없으면:</strong> 센서 데이터만 쌓이고 아무도 안 봅니다. "알람만 울리는 시스템"조차 못 됩니다.</p>
+    </div>
+  </div>
+
+  <!-- ══ 탭 3: IT/OT 융합 ══ -->
+  <div class="feat-panel" id="feat-itot">
+    <h3>IT/OT 데이터 융합 (F3)</h3>
+    <p style="color:#ddd;font-size:15px;margin-bottom:20px;">"같은 고장이라도 상황에 따라 대응이 다르다" &mdash; 센서(OT)와 비즈니스(IT)를 합쳐 맥락을 만듭니다.</p>
+
+    <div class="arch-card">
+      <h4 style="margin-top:0;">OT와 IT가 뭔가?</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+        <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:14px 16px;">
+          <p style="font-size:14px;font-weight:700;color:#4ade80;margin-bottom:6px;">OT (운영 기술)</p>
+          <p style="font-size:13px;margin:0;"><strong>"설비가 지금 어떤 상태인가"</strong><br>센서 42개의 실시간 값 (전류, 전압, 진동 등)<br>SCADA가 수집, 5초마다 갱신</p>
+        </div>
+        <div style="background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.15);border-radius:8px;padding:14px 16px;">
+          <p style="font-size:14px;font-weight:700;color:#60a5fa;margin-bottom:6px;">IT (정보 기술)</p>
+          <p style="font-size:13px;margin:0;"><strong>"설비가 뭘 하고 있고, 뭘 준비해야 하는가"</strong><br>MES 작업지시, 정비이력, ERP 부품재고<br>이벤트 발생 시 기록</p>
+        </div>
+      </div>
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px 16px;margin-top:12px;">
+        <p style="font-size:13px;margin:0;"><strong>현실의 문제:</strong> 대부분의 공장에서 OT(SCADA)와 IT(MES/ERP)는 <strong>서로 다른 시스템, 다른 DB, 다른 부서</strong>가 관리합니다. "스핀들 과열!"이라는 알람이 울려도, "지금 이 설비가 긴급 작업 중인지"를 확인하려면 MES 시스템에 별도로 로그인해야 합니다. F3은 이 <strong>칸막이를 허물어</strong> 한 번에 합칩니다.</p>
+      </div>
+    </div>
+
+    <div class="fn-detail" style="border-color:rgba(255,255,255,0.12);">
+      <div class="fn-question"><span class="fn-num">F3</span> IT/OT 동기화 동작 원리</div>
+      <p><strong>트리거:</strong> F2에서 <code>is_anomaly = true</code>가 나올 때만 실행됩니다 (매 5초가 아님).</p>
+      <h4 style="color:#f59e0b;margin-top:16px;">3개 SQL 쿼리</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;">
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:12px;">
+          <p style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:6px;">쿼리 1: MES</p>
+          <p style="font-size:12px;color:#ddd;margin:0;">"이 설비의 가장 최근 작업은?"<br><span style="color:#888;">→ 우선순위, 납기, 상태</span></p>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:12px;">
+          <p style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:6px;">쿼리 2: Maintenance</p>
+          <p style="font-size:12px;color:#ddd;margin:0;">"최근 정비 이력은?"<br><span style="color:#888;">→ 고장코드, 소요시간, 사용부품</span></p>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:12px;">
+          <p style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:6px;">쿼리 3: ERP</p>
+          <p style="font-size:12px;color:#ddd;margin:0;">"필요 부품 재고는?"<br><span style="color:#888;">→ 수량, 발주 여부, 리드타임</span></p>
+        </div>
+      </div>
+      <h4 style="color:#f59e0b;margin-top:16px;">F3이 만드는 차이 (예시)</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="background:rgba(239,68,68,0.06);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:4px;">F3 없이 (OT만)</p>
+          <p style="font-size:13px;margin:0;">"SPINDLE_OVERHEAT_001 감지! 즉시 정지하세요!"<br><span style="color:#888;">(근데 지금 urgent 작업 중인데... 부품은 있는 건가...?)</span></p>
+        </div>
+        <div style="background:rgba(74,222,128,0.06);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:4px;">F3 있으면 (OT + IT)</p>
+          <p style="font-size:13px;margin:0;">"SPINDLE_OVERHEAT_001 감지!<br>현재: urgent 작업, 납기 2시간 뒤<br>재고: P002 베어링 2세트 있음<br>이력: 과거 같은 고장 정비 평균 75분"</p>
+        </div>
+      </div>
+      <p style="font-size:14px;color:#d4d4d4;margin-top:12px;">F3의 핵심은 <strong>시간 기준 조인</strong>입니다. OT(센서)는 100ms~5초 간격의 연속 데이터이고, IT(작업/정비/재고)는 비정기 이벤트 데이터입니다. 이상 감지 시점의 timestamp를 기준으로 "그 시간에 진행 중이던 작업", "최근 정비 이력", "현재 부품 재고"를 각각 쿼리하여 하나의 컨텍스트로 합칩니다.</p>
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력 : equipment_id + timestamp + 예측 고장코드</span>
+        <span class="fn-data-tag db">DB : mes_work_orders, maintenance_events, erp_inventory</span>
+        <span class="fn-data-tag output">출력 : 통합 컨텍스트 JSON (작업 + 재고 + 정비이력)</span>
+      </div>
+      <p class="fn-sub"><strong>이게 없으면:</strong> 맥락 없는 알람만 울립니다. "고장인 건 아는데, 지금 뭘 해야 하는지"를 모릅니다.</p>
+    </div>
+  </div>
+
+  <!-- ══ 탭 4: 온톨로지 + GraphRAG ══ -->
+  <div class="feat-panel" id="feat-graphrag">
+    <h3>온톨로지 + GraphRAG (F4)</h3>
+    <p style="color:#ddd;font-size:15px;margin-bottom:20px;">"이 고장을 고치려면 뭐가 필요하고, 매뉴얼에 뭐라고 적혀있는가?"를 지식 그래프에서 찾습니다.</p>
+
+    <div class="arch-card">
+      <h4 style="margin-top:0;">왜 온톨로지가 필요한가?</h4>
+      <p>"SPINDLE_OVERHEAT_001이 발생했다"는 사실만으로는 부족합니다. LLM이 판단하려면:</p>
+      <ul style="font-size:13px;padding-left:20px;line-height:2;">
+        <li>"이 고장을 고치려면 <strong>어떤 부품</strong>이 필요한가?" &rarr; P002 스핀들 베어링</li>
+        <li>"<strong>매뉴얼</strong>에 교체 절차가 있는가?" &rarr; DOC-004, DOC-005, DOC-006</li>
+        <li>"<strong>과거에</strong> 같은 고장을 어떻게 수리했는가?" &rarr; 평균 75분, 베어링 1세트 소모</li>
+        <li>"이 부품 <strong>재고</strong>가 있는가?" &rarr; ERP에서 2세트 확인</li>
+      </ul>
+      <p>이 관계들이 미리 <strong>Neo4j 그래프</strong>에 정리되어 있어야 빠르게 찾을 수 있습니다. 이것이 온톨로지의 역할입니다.</p>
+    </div>
+
+    <div class="arch-card">
+      <h4 style="margin-top:0;">그래프 구조</h4>
+      <div style="text-align:center;padding:8px 0;">
+        <div class="arch-flow" style="justify-content:center;">
+          <div class="arch-flow-box active">Equipment<br><span style="font-size:11px;color:#888;">3대</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box">Sensor<br><span style="font-size:11px;color:#888;">42개</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="border-color:#ef4444;color:#ef4444;">FailureCode<br><span style="font-size:11px;color:#888;">4종</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box">Part<br><span style="font-size:11px;color:#888;">5종</span></div>
+        </div>
+        <div class="arch-flow" style="justify-content:center;margin-top:8px;">
+          <div class="arch-flow-box active">Equipment</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box">WorkOrder<br><span style="font-size:11px;color:#888;">18건</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box">MaintenanceAction<br><span style="font-size:11px;color:#888;">39건</span></div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box">Document<br><span style="font-size:11px;color:#888;">12건</span></div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:12px;color:#888;">7종 노드 &middot; 10종 관계 &middot; FailureCode가 중심 허브 &mdash; <a href="#p12" style="color:#e8770e;">상세: 온톨로지 페이지</a></p>
+    </div>
+
+    <div class="fn-detail" style="border-color:rgba(255,255,255,0.12);">
+      <div class="fn-question"><span class="fn-num">F4</span> GraphRAG 2단계 검색</div>
+
+      <h4 style="color:#a78bfa;margin-top:12px;">1단계 &mdash; Neo4j 그래프 순회 (구조적 검색)</h4>
+      <p>고장코드에서 출발하여 <strong>관계를 타고 3단계</strong>까지 탐색합니다:</p>
+      <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin:8px 0;font-family:monospace;font-size:12px;color:#60a5fa;line-height:2;">
+        SPINDLE_OVERHEAT_001<br>
+        &nbsp;&nbsp;├─ REQUIRES &rarr; <span style="color:#ddd;">P002 (스핀들 베어링, 수량 1, urgency: high)</span><br>
+        &nbsp;&nbsp;├─ DESCRIBED_BY &rarr; <span style="color:#ddd;">DOC-004 (교체 절차서), DOC-005 (체크리스트), DOC-006 (트러블슈팅)</span><br>
+        &nbsp;&nbsp;└─ RESOLVES &larr; <span style="color:#ddd;">MT-2024-007 (75분, P002 1세트 소모), MT-2024-016 (60분)</span>
+      </div>
+      <p style="color:#888;font-size:12px;">"이 고장과 <strong>구조적으로</strong> 연결된 모든 것"을 정확히 찾음</p>
+
+      <h4 style="color:#a78bfa;margin-top:16px;">2단계 &mdash; pgvector 의미 검색 (정밀 검색)</h4>
+      <p>1단계에서 좁혀진 매뉴얼 3건(DOC-004~006) 안에서 <strong>"베어링 교체 절차"</strong> 같은 구체적 섹션을 벡터 유사도로 찾습니다.</p>
+      <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin:8px 0;font-family:monospace;font-size:12px;color:#60a5fa;line-height:2;">
+        검색어: "스핀들 과열 시 베어링 교체 방법"<br>
+        &nbsp;&nbsp;1위: DOC-004 섹션3 "교체 절차" <span style="color:#4ade80;">(cosine=0.92)</span><br>
+        &nbsp;&nbsp;2위: DOC-006 섹션2 "조치 방법" <span style="color:#4ade80;">(cosine=0.87)</span><br>
+        &nbsp;&nbsp;3위: DOC-005 섹션4 "판정 기준" <span style="color:#fbbf24;">(cosine=0.71)</span>
+      </div>
+      <p style="color:#888;font-size:12px;">자연어로 질문해도 <strong>의미가 비슷한</strong> 매뉴얼 섹션을 찾을 수 있음</p>
+
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력: 고장코드 + equipment_id</span>
+        <span class="fn-data-tag db">DB: Neo4j (순회) + document_embeddings (벡터)</span>
+        <span class="fn-data-tag output">출력: 필요 부품 + 매뉴얼 섹션 + 과거 정비 사례</span>
+      </div>
+      <p class="fn-sub"><strong>이게 없으면:</strong> LLM이 "스핀들 과열이면 일반적으로..."라고 답합니다. 우리 설비, 우리 매뉴얼에 맞는 답이 아닙니다.</p>
+    </div>
+  </div>
+
+  <!-- ══ 탭 5: LLM 자율 판단 ══ -->
+  <div class="feat-panel" id="feat-llm">
+    <h3>LLM 자율 판단 (F5)</h3>
+    <p style="color:#ddd;font-size:15px;margin-bottom:20px;">"그래서 지금 뭘 해야 하는가?" &mdash; 모든 정보를 종합하여 AI가 최종 판단을 내립니다.</p>
+
+    <div class="arch-card">
+      <h4 style="margin-top:0;">왜 LLM인가?</h4>
+      <p>F2(이상 점수) + F3(비즈니스 상황) + F4(매뉴얼/이력)을 종합하려면 <strong>규칙으로는 한계</strong>가 있습니다:</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:6px;">규칙 기반 (if-else)</p>
+          <p style="font-size:13px;margin:0;">"anomaly_score &gt; 0.8이면 정지"<br><span style="color:#888;">근데 지금 urgent 작업 중이면? 부품이 없으면? 과거에 같은 고장을 50분만에 고쳤으면? 경우의 수가 폭발</span></p>
+        </div>
+        <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:6px;">LLM (자연어 판단)</p>
+          <p style="font-size:13px;margin:0;">"이 정보를 종합했을 때 최선의 조치는?"<br><span style="color:#888;">매뉴얼 + 이력 + 상황을 자연어로 이해하고 유연하게 판단</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fn-detail" style="border-color:rgba(255,255,255,0.12);">
+      <div class="fn-question"><span class="fn-num">F5</span> LLM 판단 동작 원리</div>
+      <h4 style="color:#4ade80;margin-top:12px;">입력: 3가지 정보 통합</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:8px 0;">
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;font-size:12px;">
+          <div style="color:#f59e0b;font-weight:700;margin-bottom:4px;">F2 이상 정보</div>
+          <div style="color:#ddd;">score: 0.87<br>고장: SPINDLE_OVERHEAT_001<br>확신도: 87%</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;font-size:12px;">
+          <div style="color:#ef4444;font-weight:700;margin-bottom:4px;">F3 비즈니스 상황</div>
+          <div style="color:#ddd;">작업: urgent, 납기 2h<br>재고: P002 2세트<br>이력: 과거 정비 2건</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:10px;font-size:12px;">
+          <div style="color:#a78bfa;font-weight:700;margin-bottom:4px;">F4 검색 결과</div>
+          <div style="color:#ddd;">부품: P002 1세트 필요<br>매뉴얼: DOC-004 절차<br>과거: 평균 75분 소요</div>
+        </div>
+      </div>
+
+      <h4 style="color:#4ade80;margin-top:16px;">LLM 판단 프로세스</h4>
+      <ol style="font-size:13px;padding-left:20px;line-height:2;">
+        <li>위 3가지를 <strong>하나의 프롬프트</strong>로 조합하여 LLM API에 전송</li>
+        <li>temperature=0.1 (일관성 위해 &mdash; 같은 입력이면 비슷한 판단)</li>
+        <li>LLM이 <strong>구조화된 JSON</strong>으로 응답:
+          <ul style="padding-left:16px;margin:4px 0;">
+            <li><strong>recommendation</strong>: "감속 운전 후 작업 완료 시 베어링 교체"</li>
+            <li><strong>confidence</strong>: 0.85</li>
+            <li><strong>action_steps</strong>: ["feedrate 50% 감속", "현재 작업 완료", "DOC-004 절차 실행"]</li>
+            <li><strong>parts_needed</strong>: [{part_id: P002, quantity: 1, in_stock: true}]</li>
+          </ul>
+        </li>
+        <li><strong>환각 검증</strong>: 응답에 존재하지 않는 고장코드나 부품ID가 있으면 재시도</li>
+      </ol>
+
+      <h4 style="color:#4ade80;margin-top:16px;">판단 임계치</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:8px 0;">
+        <div style="background:rgba(239,68,68,0.1);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:20px;font-weight:800;color:#ef4444;">score &ge; 0.8</div>
+          <div style="font-size:13px;color:#ddd;margin-top:4px;"><strong>즉시 정지</strong></div>
+          <div style="font-size:12px;color:#888;">심각한 위험, 즉각 조치</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.1);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:20px;font-weight:800;color:#fbbf24;">score &ge; 0.6</div>
+          <div style="font-size:13px;color:#ddd;margin-top:4px;"><strong>감속 운전</strong></div>
+          <div style="font-size:12px;color:#888;">위험하지만 여유 있음</div>
+        </div>
+        <div style="background:rgba(74,222,128,0.1);border-radius:8px;padding:12px;text-align:center;">
+          <div style="font-size:20px;font-weight:800;color:#4ade80;">score &lt; 0.6</div>
+          <div style="font-size:13px;color:#ddd;margin-top:4px;"><strong>모니터링 강화</strong></div>
+          <div style="font-size:12px;color:#888;">주시하되 가동 유지</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력 : F2 이상 + F3 컨텍스트 + F4 검색 결과</span>
+        <span class="fn-data-tag output">출력 : recommendation + confidence + action_steps + parts_needed</span>
+      </div>
+      <p class="fn-sub"><strong>이게 없으면:</strong> 정보는 다 있는데 "그래서 뭘 해야 하는데?"에 답할 수 없습니다. 결국 사람이 24시간 붙어서 판단해야 합니다.</p>
+    </div>
+  </div>
+
+  <!-- ══ 탭 6: 관제 대시보드 ══ -->
+  <div class="feat-panel" id="feat-dashboard">
+    <h3>관제 대시보드 (F6)</h3>
+    <p style="color:#ddd;font-size:15px;margin-bottom:20px;">시스템이 내린 판단을 현장 관리자가 <strong>한 화면에서</strong> 확인합니다.</p>
+
+    <div class="arch-card">
+      <h4 style="margin-top:0;">왜 대시보드가 필요한가?</h4>
+      <p>F5가 아무리 좋은 판단을 내려도, <strong>사람이 볼 수 없으면 의미가 없습니다</strong>. 현장 관리자가 한 화면에서 설비 상태, 알람, 조치 내용을 확인하고 실행할 수 있어야 합니다.</p>
+    </div>
+
+    <div class="fn-detail" style="border-color:rgba(255,255,255,0.12);">
+      <div class="fn-question"><span class="fn-num">F6</span> 대시보드 구성</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0;">
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">&#128994;&#128308;&#128994;</div>
+          <div style="font-size:14px;color:#f5f5f5;font-weight:600;">설비 상태 요약</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">CNC 3대의 현재 상태<br>정상 / 경고 / 위험 표시</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">&#128200;</div>
+          <div style="font-size:14px;color:#f5f5f5;font-weight:600;">실시간 센서 차트</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">5초 갱신, 이상 구간 하이라이트<br>센서별 시계열 그래프</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">&#128680;</div>
+          <div style="font-size:14px;color:#f5f5f5;font-weight:600;">이상 점수 + 알람</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">anomaly_score 게이지<br>예측 고장코드 표시</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">&#128221;</div>
+          <div style="font-size:14px;color:#f5f5f5;font-weight:600;">LLM 조치 리포트</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">F5 판단 결과 전문<br>조치 단계 + 필요 부품</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">&#128230;</div>
+          <div style="font-size:14px;color:#f5f5f5;font-weight:600;">작업 + 재고 현황</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">현재 작업 정보<br>부품 재고 + 발주 상태</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력 : F1~F5의 모든 결과</span>
+        <span class="fn-data-tag output">출력 : 웹 대시보드 (FastAPI + HTML)</span>
+      </div>
+      <p style="font-size:13px;color:#d4d4d4;margin-top:12px;">ADR-005에 의해 Phase 1부터 조기 착수했습니다. 현재 프로젝트 리뷰 대시보드(data-review.html)가 존재하며, 실제 운영 대시보드(F6)는 Phase 3에서 구현합니다.</p>
+      <p class="fn-sub"><strong>이게 없으면:</strong> 시스템이 좋은 판단을 내려도 아무도 모릅니다.</p>
+    </div>
+  </div>
+
+  </div><!-- /feat-content -->
 </div>
 </div>
 
@@ -1458,6 +1932,158 @@
     </div>
   </div>
 
+  <!-- ── 섹션 1.5: GraphRAG란? ── -->
+  <h3>GraphRAG란?</h3>
+  <div class="arch-card">
+    <p>GraphRAG를 이해하려면 먼저 <strong>RAG</strong>를 알아야 합니다.</p>
+
+    <h4 style="color:#a78bfa;margin-top:16px;">RAG (Retrieval-Augmented Generation)</h4>
+    <p>LLM한테 질문할 때, <strong>관련 문서를 먼저 찾아서 같이 넘겨주는 기법</strong>입니다.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:6px;">일반 LLM (RAG 없이)</p>
+        <p style="font-size:13px;margin:0;">"TOOL_WEAR 수리 방법?" &rarr; LLM이 일반 지식으로 대답<br><strong>문제:</strong> 우리 설비에 맞지 않는 답, 환각(hallucination) 위험</p>
+      </div>
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:6px;">RAG 적용</p>
+        <p style="font-size:13px;margin:0;">"TOOL_WEAR 수리 방법?" &rarr; <strong>정비 매뉴얼에서 관련 문서를 먼저 검색</strong> &rarr; 찾은 문서를 LLM에게 "이거 참고해서 답해줘"라고 같이 전달 &rarr; 근거 있는 답변</p>
+      </div>
+    </div>
+
+    <h4 style="color:#f59e0b;margin-top:20px;">그러면 GraphRAG는?</h4>
+    <p><strong>RAG의 "검색" 부분에 지식 그래프를 쓰는 것</strong>입니다.</p>
+    <p>일반 RAG는 문서를 <strong>벡터 유사도</strong>(pgvector)로 검색합니다. "TOOL_WEAR"와 의미적으로 비슷한 문서를 찾는 거죠. 하지만 벡터 검색만으로는 <strong>구조적 관계</strong>를 모릅니다:</p>
+    <ul style="font-size:13px;padding-left:20px;margin:8px 0;">
+      <li>"TOOL_WEAR에 필요한 <strong>부품</strong>이 뭔지" &mdash; 관계를 타야 알 수 있음</li>
+      <li>"과거에 같은 고장을 <strong>어떻게 수리</strong>했는지" &mdash; 정비 이력 순회 필요</li>
+      <li>"그 부품 <strong>재고</strong>가 지금 있는지" &mdash; ERP 조인 필요</li>
+    </ul>
+    <p>이건 문서 유사도로는 못 찾고, <strong>관계를 타고 탐색</strong>해야 합니다. 그래서 GraphRAG입니다.</p>
+
+    <h4 style="color:#f59e0b;margin-top:20px;">우리 F4의 2단계 검색</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:rgba(0,168,84,0.06);border:1px solid rgba(0,168,84,0.15);border-radius:10px;padding:16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:8px;">1단계 &mdash; Neo4j 그래프 순회 (구조적 검색)</p>
+        <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+          TOOL_WEAR_001 &rarr; REQUIRES &rarr; Endmill (P001)<br>
+          TOOL_WEAR_001 &rarr; DESCRIBED_BY &rarr; 매뉴얼 3건<br>
+          TOOL_WEAR_001 &larr; RESOLVES &larr; 과거 정비 5건
+        </div>
+        <p style="font-size:12px;color:#888;margin:0;">"이 고장과 관련된 것들"을 <strong>관계로 정확히</strong> 찾음</p>
+      </div>
+      <div style="background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.15);border-radius:10px;padding:16px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:8px;">2단계 &mdash; pgvector 의미 검색 (의미적 검색)</p>
+        <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:6px;padding:10px 12px;margin-bottom:8px;">
+          1단계에서 좁혀진 매뉴얼 3건 안에서<br>
+          &rarr; "베어링 교체 절차" 같은 구체적 섹션을<br>
+          &rarr; 벡터 유사도(cosine)로 정밀 검색
+        </div>
+        <p style="font-size:12px;color:#888;margin:0;">자연어 의미를 이해해서 <strong>가장 관련 높은 섹션</strong>을 찾음</p>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:#888;">&darr;&nbsp; 두 결과를 합쳐서 LLM에게 전달 &rarr; <strong>근거 있는 자율 판단</strong></p>
+
+    <h4 style="color:#f59e0b;margin-top:20px;">세 가지 방식 비교</h4>
+    <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:8px;">
+    <table>
+      <thead><tr><th>방식</th><th>검색 방법</th><th>강점</th><th>약점</th></tr></thead>
+      <tbody>
+        <tr><td><strong>일반 RAG</strong></td><td>벡터 유사도만</td><td>의미적으로 비슷한 문서 찾기</td><td>구조적 관계를 모름</td></tr>
+        <tr><td><strong style="color:#f59e0b;">GraphRAG</strong></td><td><strong>그래프 순회 + 벡터</strong></td><td>관계로 정확히 좁힌 후 정밀 검색</td><td>그래프 구축 비용</td></tr>
+        <tr><td><strong>지식 그래프만</strong></td><td>그래프 순회만</td><td>관계 탐색 빠름</td><td>자연어 의미 검색 못함</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;"><strong>GraphRAG = 지식 그래프의 "정확한 관계 탐색" + 벡터 검색의 "자연어 이해"</strong>를 결합한 것입니다. Neo4j와 pgvector를 둘 다 쓰는 이유가 바로 이것입니다.</p>
+  </div>
+
+  <!-- ── 섹션 1.7: 데이터 시스템 구분 ── -->
+  <h3>우리 데이터는 어디서 오는가?</h3>
+  <div class="arch-card">
+    <p>제조 현장에서는 여러 시스템이 서로 다른 종류의 데이터를 관리합니다. 우리 프로젝트의 데이터도 이 시스템별로 구분됩니다.</p>
+
+    <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:12px;">
+    <table>
+      <thead><tr><th>시스템</th><th>역할</th><th>우리 데이터</th><th>파일</th><th>규모</th><th>종류</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:#4ade80;">SCADA (OT)</strong></td>
+          <td>설비 센서를 실시간으로 수집하는 감시/제어 시스템</td>
+          <td>CNC 센서 42컬럼, 100ms 샘플링</td>
+          <td>Kaggle CNC Mill<br><span style="font-size:11px;color:#4ade80;">실데이터</span></td>
+          <td>25,286행</td>
+          <td>실시간 연속</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#60a5fa;">MES</strong></td>
+          <td>생산 실행 관리 &mdash; "어떤 설비로 뭘 만들어라"</td>
+          <td>작업지시 (설비, 제품, 납기, 우선순위)</td>
+          <td>mes_work_orders.csv<br><span style="font-size:11px;color:#fbbf24;">합성</span></td>
+          <td>18건</td>
+          <td>이벤트성</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#60a5fa;">CMMS</strong></td>
+          <td>설비보전 관리 &mdash; "언제, 무엇을, 어떻게 수리했나"</td>
+          <td>정비 이벤트 (고장코드, 부품, 소요시간)</td>
+          <td>maintenance_events.csv<br><span style="font-size:11px;color:#fbbf24;">합성</span></td>
+          <td>39건</td>
+          <td>이벤트성</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#60a5fa;">ERP</strong></td>
+          <td>자원 관리 &mdash; "부품 재고가 몇 개 남았나"</td>
+          <td>부품 재고 주간 스냅샷 (5부품 &times; 7주)</td>
+          <td>erp_inventory_snapshots.csv<br><span style="font-size:11px;color:#fbbf24;">합성</span></td>
+          <td>35건</td>
+          <td>주간 스냅샷</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:4px;">OT (운영 기술)</p>
+        <p style="font-size:13px;margin:0;">SCADA 센서 데이터 &mdash; <strong>실데이터 1종</strong><br>설비가 "지금 어떤 상태인가"를 알려줌</p>
+      </div>
+      <div style="background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">IT (정보 기술)</p>
+        <p style="font-size:13px;margin:0;">MES + CMMS + ERP &mdash; <strong>합성 데이터 3종</strong><br>설비가 "무슨 일을 하고 있고, 뭘 준비해야 하는가"를 알려줌</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>왜 이 데이터로 충분한가? (MVP 관점)</h3>
+  <div class="arch-card">
+    <p style="font-size:13px;color:#888;margin-bottom:12px;">합성 데이터를 쓰는 게 찜찜할 수 있습니다. 하지만 우리의 목표는 <strong>"파이프라인이 동작하는 것을 증명하는 MVP"</strong>이지, 상용 배포가 아닙니다.</p>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">이 프로젝트가 증명하려는 것</p>
+      <p style="font-size:13px;">센서가 이상 신호를 보내면 &rarr; IT 데이터(작업/재고/정비이력)와 합쳐서 &rarr; 온톨로지로 관련 지식을 찾고 &rarr; LLM이 "무엇을 해야 하는지"를 자율 판단하는 <strong>전체 흐름(F1&rarr;F6)이 끊기지 않고 작동</strong>하는 것입니다.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:6px;">SCADA (실데이터) &mdash; 왜 충분한가</p>
+        <p style="font-size:13px;margin:0;">미시간대 SMART Lab의 <strong>실제 CNC 밀링 실험</strong>입니다. 42개 센서, 18개 실험, 100ms 고해상도. 센서 패턴의 다양성(마모/정상, 고속/저속, 중단/완료)이 충분히 확보되어 있어서 F2 이상탐지 모델의 학습/검증이 가능합니다.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:6px;">MES/CMMS/ERP (합성) &mdash; 왜 충분한가</p>
+        <p style="font-size:13px;margin:0;">기업 IT 데이터는 비공개입니다(ADR-002). 하지만 파이프라인이 필요한 건 <strong>"데이터의 존재와 형식"</strong>이지 "실제 비즈니스 정확도"가 아닙니다. 합성 데이터로도 F3 동기화, F4 GraphRAG 검색, F5 LLM 판단의 <strong>흐름과 인터페이스</strong>를 완전히 검증할 수 있습니다.</p>
+      </div>
+    </div>
+
+    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px 16px;margin-top:12px;">
+      <p style="font-size:13px;margin:0;"><strong>핵심 테스트 시나리오:</strong> W5(5주차)에 P003 Coolant 재고가 0이 됩니다. 이때 COOLANT_LOW_001 고장이 감지되면, F5 LLM은 "수리하고 싶지만 부품이 없다 &rarr; 긴급 발주 필요"라는 판단을 내려야 합니다. 이 시나리오 하나만으로도 SCADA &rarr; MES &rarr; CMMS &rarr; ERP &rarr; 온톨로지 &rarr; LLM의 <strong>전체 파이프라인이 정상 작동하는지</strong> 검증할 수 있습니다.</p>
+    </div>
+
+    <div style="margin-top:16px;">
+      <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">실제 현장 도입 시에는?</p>
+      <p style="font-size:13px;margin:0;">합성 데이터를 실제 MES/ERP API로 교체하면 됩니다. 파이프라인의 <strong>인터페이스(입출력 형식)가 동일</strong>하도록 합성 스키마를 설계했기 때문에, 데이터 소스만 바꾸면 코드 변경 없이 실데이터로 전환 가능합니다. 이것이 합성 데이터의 진짜 가치입니다.</p>
+    </div>
+  </div>
+
   <!-- ── 섹션 2: 우리 온톨로지가 답해야 할 질문들 ── -->
   <h3>이 온톨로지가 답해야 할 핵심 질문</h3>
   <div class="arch-card">
@@ -1512,10 +2138,10 @@
         <div class="arch-flow-arrow">&rarr;</div>
         <div class="arch-flow-box">MaintenanceAction<br><span style="font-size:11px;color:#888;">39건</span></div>
         <div class="arch-flow-arrow">&rarr;</div>
-        <div class="arch-flow-box">Document<br><span style="font-size:11px;color:#888;">~20건</span></div>
+        <div class="arch-flow-box">Document<br><span style="font-size:11px;color:#888;">12건</span></div>
       </div>
     </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">7종 노드 &middot; 10종 관계 &middot; 총 ~131개 노드 &middot; FailureCode가 그래프의 중심 허브</p>
+    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">7종 노드 &middot; 10종 관계 &middot; 총 ~123개 노드 &middot; FailureCode가 그래프의 중심 허브</p>
   </div>
 
   <!-- ── 섹션 4: 노드 하나씩 설명 ── -->
@@ -1586,8 +2212,8 @@
   </div>
 
   <div class="arch-card">
-    <h4 style="font-size:15px;"><span style="color:#f59e0b;font-size:13px;margin-right:6px;">05</span> Document &mdash; 정비 매뉴얼 (~20건)</h4>
-    <p><strong>무엇:</strong> 고장별 정비 절차, 안전 주의사항, 교체 방법을 담은 문서입니다. Phase 3에서 합성 예정.</p>
+    <h4 style="font-size:15px;"><span style="color:#f59e0b;font-size:13px;margin-right:6px;">05</span> Document &mdash; 정비 매뉴얼 (12건)</h4>
+    <p><strong>무엇:</strong> 고장별 정비 절차, 안전 주의사항, 교체 방법을 담은 문서입니다. 4종 고장코드 &times; 3종 문서유형(교체 절차서, 점검 체크리스트, 트러블슈팅) = 12건 합성 완료.</p>
     <p><strong>왜 필요한가:</strong> LLM이 조치를 판단할 때, <strong>"왜 이렇게 해야 하는지"의 근거</strong>가 되는 문서입니다. GraphRAG의 RAG(Retrieval-Augmented Generation) 부분이 바로 이 문서를 검색하는 것입니다. 매뉴얼 없이는 LLM이 일반 지식으로만 답하게 되어 환각(hallucination) 위험이 커집니다.</p>
     <p style="font-size:12px;color:#888;margin-bottom:0;">Neo4j에는 메타데이터(제목, 문서 타입, 관련 고장코드)만 저장하고, 실제 텍스트와 임베딩은 PostgreSQL pgvector에 저장합니다. 검색 시 Neo4j로 관련 문서를 좁히고, pgvector로 정밀 의미 검색을 수행합니다.</p>
   </div>
@@ -1633,7 +2259,7 @@
         <span class="arch-rel-name">R3 EXPERIENCES</span>
         <span style="font-size:12px;color:#999;">Equipment &rarr; FailureCode &middot; N:M</span>
       </div>
-      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "CNC-002에서 SPINDLE_OVERHEAT가 이전에도 발생한 적 있나?" &mdash; 설비별 고장 이력을 추적합니다. 반복 고장이면 근본 원인 분석이 필요하다는 신호입니다.</p>
+      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "CNC-002에서 SPINDLE_OVERHEAT_001이 이전에도 발생한 적 있나?" &mdash; 설비별 고장 이력을 추적합니다. 반복 고장이면 근본 원인 분석이 필요하다는 신호입니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -1649,7 +2275,7 @@
         <span class="arch-rel-name">R5 DESCRIBED_BY</span>
         <span style="font-size:12px;color:#999;">FailureCode &rarr; Document &middot; N:M</span>
       </div>
-      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "SPINDLE_OVERHEAT의 정비 절차가 적힌 매뉴얼은?" &mdash; LLM에게 근거 문서를 제공하여 환각을 방지합니다. <span style="color:#888;">속성: relevance_score(관련도). 이게 GraphRAG의 "Graph" 부분입니다.</span></p>
+      <p style="font-size:13px;margin:0;"><strong>왜:</strong> "SPINDLE_OVERHEAT_001의 정비 절차가 적힌 매뉴얼은?" &mdash; LLM에게 근거 문서를 제공하여 환각을 방지합니다. <span style="color:#888;">속성: relevance_score(관련도). 이게 GraphRAG의 "Graph" 부분입니다.</span></p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -1666,6 +2292,7 @@
         <span style="font-size:12px;color:#999;">WorkOrder &rarr; MaintenanceAction &middot; 1:N</span>
       </div>
       <p style="font-size:13px;margin:0;"><strong>왜:</strong> "이 작업 중에 정비가 필요했던 적이 있는가?" &mdash; 작업과 정비의 인과관계를 추적합니다.</p>
+      <p style="font-size:12px;color:#f59e0b;margin:4px 0 0;"><strong>예외:</strong> 예방정비 27건은 작업지시 없이 정기 일정으로 수행 &rarr; work_order_id가 비어있어 R7 관계 없음. 교정정비 12건만 연결됩니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -1674,6 +2301,7 @@
         <span style="font-size:12px;color:#999;">MaintenanceAction &rarr; FailureCode &middot; N:1</span>
       </div>
       <p style="font-size:13px;margin:0;"><strong>왜:</strong> "과거에 TOOL_WEAR를 어떻게 해결했는가?" &mdash; 성공적인 정비 사례를 LLM에게 제공합니다. <span style="color:#888;">속성: resolution_time_min(해결 소요 시간) &mdash; "보통 30분이면 고칠 수 있다"는 정보.</span></p>
+      <p style="font-size:12px;color:#f59e0b;margin:4px 0 0;"><strong>예외:</strong> 에어 필터 정기 교체 9건(MT-031~039)은 특정 고장코드 없이 수행 &rarr; failure_code가 비어있어 R8 관계 없음. R9(CONSUMES &rarr; P005)만 연결됩니다.</p>
     </div>
 
     <div class="arch-rel" style="flex-direction:column;align-items:flex-start;padding:12px 0;">
@@ -1710,28 +2338,91 @@
     <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:14px 16px;">
       <p style="font-size:14px;font-weight:700;color:#f59e0b;margin-bottom:6px;">경로 3 : 고장 &rarr; 정비 매뉴얼 &rarr; 의미 검색</p>
       <p style="font-family:monospace;font-size:13px;color:#60a5fa;margin-bottom:4px;">FailureCode &mdash;DESCRIBED_BY&rarr; Document &mdash;(pgvector)&rarr; 유사 청크 검색</p>
-      <p style="font-size:12px;color:#888;margin:0;"><strong>용도:</strong> "SPINDLE_OVERHEAT 관련 매뉴얼 3건을 찾고, 그 중 '베어링 교체 절차' 섹션을 LLM에게 전달합니다."</p>
+      <p style="font-size:12px;color:#888;margin:0;"><strong>용도:</strong> "SPINDLE_OVERHEAT_001 관련 매뉴얼 3건을 찾고, 그 중 '베어링 교체 절차' 섹션을 LLM에게 전달합니다."</p>
     </div>
   </div>
 
   <!-- ── 섹션 7: PG vs Neo4j 역할 분담 ── -->
-  <h3>PostgreSQL &harr; Neo4j &mdash; 왜 두 개를 쓰는가?</h3>
+  <h3>PostgreSQL(포스트그레스) &harr; Neo4j(네오포제이) &mdash; 왜 두 개를 쓰는가?</h3>
   <div class="arch-card">
     <p>한마디로: <strong>PostgreSQL은 "숫자를 빠르게 집계"</strong>하고, <strong>Neo4j는 "관계를 빠르게 탐색"</strong>합니다.</p>
     <p>센서 데이터 25,286행을 "최근 30초 평균"으로 집계하는 건 PostgreSQL(TimescaleDB)이 빠르고, "이 고장코드에 필요한 부품 &rarr; 그 부품을 과거에 쓴 정비 이력"을 3단계 관계로 찾는 건 Neo4j가 압도적으로 빠릅니다.</p>
     <p style="font-size:12px;color:#888;">ADR-003 결정: 1인 개발에서 DB 4개는 비현실적 &rarr; PostgreSQL(TimescaleDB + pgvector 통합) + Neo4j = 총 2개로 제한</p>
   </div>
+
+  <div class="arch-card">
+    <h4 style="margin-top:0;">먼저 알아야 할 용어</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:6px;">PK (Primary Key, 기본 키)</p>
+        <p style="font-size:13px;margin:0;">"이 테이블에서 나를 유일하게 식별하는 ID"<br>예: failure_codes 테이블의 <code>TOOL_WEAR_001</code></p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:6px;">FK (Foreign Key, 외래 키)</p>
+        <p style="font-size:13px;margin:0;">"다른 테이블의 PK를 가리키는 참조 화살표"<br>예: maintenance_events의 failure_code &rarr; failure_codes 테이블을 가리킴</p>
+      </div>
+    </div>
+    <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin-top:12px;font-family:monospace;font-size:12px;color:#ccc;line-height:1.8;">
+      <span style="color:#888;"># maintenance_events 테이블 (FK를 가진 쪽)</span><br>
+      MT-001 | failure_code: <span style="color:#f59e0b;">TOOL_WEAR_001</span> &larr; "failure_codes 테이블 가서 찾아봐!"<br>
+      MT-002 | failure_code: <span style="color:#f59e0b;">SPINDLE_OVERHEAT_001</span><br>
+      <br>
+      <span style="color:#888;"># failure_codes 테이블 (PK를 가진 원본)</span><br>
+      <span style="color:#60a5fa;">TOOL_WEAR_001</span> (PK) | 설명: 엔드밀 마모 &larr; 여기에 진짜 정보가 있음<br>
+      <span style="color:#60a5fa;">SPINDLE_OVERHEAT_001</span> (PK) | 설명: 스핀들 과열
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">FK 덕분에 "MT-001 이벤트는 어떤 고장이야?" &rarr; failure_codes 테이블에서 바로 찾을 수 있습니다. 데이터를 중복 저장하지 않으면서도 연결하는 방법이에요.</p>
+  </div>
+
+  <h4 style="color:#ddd;margin-top:20px;margin-bottom:12px;">그래서 같은 데이터가 어디에 저장되는가?</h4>
+  <p style="font-size:13px;color:#888;margin-bottom:12px;">아래 표에서 "어떤 역할로 저장되는가"를 보여줍니다. 같은 데이터라도 쓰는 목적이 다르면 양쪽에 다 넣어요.</p>
+
   <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);">
   <table>
-    <thead><tr><th>데이터</th><th>PostgreSQL</th><th>Neo4j</th><th>이유</th></tr></thead>
+    <thead><tr><th>데이터</th><th>PostgreSQL에서의 역할</th><th>Neo4j에서의 역할</th><th>왜 이렇게 나눴는가</th></tr></thead>
     <tbody>
-      <tr><td>센서 시계열 (25,286행 &times; 42컬럼)</td><td><span class="arch-badge pg">TimescaleDB</span></td><td>&mdash;</td><td>시간 범위 집계, 압축, 연속 데이터에 최적화</td></tr>
-      <tr><td>센서 메타데이터 (42개)</td><td>참조 테이블</td><td><span class="arch-badge neo">Node</span></td><td>"이 센서가 어떤 고장을 감지하는가" 관계 순회</td></tr>
-      <tr><td>고장코드 마스터 (4종)</td><td><span class="arch-badge pg">FK 참조</span></td><td><span class="arch-badge neo">Node</span></td><td>PG: anomaly_scores의 FK, Neo4j: 그래프 허브</td></tr>
-      <tr><td>부품 마스터 (5종)</td><td><span class="arch-badge pg">FK 참조</span></td><td><span class="arch-badge neo">Node</span></td><td>PG: ERP 재고 조인, Neo4j: 고장&rarr;부품 탐색</td></tr>
-      <tr><td>정비 이벤트 (39건)</td><td><span class="arch-badge pg">이벤트 테이블</span></td><td><span class="arch-badge neo">Node</span></td><td>PG: 이력 조회/통계, Neo4j: 고장&harr;정비&harr;부품 경로</td></tr>
-      <tr><td>매뉴얼 텍스트 + 임베딩</td><td><span class="arch-badge pg">pgvector</span></td><td>&mdash;</td><td>벡터 유사도 검색 (HNSW cosine)</td></tr>
-      <tr><td>매뉴얼 메타 + 관계</td><td>&mdash;</td><td><span class="arch-badge neo">Node</span></td><td>"이 고장에 관련된 매뉴얼은?" 그래프 순회</td></tr>
+      <tr>
+        <td><strong>센서 시계열</strong><br><span style="font-size:11px;color:#888;">25,286행 &times; 42컬럼</span></td>
+        <td><span class="arch-badge pg">저장 + 집계</span><br><span style="font-size:11px;color:#888;">TimescaleDB로 "최근 30초 평균" 같은 시간 계산</span></td>
+        <td style="color:#555;">&mdash; 안 넣음</td>
+        <td>수만 행의 숫자 계산은 PostgreSQL이 압도적</td>
+      </tr>
+      <tr>
+        <td><strong>센서 메타</strong><br><span style="font-size:11px;color:#888;">42개 센서 정보</span></td>
+        <td><span class="arch-badge pg">목록 관리</span><br><span style="font-size:11px;color:#888;">sensors 테이블에 이름, 축, 단위 저장</span></td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"이 센서가 어떤 고장을 감지하는가" 관계 탐색</span></td>
+        <td>센서 &rarr; 고장 관계는 그래프로 찾아야 빠름</td>
+      </tr>
+      <tr>
+        <td><strong>고장코드</strong><br><span style="font-size:11px;color:#888;">4종</span></td>
+        <td><span class="arch-badge pg">원본 테이블</span><br><span style="font-size:11px;color:#888;">다른 테이블들이 FK로 참조하는 원본</span></td>
+        <td><span class="arch-badge neo">중심 허브 노드</span><br><span style="font-size:11px;color:#888;">부품, 매뉴얼, 정비이력이 여기서 갈라짐</span></td>
+        <td>PG: "이 이상 점수의 고장코드가 뭐야?"<br>Neo4j: "이 고장에 필요한 부품/매뉴얼은?"</td>
+      </tr>
+      <tr>
+        <td><strong>부품</strong><br><span style="font-size:11px;color:#888;">5종</span></td>
+        <td><span class="arch-badge pg">원본 테이블</span><br><span style="font-size:11px;color:#888;">ERP 재고와 조인하여 "지금 몇 개 남았나" 계산</span></td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"이 고장을 고치려면 어떤 부품이 필요한가" 탐색</span></td>
+        <td>PG: 재고 숫자 집계<br>Neo4j: 고장&rarr;부품 관계 탐색</td>
+      </tr>
+      <tr>
+        <td><strong>정비 이벤트</strong><br><span style="font-size:11px;color:#888;">39건</span></td>
+        <td><span class="arch-badge pg">이벤트 기록</span><br><span style="font-size:11px;color:#888;">날짜별 정비 이력, 통계 (평균 소요시간 등)</span></td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"과거에 같은 고장을 어떻게 수리했나" 경로 탐색</span></td>
+        <td>PG: "지난달 정비 몇 건?"<br>Neo4j: "고장&rarr;정비&rarr;부품" 3단계 탐색</td>
+      </tr>
+      <tr>
+        <td><strong>매뉴얼 본문</strong><br><span style="font-size:11px;color:#888;">12건 텍스트</span></td>
+        <td><span class="arch-badge pg">텍스트 + 벡터</span><br><span style="font-size:11px;color:#888;">pgvector로 "이 증상과 비슷한 매뉴얼 섹션" 검색</span></td>
+        <td style="color:#555;">&mdash; 안 넣음</td>
+        <td>벡터 유사도 검색은 PostgreSQL(pgvector)이 담당</td>
+      </tr>
+      <tr>
+        <td><strong>매뉴얼 메타</strong><br><span style="font-size:11px;color:#888;">제목, 유형, 연결 고장</span></td>
+        <td style="color:#555;">&mdash; 안 넣음</td>
+        <td><span class="arch-badge neo">노드</span><br><span style="font-size:11px;color:#888;">"이 고장에 관련된 매뉴얼이 뭐야?" 그래프로 찾기</span></td>
+        <td>고장코드 &rarr; 매뉴얼 관계는 Neo4j가 빠름</td>
+      </tr>
     </tbody>
   </table>
   </div>
@@ -1744,95 +2435,330 @@
 <div class="page" id="p13">
 <div class="inner">
   <div class="page-title">Phase 2 : DB 스키마</div>
-  <p class="page-sub">PostgreSQL (TimescaleDB + pgvector) 10개 테이블과 Docker 구성입니다.</p>
+  <p class="page-sub">온톨로지가 "지식의 구조"를 정의했다면, DB 스키마는 "실제 데이터를 어디에 어떻게 저장할지"를 정의합니다.</p>
 
-  <h3>테이블 요약 (10개)</h3>
+  <!-- ── 섹션 1: 실제 현장의 데이터 흐름 ── -->
+  <h3>실제 현장에서 데이터는 어떻게 흐르는가?</h3>
+  <div class="arch-card">
+    <p>실제 공장에서는 SCADA, MES, ERP <strong>각각이 자체 데이터베이스를 갖고 있습니다</strong>. 그리고 예지보전 시스템은 이 DB들에서 데이터를 가져와서 <strong>자기 전용 DB에 저장</strong>한 뒤 분석합니다.</p>
+    <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:16px;margin:12px 0;font-size:13px;color:#ccc;line-height:2;">
+      <span style="color:#888;"># 실제 공장의 구조</span><br>
+      <span style="color:#4ade80;">SCADA DB</span> (센서 실시간) &mdash;&#9472;&#9488;<br>
+      <span style="color:#60a5fa;">MES DB</span> &nbsp;&nbsp;(작업지시) &nbsp;&nbsp;&nbsp;&mdash;&#9472;&#9508;&mdash;&rarr; <span style="color:#f59e0b;font-weight:700;">[예지보전 시스템 DB]</span> &mdash;&rarr; 이상탐지 &rarr; LLM 판단<br>
+      <span style="color:#60a5fa;">ERP DB</span> &nbsp;&nbsp;(부품 재고) &nbsp;&nbsp;&nbsp;&mdash;&#9472;&#9496;
+    </div>
+    <p><strong>우리 프로젝트도 정확히 이 구조입니다.</strong> 다만 SCADA/MES/ERP의 DB가 없으니, CSV 데이터를 시뮬레이터가 읽어서 <strong>실제 현장처럼 5초마다 INSERT</strong>하는 방식으로 실시간 환경을 재현합니다.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:16px;">
+        <p style="font-size:13px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">실제 현장</p>
+        <div style="font-size:13px;color:#ddd;line-height:1.8;">
+          <span style="color:#4ade80;">SCADA</span> &rarr; <strong style="color:#f5f5f5;">API/OPC-UA</strong>로 센서값 전송<br>
+          <span style="color:#60a5fa;">MES</span> &rarr; <strong style="color:#f5f5f5;">API</strong>로 작업지시 전송<br>
+          <span style="color:#60a5fa;">ERP</span> &rarr; <strong style="color:#f5f5f5;">API</strong>로 재고 조회<br>
+          &darr;<br>
+          예지보전 DB에 <strong style="color:#f5f5f5;">INSERT</strong>
+        </div>
+      </div>
+      <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:16px;">
+        <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:8px;">우리 프로젝트</p>
+        <div style="font-size:13px;color:#ddd;line-height:1.8;">
+          Kaggle CSV &rarr; <strong style="color:#f5f5f5;">시뮬레이터</strong>가 한 행씩 읽음<br>
+          MES CSV &rarr; <strong style="color:#f5f5f5;">시뮬레이터</strong>가 읽음<br>
+          ERP CSV &rarr; <strong style="color:#f5f5f5;">시뮬레이터</strong>가 읽음<br>
+          &darr;<br>
+          PostgreSQL에 <strong style="color:#f5f5f5;">INSERT</strong> <span style="color:#4ade80;">(동일!)</span>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px 16px;">
+      <p style="font-size:13px;margin:0;"><strong>핵심:</strong> DB에 INSERT된 이후의 모든 것(F1 전처리 &rarr; F2 이상탐지 &rarr; F3 동기화 &rarr; F4 GraphRAG &rarr; F5 LLM &rarr; F6 대시보드)은 <strong>실제 현장과 완전히 동일한 코드</strong>입니다. 바뀌는 건 데이터 소스(CSV 시뮬레이터 vs SCADA API)뿐이고, 파이프라인 자체는 그대로 쓸 수 있습니다.</p>
+    </div>
+  </div>
+
+  <h3>그래서 이 DB 스키마는 무엇을 정의하는가?</h3>
+  <div class="arch-card">
+    <p><strong>"실시간으로 쌓이는 센서 데이터 + IT 이벤트를, 어떤 구조의 테이블에 저장해야 F1~F6 파이프라인이 빠르고 정확하게 작동하는가"</strong>를 정의합니다.</p>
+    <p>단순히 "CSV를 DB에 옮긴다"가 아니라, 실제 현장의 실시간 환경에서 필요한 것들을 고려한 설계입니다:</p>
+    <ul style="font-size:13px;padding-left:20px;">
+      <li><strong>5초마다 INSERT되는 센서 데이터</strong>를 빠르게 집계하려면? &rarr; TimescaleDB Hypertable</li>
+      <li><strong>여러 기능(F1~F6)이 동시에 읽고 써야</strong> 한다면? &rarr; DB의 동시 접근 제어</li>
+      <li><strong>"이 고장의 관련 매뉴얼"을 자연어로 검색</strong>하려면? &rarr; pgvector 벡터 인덱스</li>
+      <li><strong>오래된 센서 데이터가 디스크를 채우면?</strong> &rarr; 7일 자동 압축 정책</li>
+      <li><strong>나중에 실제 SCADA로 바꿀 때 DB 구조를 바꿔야 하나?</strong> &rarr; 안 바꿔도 됨. INSERT 소스만 바뀜.</li>
+    </ul>
+  </div>
+
+  <!-- ── 섹션 2: 우리의 DB 선택 ── -->
+  <h3>우리의 선택: PostgreSQL + 확장 2개</h3>
+  <div class="arch-card">
+    <p>PostgreSQL(포스트그레스)은 무료 오픈소스 데이터베이스입니다. 여기에 <strong>확장(Extension) 2개를 추가</strong>해서 3가지 역할을 한 DB로 해결합니다.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;">
+      <div style="background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.2);border-radius:10px;padding:16px;text-align:center;">
+        <p style="font-size:24px;margin-bottom:4px;">&#128202;</p>
+        <p style="font-size:14px;font-weight:700;color:#60a5fa;margin-bottom:6px;">TimescaleDB</p>
+        <p style="font-size:13px;margin:0;"><strong>시계열 데이터 전문</strong><br>센서 데이터처럼 시간순으로 쌓이는 데이터를 빠르게 집계하고 자동 압축합니다.</p>
+        <p style="font-size:11px;color:#888;margin-top:6px;">"최근 30초 평균 전류" 같은 쿼리에 최적화</p>
+      </div>
+      <div style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);border-radius:10px;padding:16px;text-align:center;">
+        <p style="font-size:24px;margin-bottom:4px;">&#128269;</p>
+        <p style="font-size:14px;font-weight:700;color:#a78bfa;margin-bottom:6px;">pgvector</p>
+        <p style="font-size:13px;margin:0;"><strong>벡터 유사도 검색</strong><br>텍스트를 숫자 벡터로 변환한 뒤, "의미가 비슷한 문서"를 찾아줍니다.</p>
+        <p style="font-size:11px;color:#888;margin-top:6px;">GraphRAG의 2단계(의미 검색)에 사용</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;text-align:center;">
+        <p style="font-size:24px;margin-bottom:4px;">&#128451;</p>
+        <p style="font-size:14px;font-weight:700;color:#ccc;margin-bottom:6px;">PostgreSQL 기본</p>
+        <p style="font-size:13px;margin:0;"><strong>일반 테이블</strong><br>MES 작업지시, 정비 이벤트, ERP 재고 등 일반적인 데이터를 저장합니다.</p>
+        <p style="font-size:11px;color:#888;margin-top:6px;">대부분의 웹/앱에서 사용하는 표준 DB</p>
+      </div>
+    </div>
+    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:12px 16px;">
+      <p style="font-size:13px;margin:0;"><strong>왜 DB를 하나로 통합했는가?</strong> &mdash; 1인 개발에서 시계열DB, 벡터DB, 일반DB를 각각 운영하면 3개 서버를 관리해야 합니다. PostgreSQL + 확장 2개면 <strong>하나의 서버</strong>로 전부 해결됩니다 (ADR-003). Neo4j만 별도로 두어 총 2개 DB.</p>
+    </div>
+  </div>
+
+  <!-- ── 섹션 3: 테이블이란 ── -->
+  <h3>테이블(Table)이란?</h3>
+  <div class="arch-card">
+    <p>테이블은 <strong>엑셀 시트</strong>와 같습니다. 행(row)은 데이터 하나, 열(column)은 속성입니다.</p>
+    <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:14px 16px;margin-top:12px;font-family:monospace;font-size:12px;color:#ccc;line-height:1.8;">
+      <span style="color:#888;"># equipment 테이블 (엑셀처럼 생각하면 됩니다)</span><br>
+      <span style="color:#60a5fa;">equipment_id</span> | <span style="color:#60a5fa;">equipment_type</span> | <span style="color:#60a5fa;">status</span> | <span style="color:#60a5fa;">experiment_range</span><br>
+      ─────────────────────────────────────────────<br>
+      CNC-001 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| CNC_MILL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| active | exp01~06<br>
+      CNC-002 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| CNC_MILL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| active | exp07~12<br>
+      CNC-003 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| CNC_MILL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| active | exp13~18
+    </div>
+    <p style="font-size:13px;margin-top:12px;">우리 DB에는 이런 테이블이 <strong>10개</strong> 있습니다. 역할별로 4가지로 나뉩니다:</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;">
+      <div style="background:rgba(49,130,246,0.08);border-radius:6px;padding:10px;text-align:center;">
+        <div style="font-size:12px;font-weight:700;color:#60a5fa;">시계열 (2개)</div>
+        <div style="font-size:11px;color:#888;">센서, 이상점수<br>시간순 연속 데이터</div>
+      </div>
+      <div style="background:rgba(245,158,11,0.08);border-radius:6px;padding:10px;text-align:center;">
+        <div style="font-size:12px;font-weight:700;color:#fbbf24;">이벤트 (3개)</div>
+        <div style="font-size:11px;color:#888;">작업, 정비, 재고<br>발생할 때만 기록</div>
+      </div>
+      <div style="background:rgba(74,222,128,0.08);border-radius:6px;padding:10px;text-align:center;">
+        <div style="font-size:12px;font-weight:700;color:#4ade80;">마스터 (4개)</div>
+        <div style="font-size:11px;color:#888;">설비, 고장, 부품, 센서<br>거의 안 바뀌는 기준 정보</div>
+      </div>
+      <div style="background:rgba(139,92,246,0.08);border-radius:6px;padding:10px;text-align:center;">
+        <div style="font-size:12px;font-weight:700;color:#a78bfa;">벡터 (1개)</div>
+        <div style="font-size:11px;color:#888;">매뉴얼 임베딩<br>의미 검색용</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 섹션 4: 테이블 요약 표 ── -->
+  <h3>10개 테이블 요약</h3>
   <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-bottom:20px;">
   <table>
-    <thead><tr><th>#</th><th>테이블</th><th>유형</th><th>레코드</th><th>컬럼</th><th>비고</th></tr></thead>
+    <thead><tr><th>#</th><th>테이블</th><th>유형</th><th>레코드</th><th>컬럼</th><th>무엇을 저장하는가</th></tr></thead>
     <tbody>
-      <tr><td>1</td><td><strong>sensor_readings</strong></td><td><span class="arch-badge pg">Hypertable</span></td><td>25,286</td><td>47</td><td>센서42 + 컨텍스트3 + PK2</td></tr>
-      <tr><td>2</td><td><strong>anomaly_scores</strong></td><td><span class="arch-badge pg">Hypertable</span></td><td>F2 산출</td><td>5</td><td>이상 점수 + 예측 고장코드</td></tr>
-      <tr><td>3</td><td><strong>mes_work_orders</strong></td><td>Event</td><td>18</td><td>8</td><td>MES 작업지시</td></tr>
-      <tr><td>4</td><td><strong>maintenance_events</strong></td><td>Event</td><td>39</td><td>9</td><td>정비 이벤트 (교정12 + 예방27)</td></tr>
-      <tr><td>5</td><td><strong>erp_inventory</strong></td><td>Snapshot</td><td>35</td><td>8</td><td>7주 &times; 5부품 재고</td></tr>
-      <tr><td>6</td><td><strong>equipment</strong></td><td>Master</td><td>3</td><td>4</td><td>CNC-001~003</td></tr>
-      <tr><td>7</td><td><strong>failure_codes</strong></td><td>Master</td><td>4</td><td>4</td><td>TOOL_WEAR, SPINDLE 등</td></tr>
-      <tr><td>8</td><td><strong>parts</strong></td><td>Master</td><td>5</td><td>5</td><td>P001~P005</td></tr>
-      <tr><td>9</td><td><strong>sensors</strong></td><td>Meta</td><td>42</td><td>4</td><td>유효 센서만</td></tr>
-      <tr><td>10</td><td><strong>document_embeddings</strong></td><td><span class="arch-badge pg">pgvector</span></td><td>~20</td><td>7</td><td>Phase 3에서 생성</td></tr>
+      <tr><td>1</td><td><strong>sensor_readings</strong></td><td><span class="arch-badge pg">시계열</span></td><td>25,286</td><td>44</td><td>센서 39개 + M1 메타 2개 + 가공단계 1개 + PK 2개</td></tr>
+      <tr><td>2</td><td><strong>anomaly_scores</strong></td><td><span class="arch-badge pg">시계열</span></td><td>F2 산출</td><td>7</td><td>이상점수 + 예측고장 + 신뢰도 + 모델버전</td></tr>
+      <tr><td>3</td><td><strong>mes_work_orders</strong></td><td><span class="arch-badge both">이벤트</span></td><td>18</td><td>9</td><td>MES 작업지시 "CNC-001로 왁스 블록 가공하라"</td></tr>
+      <tr><td>4</td><td><strong>maintenance_events</strong></td><td><span class="arch-badge both">이벤트</span></td><td>39</td><td>10</td><td>정비 기록 "TOOL_WEAR로 엔드밀 교체, 30분 소요"</td></tr>
+      <tr><td>5</td><td><strong>erp_inventory</strong></td><td><span class="arch-badge both">이벤트</span></td><td>35</td><td>8</td><td>주간 재고 "P001 엔드밀 15개 남음, 발주 불필요"</td></tr>
+      <tr><td>6</td><td><strong>equipment</strong></td><td><span class="arch-badge neo">마스터</span></td><td>3</td><td>4</td><td>CNC 설비 3대의 기본 정보</td></tr>
+      <tr><td>7</td><td><strong>failure_codes</strong></td><td><span class="arch-badge neo">마스터</span></td><td>4</td><td>4</td><td>고장 유형 4종의 정의와 심각도</td></tr>
+      <tr><td>8</td><td><strong>parts</strong></td><td><span class="arch-badge neo">마스터</span></td><td>5</td><td>5</td><td>부품 5종의 가격, 리드타임, 발주 기준</td></tr>
+      <tr><td>9</td><td><strong>sensors</strong></td><td><span class="arch-badge neo">마스터</span></td><td>42</td><td>4</td><td>센서 42개의 이름, 축, 단위 (6개 제외된 것은 미포함)</td></tr>
+      <tr><td>10</td><td><strong>document_embeddings</strong></td><td><span class="arch-badge api">벡터</span></td><td>12+</td><td>7</td><td>매뉴얼 12건을 섹션별로 쪼갠 뒤 벡터로 변환한 것</td></tr>
     </tbody>
   </table>
   </div>
 
-  <h3>핵심 테이블 상세</h3>
+  <!-- ── 섹션 5: 핵심 테이블 상세 ── -->
+  <h3>핵심 테이블 상세 &mdash; "무엇"이고 "왜" 이렇게 설계했는가</h3>
+
   <div class="arch-card">
-    <h4>sensor_readings &mdash; 와이드 테이블 (47 컬럼)</h4>
-    <p>42개 센서를 <strong>컬럼으로 펼친 와이드 형식</strong>입니다. 롱 형식 대비 행 수 1/42, 시간 범위 집계에 유리합니다.</p>
+    <h4><span style="color:#f59e0b;font-size:13px;margin-right:6px;">01</span> sensor_readings &mdash; 센서 시계열 (가장 큰 테이블)</h4>
+    <p><strong>무엇:</strong> CNC 3대의 센서 42개 값이 5초마다 한 행씩 쌓이는 테이블입니다. 우리 시스템의 <strong>핵심 입력 데이터</strong>입니다.</p>
+    <p><strong>왜 "와이드 테이블"인가:</strong> 센서 값을 저장하는 방법은 두 가지가 있습니다:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
+      <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#ef4444;margin-bottom:6px;">롱(Long) 형식 &mdash; 선택 안 함</p>
+        <div style="font-family:monospace;font-size:11px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:6px;padding:8px 10px;">
+          시각 &nbsp;&nbsp;&nbsp;| 센서명 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 값<br>
+          08:00:00 | X1_CurrentFeedback | 3.2<br>
+          08:00:00 | X1_DCBusVoltage &nbsp;&nbsp;| 319<br>
+          08:00:00 | Y1_CurrentFeedback | 2.8<br>
+          ... (한 시점에 42행!)
+        </div>
+        <p style="font-size:12px;color:#888;margin-top:6px;">25,286 &times; 42 = <strong>106만 행</strong>. 느림.</p>
+      </div>
+      <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:12px 16px;">
+        <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:6px;">와이드(Wide) 형식 &mdash; 우리의 선택</p>
+        <div style="font-family:monospace;font-size:11px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:6px;padding:8px 10px;">
+          시각 &nbsp;&nbsp;&nbsp;| X1_Current | X1_DCBus | Y1_Current | ...<br>
+          08:00:00 | 3.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 319 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 2.8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ...<br>
+          08:00:05 | 3.1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 320 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| 2.7 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| ...
+        </div>
+        <p style="font-size:12px;color:#888;margin-top:6px;">행 수 그대로 <strong>25,286행</strong>. 빠름.</p>
+      </div>
+    </div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;">
-      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">PK</div><div style="font-size:14px;color:#f5f5f5;">timestamp + equipment_id</div></div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">센서</div><div style="font-size:14px;color:#f5f5f5;">42개</div></div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">컨텍스트</div><div style="font-size:14px;color:#f5f5f5;">3개</div></div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">압축</div><div style="font-size:14px;color:#f5f5f5;">7일 자동</div></div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">PK (기본 키)</div><div style="font-size:13px;color:#f5f5f5;">timestamp + equipment_id</div></div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">데이터 컬럼</div><div style="font-size:13px;color:#f5f5f5;">42개</div></div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">총 컬럼</div><div style="font-size:13px;color:#f5f5f5;">44개</div></div>
+      <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:8px 12px;text-align:center;"><div style="font-size:11px;color:#888;">자동 압축</div><div style="font-size:13px;color:#f5f5f5;">7일 후</div></div>
     </div>
-    <p style="font-size:12px;color:#888;margin-top:8px;">컨텍스트 3개: machining_process, m1_current_program_number, m1_current_feedrate (센서 아님, 메타 정보)</p>
+    <p style="font-size:12px;color:#888;margin-top:8px;">컨텍스트 3개: machining_process(가공 단계), m1_current_program_number(프로그램 번호), m1_current_feedrate(이송속도). 센서가 아니라 가공 상황 메타 정보입니다.</p>
+    <p style="font-size:12px;color:#888;margin-bottom:0;"><strong>TimescaleDB Hypertable:</strong> 일반 테이블을 시간 기준으로 자동 분할합니다. "최근 1분 데이터"만 필요할 때 전체를 뒤지지 않고 해당 구간만 읽어서 빠릅니다.</p>
   </div>
 
   <div class="arch-card">
-    <h4>anomaly_scores &mdash; F2 이상탐지 결과</h4>
-    <p>sensor_readings와 생성 주기가 다릅니다 (윈도우 단위). 모델 버전별 결과 비교를 위해 별도 테이블.</p>
-    <div style="font-family:monospace;font-size:13px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-top:8px;">
-      timestamp | equipment_id | anomaly_score | is_anomaly | predicted_failure_code
+    <h4><span style="color:#f59e0b;font-size:13px;margin-right:6px;">02</span> anomaly_scores &mdash; F2 이상탐지 결과</h4>
+    <p><strong>무엇:</strong> F2가 "지금 이 설비에 이상이 있는가?"를 판단한 결과입니다.</p>
+    <p><strong>왜 sensor_readings에 안 넣고 별도 테이블인가:</strong></p>
+    <ul style="font-size:13px;padding-left:20px;">
+      <li><strong>생성 주기가 다름</strong> &mdash; sensor_readings는 5초마다, anomaly_scores는 윈도우(30초) 단위</li>
+      <li><strong>모델 버전 관리</strong> &mdash; 나중에 모델을 개선하면 같은 시점의 결과를 비교해야 함</li>
+      <li><strong>NULL 방지</strong> &mdash; sensor_readings에 넣으면 대부분의 행에 빈 값이 들어감</li>
+    </ul>
+    <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-top:8px;line-height:1.8;">
+      <span style="color:#888;"># 예시: CNC-001에서 이상 감지됨</span><br>
+      timestamp: 2024-01-15 08:05:00<br>
+      equipment_id: CNC-001<br>
+      anomaly_score: <span style="color:#ef4444;">0.87</span> &larr; 1에 가까울수록 이상<br>
+      is_anomaly: <span style="color:#ef4444;">true</span><br>
+      predicted_failure_code: <span style="color:#ef4444;">SPINDLE_OVERHEAT_001</span>
     </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">is_anomaly가 true이면 &rarr; F3&rarr;F4&rarr;F5 이벤트 트리거가 발동합니다.</p>
   </div>
 
   <div class="arch-card">
-    <h4>document_embeddings &mdash; pgvector 벡터 검색</h4>
-    <p>정비 매뉴얼 청크의 임베딩을 저장합니다. HNSW 인덱스 + cosine 유사도로 검색.</p>
-    <div style="font-family:monospace;font-size:13px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-top:8px;">
-      chunk_id | manual_id | chunk_text | embedding(768) | chunk_index
+    <h4><span style="color:#f59e0b;font-size:13px;margin-right:6px;">03~05</span> IT 데이터 테이블 (MES + Maintenance + ERP)</h4>
+    <p><strong>무엇:</strong> CSV로 합성한 IT 데이터 3종을 DB 테이블로 옮긴 것입니다.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">mes_work_orders</p>
+        <p style="font-size:12px;color:#ccc;margin-bottom:4px;">18건 &middot; MES 작업지시</p>
+        <p style="font-size:11px;color:#888;margin:0;">"CNC-001로 WAX_BLOCK 가공"<br>priority, status, 납기 등</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">maintenance_events</p>
+        <p style="font-size:12px;color:#ccc;margin-bottom:4px;">39건 &middot; CMMS 정비기록</p>
+        <p style="font-size:11px;color:#888;margin:0;">"TOOL_WEAR로 엔드밀 교체"<br>소요시간, 사용 부품 등</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:12px;">
+        <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:4px;">erp_inventory</p>
+        <p style="font-size:12px;color:#ccc;margin-bottom:4px;">35건 &middot; ERP 재고 스냅샷</p>
+        <p style="font-size:11px;color:#888;margin:0;">"P001 엔드밀 15개 남음"<br>7주 &times; 5부품 주간 기록</p>
+      </div>
     </div>
+    <p style="font-size:12px;color:#888;margin-bottom:0;"><strong>왜 CSV를 DB로 옮기는가:</strong> F3(IT/OT 동기화)에서 "이상 감지 시점에 이 설비의 현재 작업, 최근 정비, 부품 재고"를 SQL 한 번으로 빠르게 조회해야 하기 때문입니다. CSV를 매번 읽어 파싱하면 느립니다.</p>
   </div>
 
-  <h3>Docker 구성</h3>
   <div class="arch-card">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-      <div>
-        <h4 style="margin-bottom:8px;"><span class="arch-badge pg">PostgreSQL</span></h4>
-        <div style="font-family:monospace;font-size:13px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;">
+    <h4><span style="color:#f59e0b;font-size:13px;margin-right:6px;">06~09</span> 마스터 테이블 &mdash; 거의 안 바뀌는 기준 정보</h4>
+    <p><strong>무엇:</strong> 설비 3대, 고장코드 4종, 부품 5종, 센서 42개의 <strong>기본 정보</strong>입니다. 한 번 넣으면 거의 바뀌지 않습니다.</p>
+    <p><strong>왜 필요한가:</strong> 다른 테이블들이 이 테이블을 <strong>FK(외래 키)로 참조</strong>합니다. 예를 들어 maintenance_events의 failure_code 컬럼은 failure_codes 테이블의 PK를 가리킵니다. 이렇게 하면 고장코드의 설명이나 심각도를 한 곳에서만 관리할 수 있습니다.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;">
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:#4ade80;">equipment</div>
+        <div style="font-size:12px;color:#ccc;">3행 &middot; 4열</div>
+        <div style="font-size:11px;color:#888;">CNC-001~003</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:#4ade80;">failure_codes</div>
+        <div style="font-size:12px;color:#ccc;">4행 &middot; 4열</div>
+        <div style="font-size:11px;color:#888;">TOOL_WEAR 등</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:#4ade80;">parts</div>
+        <div style="font-size:12px;color:#ccc;">5행 &middot; 5열</div>
+        <div style="font-size:11px;color:#888;">P001~P005</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:13px;font-weight:700;color:#4ade80;">sensors</div>
+        <div style="font-size:12px;color:#ccc;">42행 &middot; 4열</div>
+        <div style="font-size:11px;color:#888;">유효 센서만</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">Neo4j에도 같은 데이터가 노드로 들어갑니다. PG는 "숫자 집계 + FK 참조"용, Neo4j는 "관계 탐색"용 &mdash; 역할이 다릅니다.</p>
+  </div>
+
+  <div class="arch-card">
+    <h4><span style="color:#f59e0b;font-size:13px;margin-right:6px;">10</span> document_embeddings &mdash; 매뉴얼 벡터 검색</h4>
+    <p><strong>무엇:</strong> 정비 매뉴얼 12건의 텍스트를 섹션별로 쪼개고(청킹), 각 섹션을 <strong>숫자 벡터(768차원)</strong>로 변환하여 저장합니다.</p>
+    <p><strong>왜 필요한가:</strong> "스핀들 과열 시 베어링 교체 절차"를 찾을 때, 키워드 검색("스핀들")만으로는 정확도가 낮습니다. 벡터로 변환하면 <strong>"과열 시 어떻게 하나요?"</strong>처럼 자연어로 질문해도 의미가 비슷한 섹션을 찾을 수 있습니다.</p>
+    <div style="font-family:monospace;font-size:12px;color:#60a5fa;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-top:8px;line-height:1.8;">
+      <span style="color:#888;"># 예시: DOC-004의 "3. 교체 절차" 섹션</span><br>
+      chunk_id: DOC-004-3<br>
+      manual_id: DOC-004 &larr; Neo4j Document 노드와 연결<br>
+      chunk_text: "Step 1: CNC 머신 전원을 완전히 차단하고..."<br>
+      embedding: [0.012, -0.034, 0.078, ...] &larr; 768개 숫자<br>
+      chunk_index: 3
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;"><strong>HNSW 인덱스:</strong> 768차원 벡터를 빠르게 비교하는 특수 인덱스입니다. cosine 유사도(방향이 비슷한 정도)로 가장 관련 높은 섹션 Top-K개를 반환합니다.</p>
+  </div>
+
+  <!-- ── 섹션 6: Docker 구성 ── -->
+  <h3>Docker 구성 &mdash; 어떻게 실행하는가</h3>
+  <div class="arch-card">
+    <p><strong>Docker</strong>는 "이 프로그램을 실행하는 데 필요한 모든 것을 하나의 상자(컨테이너)에 담는 도구"입니다. 우리는 2개의 컨테이너를 띄웁니다:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+      <div style="background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.15);border-radius:10px;padding:16px;">
+        <h4 style="margin-top:0;margin-bottom:8px;"><span class="arch-badge pg">PostgreSQL</span></h4>
+        <div style="font-family:monospace;font-size:12px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;line-height:1.7;">
           image: timescale/timescaledb-ha:pg16<br>
           port: 5432<br>
-          extensions: TimescaleDB + pgvector
+          확장: TimescaleDB + pgvector 포함
         </div>
-        <p style="font-size:12px;color:#888;margin-top:6px;">pgvector 포함 이미지로 별도 설치 불필요</p>
+        <p style="font-size:12px;color:#888;margin-top:6px;margin-bottom:0;"><strong>timescaledb-ha</strong> 이미지를 쓰면 pgvector가 기본 포함되어 별도 설치가 필요 없습니다.</p>
       </div>
-      <div>
-        <h4 style="margin-bottom:8px;"><span class="arch-badge neo">Neo4j</span></h4>
-        <div style="font-family:monospace;font-size:13px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;">
+      <div style="background:rgba(0,168,84,0.06);border:1px solid rgba(0,168,84,0.15);border-radius:10px;padding:16px;">
+        <h4 style="margin-top:0;margin-bottom:8px;"><span class="arch-badge neo">Neo4j</span></h4>
+        <div style="font-family:monospace;font-size:12px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;line-height:1.7;">
           image: neo4j:5-community<br>
-          ports: 7474 (Browser) / 7687 (Bolt)<br>
+          ports: 7474 (브라우저) / 7687 (Bolt)<br>
           plugins: APOC
         </div>
-        <p style="font-size:12px;color:#888;margin-top:6px;">Community Edition &mdash; MVP에 충분</p>
+        <p style="font-size:12px;color:#888;margin-top:6px;margin-bottom:0;"><strong>Community Edition</strong>은 무료이고 MVP에 충분합니다. 7474 포트로 브라우저에서 그래프를 직접 볼 수 있습니다.</p>
       </div>
+    </div>
+    <div style="font-family:monospace;font-size:12px;color:#ccc;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px 16px;margin-top:12px;line-height:1.7;">
+      <span style="color:#888;"># 실행 명령 (이 한 줄이면 DB 2개가 동시에 뜹니다)</span><br>
+      <span style="color:#4ade80;">$</span> docker-compose up -d
     </div>
   </div>
 
-  <h3>조인 키 매핑</h3>
+  <!-- ── 섹션 7: 조인 키 매핑 ── -->
+  <h3>PostgreSQL &harr; Neo4j 연결 고리</h3>
   <div class="arch-card">
-    <p>PostgreSQL과 Neo4j 사이의 데이터 연결은 <strong>동일 ID 값</strong>으로 조인합니다.</p>
+    <p>두 DB는 <strong>같은 ID 값</strong>을 공유합니다. PostgreSQL에서 숫자를 집계한 뒤, 그 ID로 Neo4j에서 관계를 탐색하는 식입니다.</p>
+    <p style="font-size:13px;color:#888;">예: F3에서 anomaly_scores의 <code>predicted_failure_code = TOOL_WEAR_001</code>을 얻으면 &rarr; 같은 값으로 Neo4j의 FailureCode 노드를 찾아 &rarr; REQUIRES 관계를 타고 필요 부품을 조회합니다.</p>
     <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:12px;">
     <table>
-      <thead><tr><th>조인 키</th><th>PostgreSQL 테이블</th><th>Neo4j 노드</th><th>용도</th></tr></thead>
+      <thead><tr><th>공유 ID</th><th>PostgreSQL에서</th><th>Neo4j에서</th><th>이 연결이 필요한 상황</th></tr></thead>
       <tbody>
-        <tr><td><code>equipment_id</code></td><td>sensor_readings, mes_work_orders</td><td>Equipment</td><td>설비 기준 통합 조회</td></tr>
-        <tr><td><code>failure_code</code></td><td>maintenance_events</td><td>FailureCode</td><td>고장 유형별 매뉴얼 검색</td></tr>
-        <tr><td><code>part_id</code></td><td>erp_inventory, parts</td><td>Part</td><td>부품 재고 + 소모 이력</td></tr>
-        <tr><td><code>manual_id</code></td><td>document_embeddings</td><td>Document</td><td>벡터 검색 + 그래프 순회</td></tr>
-        <tr><td><code>event_id</code></td><td>maintenance_events</td><td>MaintenanceAction</td><td>정비 이벤트 상세</td></tr>
+        <tr><td><code style="color:#f59e0b;">equipment_id</code></td><td>sensor_readings, mes_work_orders</td><td>Equipment 노드</td><td>"CNC-001의 센서 데이터 + 이 설비의 과거 고장 이력"</td></tr>
+        <tr><td><code style="color:#f59e0b;">failure_code</code></td><td>anomaly_scores, maintenance_events</td><td>FailureCode 노드</td><td>"이 고장의 이상 점수 + 필요 부품 + 관련 매뉴얼"</td></tr>
+        <tr><td><code style="color:#f59e0b;">part_id</code></td><td>erp_inventory, parts</td><td>Part 노드</td><td>"이 부품의 현재 재고 + 과거 소모 이력"</td></tr>
+        <tr><td><code style="color:#f59e0b;">manual_id</code></td><td>document_embeddings</td><td>Document 노드</td><td>"이 매뉴얼의 벡터 검색 결과 + 관련 고장코드"</td></tr>
+        <tr><td><code style="color:#f59e0b;">event_id</code></td><td>maintenance_events</td><td>MaintenanceAction 노드</td><td>"이 정비의 상세 기록 + 사용 부품 + 참조 매뉴얼"</td></tr>
       </tbody>
     </table>
     </div>
+  </div>
+
+  <!-- ── 섹션 8: 데이터 흐름 요약 ── -->
+  <h3>데이터가 실제로 어떻게 흐르는가</h3>
+  <div class="arch-card">
+    <p style="font-size:13px;color:#888;margin-bottom:12px;">하나의 이상 감지 이벤트가 DB를 어떻게 거치는지 따라가 봅니다:</p>
+    <div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:16px;font-size:13px;color:#ccc;line-height:2;">
+      <span style="color:#f59e0b;font-weight:700;">1.</span> F1이 센서 값을 읽어 <strong>sensor_readings</strong>에 INSERT<br>
+      <span style="color:#f59e0b;font-weight:700;">2.</span> F2가 sensor_readings를 읽어 이상 점수를 계산 &rarr; <strong>anomaly_scores</strong>에 INSERT<br>
+      <span style="color:#f59e0b;font-weight:700;">3.</span> is_anomaly = true이면 F3 시작!<br>
+      <span style="color:#f59e0b;font-weight:700;">4.</span> F3이 <strong>mes_work_orders</strong> + <strong>maintenance_events</strong> + <strong>erp_inventory</strong>를 SELECT &rarr; 현재 상황 파악<br>
+      <span style="color:#f59e0b;font-weight:700;">5.</span> F4가 failure_code로 <strong>Neo4j 순회</strong>(부품, 매뉴얼, 과거 정비) + <strong>document_embeddings</strong>에서 벡터 검색<br>
+      <span style="color:#f59e0b;font-weight:700;">6.</span> F5가 모든 정보를 받아 LLM에게 전달 &rarr; 조치 판단<br>
+      <span style="color:#f59e0b;font-weight:700;">7.</span> F6가 전체 결과를 대시보드에 표시
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">10개 테이블이 각각 어떤 단계(F1~F6)에서 쓰이는지가 명확하게 설계된 것이 이 스키마의 핵심입니다.</p>
   </div>
 </div>
 </div>
@@ -1843,149 +2769,186 @@
 <div class="page" id="p14">
 <div class="inner">
   <div class="page-title">Phase 2 : 파이프라인 &amp; API</div>
-  <p class="page-sub">F1~F6 데이터 흐름, FastAPI 12개 엔드포인트, 에러 대응 전략입니다.</p>
+  <p class="page-sub">F1~F6이 실제로 어떻게 연결되고, 외부에서는 어떻게 접근하며, 문제가 생기면 어떻게 대응하는지를 정의합니다.</p>
 
-  <h3>파이프라인 흐름</h3>
-  <div class="arch-card">
-    <h4 style="margin-bottom:12px;">5초 폴링 루프 (F1 &rarr; F2 &rarr; F6)</h4>
-    <div class="arch-flow" style="justify-content:center;">
-      <div class="arch-flow-box active">F1<br><span style="font-size:11px;color:#888;">수집/전처리</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box active">F2<br><span style="font-size:11px;color:#888;">이상탐지/예측</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F6<br><span style="font-size:11px;color:#888;">대시보드 갱신</span></div>
+  <!-- ── 파이프라인 구조 ── -->
+  <h3>파이프라인이란?</h3>
+  <div class="fn-detail">
+    <p>파이프라인은 <strong>"데이터가 처리되는 순서와 경로"</strong>입니다. 수도관(pipe)처럼 데이터가 한 단계씩 흘러가면서 가공됩니다.</p>
+    <p>우리 파이프라인은 <strong>두 가지 모드</strong>로 동작합니다:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">모드 1 &mdash; 상시 감시 (매 5초)</p>
+        <div class="arch-flow" style="justify-content:center;margin:8px 0;">
+          <div class="arch-flow-box" style="min-width:70px;">F1</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:70px;">F2</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:70px;">F6</div>
+        </div>
+        <p style="font-size:13px;">센서를 읽고(F1), 이상 여부를 판단하고(F2), 대시보드를 갱신(F6)합니다. 이상이 없으면 여기서 끝나고 5초 후 다시 반복합니다.</p>
+        <p style="font-size:12px;color:#999;margin-bottom:0;">하루 약 17,280 사이클 (86,400초 &divide; 5초). 설비 3대 합산 약 51,840행/일. 대부분의 시간은 이 모드.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:8px;">모드 2 &mdash; 이상 대응 (이벤트 트리거)</p>
+        <div class="arch-flow" style="justify-content:center;margin:8px 0;">
+          <div class="arch-flow-box" style="min-width:50px;">F3</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:50px;">F4</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:50px;">F5</div>
+          <div class="arch-flow-arrow">&rarr;</div>
+          <div class="arch-flow-box" style="min-width:50px;">F6</div>
+        </div>
+        <p style="font-size:13px;">F2에서 <code>is_anomaly = true</code>가 나올 때만 실행됩니다. 상황 파악(F3) &rarr; 지식 검색(F4) &rarr; LLM 판단(F5) &rarr; 알람 표시(F6).</p>
+        <p style="font-size:12px;color:#999;margin-bottom:0;">드물게 발생. F5는 2~10초 걸리므로 <strong>비동기</strong>로 실행하여 대시보드 갱신을 막지 않음.</p>
+      </div>
     </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">매 5초마다 실행 (ADR-004) &middot; 설비 3대 &times; 센서 42개 = 폴링당 126 값</p>
-
-    <h4 style="margin-top:20px;margin-bottom:12px;">이벤트 트리거 (이상 감지 시에만)</h4>
-    <div class="arch-flow" style="justify-content:center;">
-      <div class="arch-flow-box" style="border-color:#ef4444;color:#ef4444;">이상 감지!</div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F3<br><span style="font-size:11px;color:#888;">IT/OT 동기화</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F4<br><span style="font-size:11px;color:#888;">GraphRAG</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F5<br><span style="font-size:11px;color:#888;">LLM 판단</span></div>
-      <div class="arch-flow-arrow">&rarr;</div>
-      <div class="arch-flow-box">F6<br><span style="font-size:11px;color:#888;">알람 표시</span></div>
-    </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">F5는 asyncio.create_task()로 비동기 실행 &mdash; 대시보드 갱신을 블로킹하지 않음</p>
+    <p style="font-size:13px;color:#999;"><strong>왜 두 모드를 나눴는가:</strong> 이상이 없을 때도 F3~F5를 매번 실행하면 불필요한 DB 쿼리 + LLM API 호출이 발생합니다. 5초마다 LLM을 호출하면 비용도, 응답 시간도 감당이 안 됩니다. "감시는 계속, 분석은 필요할 때만" 전략입니다.</p>
   </div>
 
-  <h3>F1~F6 기능 상세</h3>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F1</span> 데이터 수집 + 전처리</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>5초 주기 센서 읽기 (시뮬레이터)</li>
-        <li>정규화 (MinMaxScaler)</li>
-        <li>슬라이딩 윈도우 (30초, 6행)</li>
-        <li>파생 변수: 이동평균, 이동표준편차, 변화율</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">확장 후보: 축 간 편차, FFT</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F2</span> 이상탐지 + 시계열 예측</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>모델: Isolation Forest vs Autoencoder (Phase 3 비교)</li>
-        <li>예측 윈도우: 30분 (설정값)</li>
-        <li>출력: anomaly_score, is_anomaly, predicted_failure_code</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">Phase 3 선결: 피처 선택, 라벨링 전략</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F3</span> IT/OT 데이터 동기화</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>PG 3개 쿼리: MES + Maintenance + ERP</li>
-        <li>timestamp 기준 조인 (범위 매칭)</li>
-        <li>작업 0건 시 null 반환 + work_order_note</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">OT=연속 데이터, IT=이벤트성 비정기 데이터</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F4</span> GraphRAG 하이브리드 검색</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>1단계: Neo4j 구조 순회 (3 hop)</li>
-        <li>2단계: pgvector 의미 검색 (cosine)</li>
-        <li>BM25 + vector 가중 합산 (alpha=0.5)</li>
-        <li>결과: 관련 부품 + 매뉴얼 + 과거 정비</li>
-      </ul>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F5</span> LLM 자율 판단</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>입력: F2 이상 + F3 컨텍스트 + F4 검색</li>
-        <li>출력: recommendation, confidence, action_steps</li>
-        <li>임계치: &ge;0.8 즉시정지, &ge;0.6 감속운전</li>
-        <li>LLM: API 우선 (Phase 3에서 선택)</li>
-      </ul>
-      <p style="font-size:12px;color:#888;margin-top:8px;">temperature=0.1 고정 (일관성)</p>
-    </div>
-    <div class="arch-card">
-      <h4><span style="color:#f59e0b;">F6</span> 대시보드</h4>
-      <ul style="font-size:13px;padding-left:16px;">
-        <li>설비 상태 요약 (3대)</li>
-        <li>실시간 센서 차트 (5초 갱신)</li>
-        <li>이상 점수 + 알람 표시</li>
-        <li>작업 + 재고 현황</li>
-        <li>LLM 조치 리포트</li>
-      </ul>
-    </div>
+  <!-- ── API 엔드포인트 ── -->
+  <h3>API 엔드포인트란?</h3>
+  <div class="fn-detail">
+    <p>API 엔드포인트는 <strong>"프로그램끼리 대화하는 주소"</strong>입니다. 대시보드(F6)가 센서 데이터를 가져오려면 <code>/api/f6/sensors/CNC-001</code>이라는 주소로 요청하면 됩니다. 마치 웹 주소(URL)처럼요.</p>
+    <p>우리 시스템은 <strong>FastAPI</strong>(Python 웹 프레임워크)로 12개 엔드포인트를 제공합니다. 크게 두 종류입니다:</p>
+    <ul style="font-size:14px;line-height:2;">
+      <li><strong>POST</strong> &mdash; "이 데이터를 처리해줘" (F1 수집, F2 감지, F3 동기화, F4 검색, F5 판단)</li>
+      <li><strong>GET</strong> &mdash; "이 데이터를 보여줘" (이력 조회, 대시보드 표시, 헬스 체크)</li>
+    </ul>
   </div>
 
-  <h3>FastAPI 엔드포인트 (12개)</h3>
-  <div style="margin-bottom:20px;">
+  <h3>12개 엔드포인트 상세</h3>
+  <div class="fn-detail">
+    <h4>파이프라인 엔드포인트 (6개) &mdash; F1~F5 내부 동작</h4>
+    <p style="font-size:13px;color:#999;margin-bottom:12px;">메인 루프가 내부적으로 호출합니다. HTTP로도 접근 가능하여 개별 테스트에 유용합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f1/collect</span><span class="ep-desc">센서 수집 + 전처리</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">시뮬레이터(또는 SCADA)에서 센서 값을 받아 정규화, 윈도우 처리 후 <code>sensor_readings</code>에 INSERT합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f2/detect</span><span class="ep-desc">이상탐지 + 예측</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">최근 윈도우 데이터를 모델에 넣어 anomaly_score를 산출하고, 임계치(0.5) 초과 시 이벤트를 트리거합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f2/history/{eq_id}</span><span class="ep-desc">이상 이력 조회</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">특정 설비의 과거 이상 점수 이력을 시간순으로 반환합니다. 대시보드의 이상 트렌드 차트에 사용됩니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f3/sync</span><span class="ep-desc">IT/OT 동기화</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">이상 감지된 설비의 현재 작업(MES), 최근 정비(CMMS), 부품 재고(ERP)를 한 번에 조회하여 통합 컨텍스트를 생성합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f4/search</span><span class="ep-desc">GraphRAG 검색</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">고장코드로 Neo4j 그래프를 순회(부품, 매뉴얼, 과거 정비)한 뒤, pgvector로 매뉴얼 섹션을 정밀 검색합니다.</p>
     <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/f5/generate-action</span><span class="ep-desc">LLM 조치 생성</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">F2+F3+F4 결과를 LLM에게 전달하고, 조치 권고(recommendation), 신뢰도(confidence), 구체적 단계(action_steps)를 받습니다.</p>
+  </div>
+
+  <div class="fn-detail">
+    <h4>대시보드 엔드포인트 (5개) &mdash; F6 화면 표시용</h4>
+    <p style="font-size:13px;color:#999;margin-bottom:12px;">프론트엔드(대시보드 화면)가 호출합니다. summary &middot; sensors &middot; anomaly는 5초 폴링, work-order는 필요 시 요청, action은 알람 발생 시에만 갱신합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/summary</span><span class="ep-desc">설비 상태 요약</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">CNC 3대의 현재 상태(정상/경고/위험), 최신 이상 점수, 마지막 정비 일시를 한 번에 반환합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/sensors/{eq_id}</span><span class="ep-desc">실시간 센서 차트</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">특정 설비의 최근 N분간 센서 시계열을 반환합니다. 차트 라이브러리가 이 데이터로 그래프를 그립니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/anomaly/{eq_id}</span><span class="ep-desc">이상 점수 현황</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">현재 이상 점수, 이상 여부, 예측 고장코드를 반환합니다. 대시보드의 게이지/알람 표시에 사용됩니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/work-order/{eq_id}</span><span class="ep-desc">작업 + 재고</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">현재 진행 중인 작업 정보와 관련 부품 재고를 반환합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/f6/action/{eq_id}</span><span class="ep-desc">LLM 조치 리포트</span></div>
-    <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/health</span><span class="ep-desc">PG + Neo4j 헬스</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">F5가 생성한 최신 조치 권고를 반환합니다. LLMActionResponse 모델을 그대로 반환합니다.</p>
   </div>
 
-  <h3>설정값 (config 파라미터화)</h3>
-  <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-bottom:20px;">
-  <table>
-    <thead><tr><th>기능</th><th>파라미터</th><th>기본값</th><th>결정 시점</th></tr></thead>
-    <tbody>
-      <tr><td rowspan="2"><strong>F1</strong></td><td>POLL_INTERVAL_SEC</td><td>5</td><td>ADR-004 확정</td></tr>
-      <tr><td>WINDOW_SIZE_SEC</td><td>30</td><td>Phase 3 조정</td></tr>
-      <tr><td rowspan="3"><strong>F2</strong></td><td>PREDICTION_WINDOW_MIN</td><td>30</td><td>Phase 3 실험</td></tr>
-      <tr><td>ANOMALY_THRESHOLD</td><td>0.5</td><td>Phase 3 PR곡선</td></tr>
-      <tr><td>MODEL_TYPE</td><td>isolation_forest</td><td>Phase 3 비교</td></tr>
-      <tr><td rowspan="3"><strong>F4</strong></td><td>HYBRID_ALPHA</td><td>0.5</td><td>Phase 3 조정</td></tr>
-      <tr><td>TOP_K_DOCS</td><td>5</td><td>필요시</td></tr>
-      <tr><td>MAX_GRAPH_HOPS</td><td>3</td><td>확정</td></tr>
-      <tr><td rowspan="3"><strong>F5</strong></td><td>TEMPERATURE</td><td>0.1</td><td>확정</td></tr>
-      <tr><td>STOP_THRESHOLD</td><td>0.8</td><td>Phase 3 검증</td></tr>
-      <tr><td>REDUCE_THRESHOLD</td><td>0.6</td><td>Phase 3 검증</td></tr>
-    </tbody>
-  </table>
+  <div class="fn-detail">
+    <h4>시스템 엔드포인트 (1개)</h4>
+    <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/health</span><span class="ep-desc">PG + Neo4j 헬스 체크</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">PostgreSQL과 Neo4j 연결 상태를 확인합니다. 모니터링 시스템이 주기적으로 호출하여 DB가 살아있는지 체크합니다.</p>
   </div>
 
-  <h3>에러 대응 시나리오 (6건)</h3>
-  <div class="arch-card" style="padding:16px 20px;">
-    <div class="err-row"><span class="err-code">E1</span><span class="err-impact"><strong>센서 데이터 5초+ 미수신</strong> &mdash; F1&rarr;F2 중단</span><span class="err-fallback">Forward-fill, 3회 연속 시 알림</span></div>
-    <div class="err-row"><span class="err-code">E2</span><span class="err-impact"><strong>F2 모델 추론 실패</strong></span><span class="err-fallback">배치 축소 재시도, 이전 점수 유지</span></div>
-    <div class="err-row"><span class="err-code">E3</span><span class="err-impact"><strong>Neo4j 연결 끊김</strong> &mdash; F4 그래프 순회 불가</span><span class="err-fallback">BM25 only (pgvector 없이)</span></div>
-    <div class="err-row"><span class="err-code">E4</span><span class="err-impact"><strong>LLM API 타임아웃/429</strong> &mdash; F5 판단 불가</span><span class="err-fallback">3&times; 재시도 (지수 백오프)</span></div>
-    <div class="err-row"><span class="err-code">E5</span><span class="err-impact"><strong>PostgreSQL 다운</strong> &mdash; 전체 영향</span><span class="err-fallback">재연결 (백오프), 대시보드 "DB offline"</span></div>
-    <div class="err-row"><span class="err-code">E6</span><span class="err-impact"><strong>LLM 환각</strong> &mdash; 존재하지 않는 고장코드/부품</span><span class="err-fallback">출력 검증 (ID 존재 확인), 재시도 또는 수동 전환</span></div>
-  </div>
-
-  <h3>응답 시간 기대치</h3>
-  <div class="arch-card">
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-      <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:#4ade80;">&lt;100ms</div><div style="font-size:12px;color:#888;">F1 수집 / F3 동기화 / F6 요약</div></div>
-      <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:#fbbf24;">200~500ms</div><div style="font-size:12px;color:#888;">F2 이상탐지 / F4 GraphRAG</div></div>
-      <div style="text-align:center;"><div style="font-size:24px;font-weight:800;color:#ef4444;">2~10초</div><div style="font-size:12px;color:#888;">F5 LLM API (병목)</div></div>
+  <!-- ── 설정값 ── -->
+  <h3>설정값 (Config) &mdash; 코드를 안 바꾸고 동작을 바꾸는 방법</h3>
+  <div class="fn-detail">
+    <p>아래 설정값들은 <strong>코드를 수정하지 않고 config 파일이나 환경 변수만 바꿔서</strong> 동작을 조정할 수 있습니다. Phase 3에서 실험할 때 코드를 건드리지 않고 다양한 조합을 테스트할 수 있어요.</p>
+    <p style="font-size:13px;color:#999;">확정된 값은 굵게, Phase 3에서 실험으로 결정할 값은 일반 표기입니다.</p>
+    <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-top:12px;">
+    <table>
+      <thead><tr><th>기능</th><th>파라미터</th><th>기본값</th><th>의미</th><th>결정 시점</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2"><strong>F1</strong></td><td><strong>POLL_INTERVAL_SEC</strong></td><td><strong>5</strong></td><td>센서를 몇 초마다 읽을지. 짧으면 정밀하지만 DB 부하 증가</td><td>ADR-004 확정</td></tr>
+        <tr><td>WINDOW_SIZE_SEC</td><td>30</td><td>"최근 몇 초의 데이터를 묶어서 볼지". 길면 추세를 잘 보지만 반응 느림</td><td>Phase 3 조정</td></tr>
+        <tr><td rowspan="3"><strong>F2</strong></td><td>PREDICTION_WINDOW_MIN</td><td>30</td><td>"몇 분 뒤의 고장까지 예측할지". 30분 = 조치 준비 시간 확보</td><td>Phase 3 실험</td></tr>
+        <tr><td>ANOMALY_THRESHOLD</td><td>0.5</td><td>이 값 넘으면 "이상"으로 판단. 낮추면 민감(오탐 증가), 높이면 둔감(놓침 증가)</td><td>Phase 3 PR곡선</td></tr>
+        <tr><td>MODEL_TYPE</td><td>isolation_forest</td><td>이상탐지 모델 종류. Autoencoder와 비교 후 성능 좋은 쪽 선택</td><td>Phase 3 비교</td></tr>
+        <tr><td rowspan="3"><strong>F4</strong></td><td>HYBRID_ALPHA</td><td>0.5</td><td>BM25(키워드) vs 벡터(의미) 검색 비중. 0=벡터만, 1=BM25만</td><td>Phase 3 조정</td></tr>
+        <tr><td>TOP_K_DOCS</td><td>5</td><td>검색 결과 상위 몇 개를 LLM에게 전달할지</td><td>필요시</td></tr>
+        <tr><td><strong>MAX_GRAPH_HOPS</strong></td><td><strong>3</strong></td><td>Neo4j에서 관계를 몇 단계까지 따라갈지. 3이면 고장&rarr;부품&rarr;재고까지 도달</td><td>확정</td></tr>
+        <tr><td rowspan="3"><strong>F5</strong></td><td><strong>TEMPERATURE</strong></td><td><strong>0.1</strong></td><td>LLM 응답의 창의성. 0에 가까울수록 일관된 답변 (같은 입력 &rarr; 같은 판단)</td><td>확정</td></tr>
+        <tr><td>STOP_THRESHOLD</td><td>0.8</td><td>anomaly_score가 이 값 이상이면 "즉시 정지" 권고</td><td>Phase 3 검증</td></tr>
+        <tr><td>REDUCE_THRESHOLD</td><td>0.6</td><td>anomaly_score가 이 값 이상이면 "감속 운전" 권고. 미만이면 "모니터링 강화"</td><td>Phase 3 검증</td></tr>
+      </tbody>
+    </table>
     </div>
+  </div>
+
+  <!-- ── 에러 대응 ── -->
+  <h3>에러 대응 시나리오 &mdash; "이것도 고장나면 어떡하지?"</h3>
+  <div class="fn-detail">
+    <p>예지보전 시스템 자체도 고장날 수 있습니다. 센서가 안 읽히거나, DB가 다운되거나, LLM API가 응답을 안 하면? 각 상황별로 <strong>"감지 방법 + 대체 방안(Fallback)"</strong>을 미리 정해둡니다.</p>
+    <div style="margin-top:16px;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E1 &mdash; 센서 데이터가 5초 넘게 안 들어옴</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> F1&rarr;F2가 중단됩니다. 이상 감지를 못 합니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> 폴링 타이머에서 타임아웃 체크.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 마지막 정상값으로 빈칸 채우기(Forward-fill). 3회 연속 실패하면 대시보드에 "센서 연결 끊김" 경고 표시.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E2 &mdash; F2 이상탐지 모델 추론 실패</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> 이상 여부를 판단할 수 없습니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> 모델 추론 함수의 try-except.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 입력 데이터 크기를 줄여서 재시도. 실패하면 이전 점수를 유지하고 "모델 오류" 플래그 설정.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E3 &mdash; Neo4j 연결이 끊김</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> F4의 1단계(그래프 순회)를 못 합니다. 관련 부품, 과거 정비를 못 찾습니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> Neo4j 연결 체크 (연결 풀 상태).</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 2단계(pgvector 의미 검색)만으로 진행. 구조적 검색 없이 의미 검색만 하면 정확도는 떨어지지만 완전 중단보다 나음.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E4 &mdash; LLM API 타임아웃 또는 429(요청 한도 초과)</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> F5가 자율 판단을 못 내립니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> HTTP 상태 코드 확인 (408 타임아웃, 429 Rate Limit).</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 3회 재시도 (지수 백오프: 1초&rarr;2초&rarr;4초). 그래도 실패하면 "LLM 판단 불가, 수동 확인 필요" 알람을 대시보드에 표시. 이상 감지 자체(F2)는 계속 작동합니다.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;margin-bottom:10px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E5 &mdash; PostgreSQL이 다운</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> 거의 모든 기능에 영향. 센서 저장, 이상 기록, IT 데이터 조회, 벡터 검색 전부 불가.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> 연결 풀에서 ConnectionError 발생.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 지수 백오프로 재연결 시도. 대시보드에 "DB offline" 표시. 재연결 성공 시 자동 복구. Docker 컨테이너의 restart 정책으로 자동 재시작도 설정.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;">
+        <p style="font-size:14px;font-weight:700;color:#f5f5f5;margin-bottom:6px;">E6 &mdash; LLM이 환각(Hallucination)을 일으킴</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>영향:</strong> 존재하지 않는 고장코드(예: "MOTOR_FAIL_007")나 부품(예: "P099")을 권고할 수 있습니다.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:4px;"><strong>감지:</strong> LLM 응답에서 failure_code와 part_id가 실제 마스터 테이블에 존재하는지 DB 조회로 검증.</p>
+        <p style="font-size:13px;color:#d4d4d4;margin-bottom:0;"><strong>대응:</strong> 존재하지 않는 ID가 포함되면 "환각 감지"로 판단하고 재시도(최대 2회). 재시도에도 실패하면 "자동 판단 불확실, 수동 확인 필요"로 에스컬레이션.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 응답 시간 ── -->
+  <h3>응답 시간 기대치 &mdash; "얼마나 빨라야 하는가?"</h3>
+  <div class="fn-detail">
+    <p>우리 시스템에서 가장 중요한 것은 <strong>"이상 감지부터 판단까지 사람이 알아채기 전에 끝나는 것"</strong>입니다.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#f5f5f5;">&lt;100ms</div>
+        <div style="font-size:13px;color:#d4d4d4;margin-top:6px;">F1 수집 &middot; F3 동기화 &middot; F6 요약</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;">단순 INSERT/SELECT. DB가 가장 잘하는 일.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#f5f5f5;">200~500ms</div>
+        <div style="font-size:13px;color:#d4d4d4;margin-top:6px;">F2 이상탐지 &middot; F4 GraphRAG</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;">모델 추론 + 그래프 순회 + 벡터 검색.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#f5f5f5;">2~10초</div>
+        <div style="font-size:13px;color:#d4d4d4;margin-top:6px;">F5 LLM API 호출</div>
+        <div style="font-size:12px;color:#999;margin-top:4px;"><strong>가장 느린 병목.</strong> 그래서 비동기 처리.</div>
+      </div>
+    </div>
+    <p style="font-size:14px;"><strong>전체 파이프라인 (이상 감지 &rarr; 판단 완료):</strong> 약 3~11초. F5가 병목이지만, 비동기로 실행하므로 대시보드 갱신(F6)은 블로킹되지 않습니다.</p>
+    <p style="font-size:13px;color:#999;margin-bottom:0;"><strong>비교:</strong> 사람이 이상을 인지하고 매뉴얼 찾고 판단하면 최소 10~30분. 시스템은 최대 11초. 이것이 자동화의 가치입니다.</p>
   </div>
 </div>
 </div>
@@ -2861,14 +3824,14 @@ const phaseDetails={
     meta:['2026-03-16 완료','설계 문서 4종','리뷰 4회 반영'],
     summary:'온톨로지 → DB 스키마 → 파이프라인 → API 순서로 설계. 4개 문서 모두 리뷰 완료, Phase 3 구현 청사진 확정.',
     goal:[
-      {text:'온톨로지 설계',detail:'Neo4j 7종 노드 (Equipment, Sensor, FailureCode, Part, Procedure, Document, Manual) + 10종 관계'},
+      {text:'온톨로지 설계',detail:'Neo4j 7종 노드 (Equipment, Sensor, FailureCode, Part, Document, WorkOrder, MaintenanceAction) + 10종 관계'},
       {text:'DB 스키마 설계',detail:'PostgreSQL 10테이블 (TimescaleDB hypertable + pgvector) + Neo4j Cypher 매핑'},
       {text:'파이프라인 설계',detail:'F1~F6 데이터 흐름, 에러 처리 6시나리오, 설정값 13개 파라미터화'},
       {text:'API 설계',detail:'FastAPI 12 엔드포인트 + Pydantic 모델, F5 비동기 분리'}
     ],
     outputs:[
       {text:'ontology-design.md',detail:'Neo4j 131노드 / 200+관계 인스턴스. PG↔Neo4j 역할 분담 명확화'},
-      {text:'db-schema-design.md',detail:'sensor_readings 와이드 47컬럼, anomaly_scores, MES/ERP 테이블, 참조 마스터 3종'},
+      {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores, MES/ERP 테이블, 참조 마스터 3종'},
       {text:'pipeline-design.md',detail:'F1→F2 매 5초 폴링, F3~F5 이벤트 트리거. 비동기 메인 루프 + process_alarm 분리'},
       {text:'api-design.md',detail:'12 엔드포인트 (F1~F5 POST 6 + F6 GET 5 + health 1). 내부 직접 호출 + HTTP 병행'}
     ],
@@ -2963,7 +3926,7 @@ const phaseOverlayData={
   },
   phase2:{
     log:[
-      {day:'Day 1 (03-16)',items:['<strong>온톨로지 설계</strong> — Neo4j 7종 노드 + 10종 관계 정의, PG↔Neo4j 역할 분담, Sensor 42개만 모델링','<strong>DB 스키마 설계</strong> — PostgreSQL 10테이블 (sensor_readings 와이드 47컬럼), TimescaleDB hypertable, Parts 원본 통일','<strong>파이프라인 설계</strong> — F1→F2 매 폴링 + F3~F5 이벤트 트리거, 에러 6시나리오, 비동기 메인 루프 패턴','<strong>API 설계</strong> — FastAPI 12 엔드포인트, Pydantic 모델, F5 비동기 분리, 내부 직접 호출 + HTTP 병행','<strong>리뷰 피드백 4회</strong> — 온톨로지 6건 + DB 스키마 7건 + 파이프라인 8건 + API 2건 + 종합 6건 반영'],
+      {day:'Day 1 (03-16)',items:['<strong>온톨로지 설계</strong> — Neo4j 7종 노드 + 10종 관계 정의, PG↔Neo4j 역할 분담, Sensor 42개만 모델링','<strong>DB 스키마 설계</strong> — PostgreSQL 10테이블 (sensor_readings 와이드 44컬럼), TimescaleDB hypertable, Parts 원본 통일','<strong>파이프라인 설계</strong> — F1→F2 매 폴링 + F3~F5 이벤트 트리거, 에러 6시나리오, 비동기 메인 루프 패턴','<strong>API 설계</strong> — FastAPI 12 엔드포인트, Pydantic 모델, F5 비동기 분리, 내부 직접 호출 + HTTP 병행','<strong>리뷰 피드백 4회</strong> — 온톨로지 6건 + DB 스키마 7건 + 파이프라인 8건 + API 2건 + 종합 6건 반영'],
        outputs:'ontology-design.md, db-schema-design.md, pipeline-design.md, api-design.md, phase-2.md'}
     ],
     adr:[],
@@ -3129,6 +4092,17 @@ document.addEventListener('click',event=>{
   if(anchor.closest('.topnav')) return;
   event.preventDefault();
   navigateToPageAnchor(anchor.getAttribute('href'));
+});
+
+// Feature tabs (p15)
+document.querySelectorAll('.feat-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.feat-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.feat-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel=document.getElementById('feat-'+tab.dataset.feat);
+    if(panel) panel.classList.add('active');
+  });
 });
 
 // Observe scroll → update active nav
