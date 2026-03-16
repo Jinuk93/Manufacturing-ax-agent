@@ -10,8 +10,8 @@
 |-------|------|------|------|------------|
 | 0 | [Project Definition](../0-project-definition/) | ✅ 완료 | 2026-03-08 ~ 2026-03-10 | PRD, 데이터셋 전략, ADR 6건, 미결사항 정리 |
 | 1 | [Data Exploration](../1-data-exploration/) | ✅ 완료 | 2026-03-10 ~ 2026-03-15 | EDA 42컬럼 확정, timestamp/equipment_id 합성, IT 데이터 합성 (MES/ERP/Maintenance), 이상치 분석 |
-| 2 | [Architecture](../2-architecture/) | **다음** | - | 세부 파이프라인, DB 스키마 설계 |
-| 3+ | *Phase 2 완료 후 정의* | - | - | - |
+| 2 | [Architecture](../2-architecture/) | ✅ 완료 | 2026-03-16 | 온톨로지, DB 스키마, 파이프라인, API, UI 설계 5종 + 매뉴얼 합성 12건 |
+| 3 | Build & Validate | ✅ 완료 | 2026-03-16 ~ 2026-03-17 | F1~F5 구현, Docker+DB, Neo4j 120노드, pgvector 47청크, LLM 연동, 통합 테스트 통과 |
 
 **Phase별 상세 로그:** [phases/](phases/)
 
@@ -50,7 +50,7 @@
 
 ## Open Items
 
-현재 **12개** 미결 사항 → [open-items.md](../0-project-definition/open-items.md)
+현재 **4개 Open** / 3개 Partial / 5개 Decided → [open-items.md](../0-project-definition/open-items.md)
 
 ---
 

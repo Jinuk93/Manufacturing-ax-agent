@@ -218,6 +218,7 @@ CREATE TABLE mes_work_orders (
 );
 
 CREATE INDEX idx_wo_equipment ON mes_work_orders(equipment_id);
+CREATE INDEX idx_wo_status ON mes_work_orders(status);
 
 -- 정비 이벤트 (CMMS)
 CREATE TABLE maintenance_events (
@@ -235,6 +236,7 @@ CREATE TABLE maintenance_events (
 
 CREATE INDEX idx_maint_equipment ON maintenance_events(equipment_id);
 CREATE INDEX idx_maint_failure ON maintenance_events(failure_code);
+CREATE INDEX idx_maint_type ON maintenance_events(event_type);
 
 -- ERP 부품 재고 스냅샷
 CREATE TABLE erp_inventory (
