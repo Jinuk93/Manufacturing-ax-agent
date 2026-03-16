@@ -427,7 +427,7 @@ frontend/
 | UI-2 | 알람 사운드 / 브라우저 알림 추가 여부 | Phase 3 결정 |
 | UI-3 | 이상 이력 차트 기간 선택 (1h / 6h / 24h) | Phase 3 구현 |
 | UI-4 | 모바일 반응형 대응 여부 | MVP 이후 |
-| UI-5 | **프론트엔드 기술 스택 확정** — Next.js vs HTML+Plotly.js (open-items #11, ADR-006 필요) | Phase 3 착수 전 확정 |
+| UI-5 | ~~프론트엔드 기술 스택 확정~~ → **React 18 + Vite 확정** (ADR-006) | ✅ Decided |
 | UI-6 | **`in_progress` 작업 상태** — Phase 3 시뮬레이터에서 합성 데이터 확장 여부 | Phase 3 결정 |
 
 ---

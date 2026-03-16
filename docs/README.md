@@ -32,8 +32,9 @@ docs/
 │   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
 │   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
-└── adr/                           # ADR 템플릿
-    └── 000-template.md
+└── adr/                           # ADR 템플릿 + 의사결정 기록
+    ├── 000-template.md
+    └── adr-006-frontend-stack.md  #   프론트엔드 스택 결정 (React 18 + Vite)
 ```
 
 > 이 프로젝트는 애자일 원칙에 따라, Phase 3 이후의 폴더는 Phase 2 완료 후 필요 시 생성합니다.
