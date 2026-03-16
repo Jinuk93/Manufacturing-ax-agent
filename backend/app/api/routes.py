@@ -1,6 +1,7 @@
 """
-FastAPI 라우터 — 13개 엔드포인트 (실제 서비스 연결)
+FastAPI 라우터 — 14개 엔드포인트 (실제 서비스 연결)
 """
+import json
 import logging
 from datetime import datetime, timedelta
 from fastapi import APIRouter, HTTPException
@@ -379,11 +380,36 @@ async def action_report(equipment_id: str):
         )
 
         # F5: LLM 판단
-        return await llm_generate_action(
+        result = await llm_generate_action(
             f2_result=f2_result,
             f3_context=f3_context,
             f4_rag_result=f4_rag_result,
         )
+
+        # F5 결과를 DB에 저장 (F6 대시보드 조회용)
+        try:
+            conn2 = get_connection()
+            try:
+                with conn2.cursor() as cur:
+                    cur.execute("""
+                        INSERT INTO llm_action_reports
+                        (equipment_id, timestamp, recommendation, confidence, reasoning,
+                         action_steps, parts_needed, predicted_failure_code, estimated_downtime_min)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """, (
+                        result.equipment_id, result.timestamp, result.recommendation,
+                        result.confidence, result.reasoning,
+                        json.dumps(result.action_steps, ensure_ascii=False),
+                        json.dumps([p.model_dump() for p in result.parts_needed], ensure_ascii=False),
+                        result.predicted_failure_code, result.estimated_downtime_min,
+                    ))
+                conn2.commit()
+            finally:
+                conn2.close()
+        except Exception as e:
+            logger.warning(f"F5 결과 DB 저장 실패 (비치명적): {e}")
+
+        return result
 
     except HTTPException:
         raise

@@ -81,13 +81,16 @@ class AnomalyDetector:
 
     def __init__(
         self,
-        contamination: float = 0.1,
-        n_estimators: int = 200,
+        contamination: float = None,
+        n_estimators: int = None,
         random_state: int = 42,
     ):
+        from app.config import settings as _s
+        _cont = contamination if contamination is not None else _s.IF_CONTAMINATION
+        _nest = n_estimators if n_estimators is not None else _s.IF_N_ESTIMATORS
         self.model = IsolationForest(
-            contamination=contamination,  # 이상 비율 추정 (10%)
-            n_estimators=n_estimators,
+            contamination=_cont,
+            n_estimators=_nest,
             random_state=random_state,
             n_jobs=-1,
         )
