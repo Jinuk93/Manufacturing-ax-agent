@@ -73,12 +73,15 @@ function CriticalBanner({ equipmentId }: { equipmentId: string }) {
         </span>
       </div>
       <button
+        disabled
         className="text-xs font-semibold px-3 py-1 rounded"
         style={{
           border: '1px solid rgba(241,116,116,0.4)',
           color: 'var(--red5)',
           background: 'rgba(241,116,116,0.1)',
           letterSpacing: '0.08em',
+          opacity: 0.5,
+          cursor: 'not-allowed',
         }}
       >
         ACKNOWLEDGE
@@ -170,7 +173,7 @@ function KpiCards({ equipmentId }: { equipmentId: string }) {
 const SENSOR_GROUPS = [
   { id: 'X축', sensors: [
     { key: 'x1_current_feedback', label: 'X1_CurrentFeedback', color: 'var(--yellow5)' },
-    { key: 'x1_output_power', key2: 'x1_output_power', label: 'X1_OutputPower', color: 'var(--green5)' },
+    { key: 'x1_output_power', label: 'X1_OutputPower', color: 'var(--green5)' },
   ]},
   { id: 'S축 (스핀들)', sensors: [
     { key: 's1_current_feedback', label: 'S1_CurrentFeedback', color: 'var(--yellow5)' },
@@ -202,7 +205,7 @@ function SensorChart({ equipmentId }: { equipmentId: string }) {
 
   const selectedGroup = SENSOR_GROUPS[groupIdx]
   const activeSensor = ALL_SENSORS.find((s) => s.label === selectedGroup?.sensors[sensorIdx]?.label)
-    ?? ALL_SENSORS[0]
+    ?? selectedGroup?.sensors[0] ?? ALL_SENSORS[0]
 
   return (
     <div className="rounded" style={{ background: 'var(--dg3)', border: '1px solid var(--border-subtle)' }}>

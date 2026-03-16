@@ -175,7 +175,7 @@ export default function Topbar() {
           <div className="flex items-center gap-3">
             <StatusDot label="PostgreSQL" ok={health?.postgres ?? false} />
             <StatusDot label="Neo4j" ok={health?.neo4j ?? false} />
-            <StatusDot label="LLM API" ok={health?.status === 'ok'} />
+            <StatusDot label="Backend" ok={health?.status === 'ok'} />
           </div>
 
           {/* 구분선 */}

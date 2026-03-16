@@ -16,6 +16,7 @@ from app.models.schemas import (
     AlarmFeedResponse, AlarmEvent,
     HealthResponse,
     ChatRequest, ChatResponse,
+    WorkOrderStatusResponse,
 )
 from app.services.db import get_connection
 from app.services.itot_sync import sync_itot_context
@@ -287,7 +288,7 @@ async def anomaly_status(equipment_id: str):
         raise HTTPException(status_code=500, detail="F6 anomaly 실패.")
 
 
-@router.get("/f6/work-order/{equipment_id}")
+@router.get("/f6/work-order/{equipment_id}", response_model=WorkOrderStatusResponse)
 async def work_order_status(equipment_id: str):
     """작업 + 재고 현황"""
     try:

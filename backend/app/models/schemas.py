@@ -60,7 +60,7 @@ class InventoryItem(BaseModel):
     part_name: str
     stock_quantity: int
     reorder_point: int
-    lead_time_days: int
+    lead_time_days: Optional[int] = None
 
 
 class MaintenanceRecord(BaseModel):
@@ -69,6 +69,14 @@ class MaintenanceRecord(BaseModel):
     event_type: str
     duration_min: int
     parts_used: Optional[str]
+    event_time: Optional[str] = None
+
+
+class WorkOrderStatusResponse(BaseModel):
+    equipment_id: str
+    work_order: Optional[WorkOrderInfo] = None
+    inventory: list[InventoryItem]
+    recent_maintenance: list[MaintenanceRecord]
 
 
 class ITOTSyncResponse(BaseModel):

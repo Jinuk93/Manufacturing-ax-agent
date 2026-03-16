@@ -130,18 +130,33 @@ export interface WorkOrderOverlayResponse {
 
 // 헬스 체크
 export interface HealthResponse {
-  status: string
+  status: 'ok' | 'degraded'
   postgres: boolean
   neo4j: boolean
   timestamp: string
+}
+
+// F4 — GraphRAG 관련 타입
+export interface RelatedPart {
+  part_id: string
+  part_name: string
+  quantity: number
+  urgency: string
+}
+
+export interface PastMaintenanceEvent {
+  event_id: string
+  event_type: string
+  duration_min: number
+  parts_used?: string
 }
 
 // F4 — GraphRAG 검색 응답 (참조 문서용)
 export interface GraphRAGResponse {
   failure_code: string
   related_documents: RelatedDocument[]
-  related_parts: { part_id: string; part_name: string; quantity: number; urgency: string }[]
-  past_maintenance: { event_id: string; event_type: string; duration_min: number; parts_used?: string }[]
+  related_parts: RelatedPart[]
+  past_maintenance: PastMaintenanceEvent[]
 }
 
 // 챗봇

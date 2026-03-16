@@ -14,6 +14,12 @@ const ACTION_COLORS: Record<ActionType, string> = {
   MONITOR: 'var(--blue4)',
 }
 
+const ACTION_LABELS: Record<ActionType, string> = {
+  STOP:    '즉시 정지 (STOP)',
+  REDUCE:  '속도 감소 (REDUCE)',
+  MONITOR: '모니터링 (MONITOR)',
+}
+
 // 이상 점수를 색상 블록 그라디언트로 시각화
 function ScoreBlocks({ score }: { score: number }) {
   const BLOCKS = 10
@@ -161,7 +167,7 @@ export default function AiDetailPanel() {
                 {actionReport.recommendation === 'STOP' && (
                   <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: actionColor }} />
                 )}
-                즉시 정지 ({actionReport.recommendation})
+                {ACTION_LABELS[actionReport.recommendation]}
               </div>
               <p className="text-xs leading-relaxed" style={{ color: 'var(--gray4)' }}>
                 {actionReport.reasoning}

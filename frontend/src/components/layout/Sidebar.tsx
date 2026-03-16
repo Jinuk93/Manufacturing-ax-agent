@@ -133,7 +133,7 @@ export default function Sidebar() {
 
   const alarms = alarmData?.alarms ?? []
   const criticalCount = alarms.filter((a) => a.severity === 'critical').length
-  const hasAnomaly = equipmentList.some((e) => e.status !== 'normal')
+  const hasAnomaly = equipmentList.some((e) => e.status === 'warning' || e.status === 'critical')
 
   return (
     <div
