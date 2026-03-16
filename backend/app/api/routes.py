@@ -15,11 +15,13 @@ from app.models.schemas import (
     DashboardSummary, EquipmentStatus,
     AlarmFeedResponse, AlarmEvent,
     HealthResponse,
+    ChatRequest, ChatResponse,
 )
 from app.services.db import get_connection
 from app.services.itot_sync import sync_itot_context
 from app.services.graphrag import search_graphrag as graphrag_search
 from app.services.llm_agent import generate_action as llm_generate_action
+from app.services.chat_agent import answer_chat
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -404,6 +406,17 @@ async def alarm_feed(limit: int = 20):
     except Exception as e:
         logger.error(f"F6 alarms 실패: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="F6 alarms 실패.")
+
+
+# ── 챗봇 ──
+@router.post("/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest):
+    """대화형 AI 질의 — pgvector 검색 + LLM 답변"""
+    try:
+        return await answer_chat(message=req.message, equipment_id=req.equipment_id)
+    except Exception as e:
+        logger.error(f"챗봇 실패: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="챗봇 응답 실패.")
 
 
 # ── 헬스 체크 ──
