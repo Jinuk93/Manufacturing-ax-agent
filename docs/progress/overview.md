@@ -50,7 +50,7 @@
 
 ## Open Items
 
-현재 **4개 Open** / 3개 Partial / 5개 Decided → [open-items.md](../0-project-definition/open-items.md)
+현재 **4개 Open** / **8개 Decided** (#7, #8, #10, #12 Open) → [open-items.md](../0-project-definition/open-items.md)
 
 ---
 
@@ -78,6 +78,7 @@ docs/
 │   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
 │   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
-└── adr/                           # ADR 템플릿
-    └── 000-template.md
+└── adr/                           # ADR 템플릿 및 결정 기록
+    ├── 000-template.md
+    └── adr-006-frontend-stack.md
 ```

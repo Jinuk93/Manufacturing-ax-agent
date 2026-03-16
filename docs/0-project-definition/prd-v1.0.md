@@ -88,7 +88,7 @@
 | 데이터베이스 (통합) | PostgreSQL + TimescaleDB + pgvector | 단일 DB로 시계열/관계형/벡터 처리 (ADR-003) |
 | 그래프 데이터베이스 | Neo4j | 온톨로지 구조 저장 (대체 불가) |
 | 백엔드 API / 모델 서빙 | Python, FastAPI | |
-| 프론트엔드 | Next.js + Tailwind CSS + Tremor | 대시보드 특화 UI |
+| 프론트엔드 | React 18 + Vite + TanStack Query + Recharts | 내부 관제 SPA (ADR-006) |
 | 인프라 | Docker Compose | 컨테이너 통합 실행 환경 |
 
 ### 3.2. 비기능 요구사항 (Non-Functional)
@@ -113,7 +113,7 @@
 - ~~KAMP 데이터~~: 카탈로그/메타데이터만이었으므로 Phase 1에서 삭제 (Kaggle CNC Mill로 대체)
 - MES(작업 지시) 및 ERP(부품 재고): CNC 도메인에 맞춰 Python 스크립트로 합성 완료 (ADR-002, Phase 1)
 - 정비/고장 이벤트 로그: failure_code 4종 기반으로 합성 완료 (Phase 1)
-- 정비 매뉴얼: 확보 방안 미정 (Phase 3에서 결정)
+- 정비 매뉴얼: 4종 고장코드 × 3종 문서유형 = 12건 합성 완료 (Phase 3 Decided)
 
 ### 4.3. 인프라 제약
 
@@ -153,6 +153,7 @@ PRD v1.0 시점의 미결 항목입니다.
 | ADR-003 | PostgreSQL 통합 (TimescaleDB + pgvector) + Neo4j 별도, 총 2개 DB | Decided |
 | ADR-004 | 실시간 처리를 폴링 방식으로 대체 | Decided |
 | ADR-005 | 시각적 결과물(대시보드 MVP) 앞당김 | Decided |
+| ADR-006 | 프론트엔드 스택: React 18 + Vite SPA (Next.js 배제) | Decided |
 
 ---
 

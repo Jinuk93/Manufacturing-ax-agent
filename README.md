@@ -101,7 +101,7 @@ AI가 **자동으로 순회 → 분석 → 조치를 제안**하는 에이전트
 | Database | PostgreSQL (TimescaleDB + pgvector) |
 | Graph DB | Neo4j |
 | Backend | Python, FastAPI |
-| Frontend | Next.js + Tailwind CSS + Tremor |
+| Frontend | React 18 + Vite + TanStack Query + Recharts (ADR-006) |
 | Infra | Docker Compose |
 
 ---
@@ -115,4 +115,4 @@ AI가 **자동으로 순회 → 분석 → 조치를 제안**하는 에이전트
 | 0 | Project Definition | ✅ 완료 |
 | 1 | Data Exploration | ✅ 완료 |
 | 2 | Architecture | ✅ 완료 |
-| 3 | Build & Validate | ✅ 완료 (F1~F5 파이프라인 + 통합 테스트) |
+| 3 | Build & Validate | ✅ 완료 (F1~F6 파이프라인 + 프론트엔드-백엔드 실제 연동) |
