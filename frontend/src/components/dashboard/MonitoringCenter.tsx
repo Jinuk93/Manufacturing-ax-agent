@@ -582,7 +582,7 @@ function DetailView({ equipmentId }: { equipmentId: string }) {
                   <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#475569' }} interval="preserveStartEnd" tickLine={false} axisLine={{ stroke: 'var(--border-subtle)' }} />
                   <YAxis tick={{ fontSize: 7, fill: '#475569' }} tickLine={false} axisLine={false} />
                   <Tooltip contentStyle={CHART_TOOLTIP} />
-                  <Legend wrapperStyle={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', textAlign: 'center' }} align="center" />
+                  <Legend layout="vertical" verticalAlign="top" align="right" wrapperStyle={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)', lineHeight: '14px', right: '-1%', top: '40%' }} iconSize={8} />
                   <Line type="monotone" dataKey="x1_current_feedback" stroke="var(--yellow5)" dot={false} strokeWidth={1} name="X1 서보" />
                   <Line type="monotone" dataKey="y1_current_feedback" stroke="var(--orange5)" dot={false} strokeWidth={1} name="Y1 서보" />
                   <Line type="monotone" dataKey="s1_current_feedback" stroke="var(--cyan)" dot={false} strokeWidth={1} name="S1 스핀들" />
@@ -604,7 +604,7 @@ function DetailView({ equipmentId }: { equipmentId: string }) {
                   <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#475569' }} interval="preserveStartEnd" tickLine={false} axisLine={{ stroke: 'var(--border-subtle)' }} />
                   <YAxis tick={{ fontSize: 7, fill: '#475569' }} tickLine={false} axisLine={false} />
                   <Tooltip contentStyle={CHART_TOOLTIP} />
-                  <Legend wrapperStyle={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', textAlign: 'center' }} align="center" />
+                  <Legend layout="vertical" verticalAlign="top" align="right" wrapperStyle={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)', lineHeight: '14px', right: '-1%', top: '40%' }} iconSize={8} />
                   <Line type="monotone" dataKey="x1_output_power" stroke="var(--green5)" dot={false} strokeWidth={1} name="X1 서보 출력" />
                   <Line type="monotone" dataKey="s1_output_power" stroke="#a78bfa" dot={false} strokeWidth={1} name="S1 스핀들 출력" />
                 </LineChart>

@@ -72,19 +72,24 @@ function AlarmRow({ alarm, isLast, isNew }: { alarm: AlarmEvent; isLast: boolean
   const time = new Date(alarm.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   const isSelected = selectedAlarm?.timestamp === alarm.timestamp && selectedAlarm?.equipment_id === alarm.equipment_id && selectedAlarm?.anomaly_score === alarm.anomaly_score
 
+  // 배경색: 새 알람(1분) → 빨간, 선택 → 진한 네이비, 기본 → 연한 노랑
+  const bg = isSelected ? 'var(--dg1-5)'
+    : isNew ? 'rgba(248,113,113,0.08)'
+    : 'rgba(251,191,36,0.03)'
+
   return (
     <button
       className="w-full text-left transition-all"
       style={{
-        padding: '7px 12px', background: isSelected ? SELECTED_BG : isNew ? 'rgba(251,191,36,0.04)' : 'transparent',
+        padding: '7px 12px', background: bg,
         borderBottom: isLast ? 'none' : '1px solid var(--border-subtle)',
         borderLeft: isSelected ? '3px solid var(--cyan)' : '3px solid transparent',
         borderRight: isSelected ? '3px solid var(--cyan)' : '3px solid transparent',
-        animation: isNew && !isSelected ? 'alarm-fade-in 1.5s ease-out' : 'none',
+        animation: isNew && !isSelected ? 'alarm-new-pulse 2s ease-in-out' : 'none',
       }}
       onClick={() => setSelectedAlarm(alarm)}
-      onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.015)' }}
-      onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = isNew ? 'rgba(251,191,36,0.04)' : 'transparent' }}
+      onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+      onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = bg }}
     >
       <div className="flex items-center">
         <span style={{ fontSize: '10px', fontWeight: 600, fontFamily: sans, color: isSelected ? 'var(--cyan)' : accentColor, minWidth: '56px', flexShrink: 0 }}>{alarm.equipment_id}</span>
@@ -162,7 +167,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     if (sortedAlarms.length !== prevCountRef.current) {
-      const timer = setTimeout(() => { setPrevAlarmCount(sortedAlarms.length); prevCountRef.current = sortedAlarms.length }, 3000)
+      const timer = setTimeout(() => { setPrevAlarmCount(sortedAlarms.length); prevCountRef.current = sortedAlarms.length }, 60000)
       return () => clearTimeout(timer)
     }
   }, [sortedAlarms.length, setPrevAlarmCount])

@@ -51,76 +51,146 @@ function AlarmAnalysisView({ alarm }: { alarm: AlarmEvent }) {
   const recommendation = actionReport?.recommendation ?? 'MONITOR'
   const actionColor = ACTION_COLORS[recommendation]
 
+  const PART_NAMES: Record<string, string> = {
+    P001: 'Endmill 6mm Carbide (엔드밀 초경 공구)',
+    P002: 'Spindle Bearing Set (스핀들 베어링 세트)',
+    P003: 'Coolant 수용성 20L (절삭유)',
+    P004: 'Clamp Bolt Set (클램프 볼트 세트)',
+    P005: 'Air Filter (에어 필터)',
+  }
+  const DOC_TITLES: Record<string, string> = {
+    'DOC-001': '엔드밀 공구 교체 절차서 — 마모 시 교체 표준 절차',
+    'DOC-002': '공구 마모 점검 체크리스트 — 센서 5항목 + 물리 3항목',
+    'DOC-003': '공구 마모 트러블슈팅 — 증상별 원인 분석 및 조치',
+    'DOC-004': '스핀들 베어링 교체 절차서 — 과열 시 교체 표준 절차',
+    'DOC-005': '스핀들 과열 점검 체크리스트 — 온도/전류 기준 점검',
+    'DOC-006': '스핀들 과열 트러블슈팅 — 과열 원인 분석 및 냉각 조치',
+    'DOC-007': '클램프 볼트 교체 절차서 — 압력 저하 시 교체',
+    'DOC-008': '클램프 압력 이상 점검 체크리스트',
+    'DOC-009': '클램프 압력 이상 트러블슈팅',
+    'DOC-010': '냉각수 보충 및 필터 교체 절차서',
+    'DOC-011': '냉각수 이상 점검 체크리스트',
+    'DOC-012': '냉각수 이상 트러블슈팅 가이드',
+  }
+  const cardBg = { background: 'var(--dg3)', border: '1px solid var(--border-mid)', borderRadius: '3px', boxShadow: '0 1px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.03)' }
+
   return (
-    <div className="p-3 space-y-3 overflow-y-auto flex-1">
-      <PanelSection title="이상감지 요약">
-        <div className="flex items-center justify-between mb-3">
-          <span style={{ fontSize: '12px', fontWeight: 600, fontFamily: sans, color: 'var(--gray5)' }}>{alarm.equipment_id}</span>
-          <span style={{ fontSize: '10px', fontWeight: 600, fontFamily: sans, color: alarm.severity === 'critical' ? 'var(--red5)' : 'var(--yellow5)', background: alarm.severity === 'critical' ? 'rgba(248,113,113,0.08)' : 'rgba(251,191,36,0.08)', padding: '2px 8px', borderRadius: '2px', border: `1px solid ${alarm.severity === 'critical' ? 'rgba(248,113,113,0.2)' : 'rgba(251,191,36,0.2)'}` }}>{severity}</span>
-        </div>
-        <div className="flex items-end gap-2 mb-2">
-          <span style={{ fontSize: '36px', lineHeight: 1, fontWeight: 700, fontFamily: mono, color: scoreColor }}>{score.toFixed(2)}</span>
-        </div>
-        <ScoreBlocks score={score} />
-        <div style={{ marginTop: '8px', fontSize: '10px', color: 'var(--gray3)', fontFamily: sans }}>감지 시각: {time}</div>
-        {alarm.predicted_failure_code && <div style={{ fontSize: '10px', color: 'var(--gray4)', fontFamily: sans, marginTop: '2px' }}>고장코드: <span style={{ fontWeight: 600, color: 'var(--gray5)' }}>{alarm.predicted_failure_code.replace(/_/g, ' ')}</span></div>}
-      </PanelSection>
+    <div className="p-3 overflow-y-auto flex-1">
+      {/* 하나의 큰 카드 */}
+      <div style={{ ...cardBg, padding: '10px' }}>
+        <div className="space-y-3">
 
-      <PanelSection title="원인 분석">
-        {isLoading ? <div style={{ fontSize: '11px', color: 'var(--gray2)', fontFamily: sans }}>분석 중...</div> : (
-          <div style={{ fontSize: '11px', lineHeight: '1.7', color: 'var(--gray4)', fontFamily: sans }}>{actionReport?.reasoning ?? <span style={{ color: 'var(--gray2)' }}>LLM 분석 데이터가 아직 없습니다.</span>}</div>
-        )}
-      </PanelSection>
-
-      {actionReport && (
-        <PanelSection title="AI 조치 제안">
-          <div className="flex items-center gap-2 px-3 py-2 mb-3" style={{ background: `${actionColor}08`, border: `1px solid ${actionColor}25`, borderRadius: '2px' }}>
-            {recommendation === 'STOP' && <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: actionColor, animation: 'pulse-dot 2s ease-in-out infinite' }} />}
-            <span style={{ fontFamily: sans, fontSize: '12px', fontWeight: 700, color: actionColor }}>{ACTION_LABELS[recommendation]}</span>
-            {actionReport.confidence && <span style={{ marginLeft: 'auto', fontFamily: mono, fontSize: '10px', color: 'var(--gray3)' }}>확신도 {(actionReport.confidence * 100).toFixed(0)}%</span>}
+          {/* 이상감지 요약 */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span style={{ fontSize: '11px', fontWeight: 700, fontFamily: sans, color: 'var(--gray5)' }}>이상감지 요약</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, fontFamily: sans, color: 'var(--gray5)' }}>{alarm.equipment_id}</span>
+              <span style={{ fontSize: '10px', fontWeight: 600, fontFamily: sans, color: alarm.severity === 'critical' ? 'var(--red5)' : 'var(--yellow5)', background: alarm.severity === 'critical' ? 'rgba(248,113,113,0.08)' : 'rgba(251,191,36,0.08)', padding: '2px 8px', borderRadius: '2px', border: `1px solid ${alarm.severity === 'critical' ? 'rgba(248,113,113,0.2)' : 'rgba(251,191,36,0.2)'}` }}>{severity}</span>
+            </div>
+            <span style={{ fontSize: '14px', fontWeight: 500, fontFamily: sans, color: scoreColor }}>{score.toFixed(2)}</span>
           </div>
-          {actionReport.action_steps.length > 0 && (
-            <ol className="space-y-2">
-              {actionReport.action_steps.map((step, i) => {
-                const docMatch = step.match(/DOC-\d+/g); const partMatch = step.match(/P\d{3}/g)
-                return (
-                  <li key={i} className="flex gap-2" style={{ fontSize: '11px', color: 'var(--gray4)', fontFamily: sans }}>
-                    <span style={{ fontFamily: mono, color: 'var(--cyan)', minWidth: '16px', fontWeight: 600, flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
-                    <span className="flex-1">{step}{docMatch?.map(d => <span key={d} className="ml-1 px-1" style={{ background: 'rgba(0,212,255,0.08)', color: 'var(--cyan)', fontSize: '9px', fontFamily: mono, border: '1px solid rgba(0,212,255,0.15)', borderRadius: '1px' }}>{d}</span>)}{partMatch?.map(p => <span key={p} className="ml-1 px-1" style={{ background: 'rgba(52,211,153,0.08)', color: 'var(--green5)', fontSize: '9px', fontFamily: mono, border: '1px solid rgba(52,211,153,0.15)', borderRadius: '1px' }}>{p}</span>)}</span>
-                  </li>
-                )
-              })}
-            </ol>
+
+          <ScoreBlocks score={score} />
+
+          <div className="flex items-center justify-between">
+            <div style={{ fontSize: '10px', fontFamily: sans, color: 'var(--cyan)', fontWeight: 500 }}>감지 시각: {time}</div>
+            {alarm.predicted_failure_code && (
+              <div style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--green5)' }}>{alarm.predicted_failure_code.replace(/_/g, ' ')}</div>
+            )}
+          </div>
+
+          {/* 구분선 */}
+          <div style={{ height: '1px', background: 'var(--border-mid)' }} />
+
+          {/* 원인 분석 */}
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--gray5)', fontFamily: sans, marginBottom: '6px' }}>원인 분석</div>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: '3px', padding: '8px 10px' }}>
+              {isLoading ? <div style={{ fontSize: '11px', color: 'var(--gray2)', fontFamily: sans }}>분석 중...</div> : (
+                <div style={{ fontSize: '11px', lineHeight: '1.7', color: 'var(--gray5)', fontFamily: sans, fontWeight: 400 }}>{actionReport?.reasoning ?? <span style={{ color: 'var(--gray2)' }}>LLM 분석 데이터가 아직 없습니다.</span>}</div>
+              )}
+            </div>
+          </div>
+
+          {/* 구분선 */}
+          <div style={{ height: '1px', background: 'var(--border-mid)' }} />
+
+          {/* AI 조치 제안 */}
+          {actionReport && (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--gray5)', fontFamily: sans }}>AI 조치 제안</span>
+                <div className="flex items-center gap-2">
+                  {recommendation === 'STOP' && <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: actionColor, animation: 'pulse-dot 2s ease-in-out infinite' }} />}
+                  <span style={{ fontFamily: sans, fontSize: '11px', fontWeight: 600, color: actionColor }}>{ACTION_LABELS[recommendation]}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mb-3">
+                <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 500, color: 'var(--gray5)' }}>확신도</span>
+                <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 500, color: 'var(--gray5)' }}>{actionReport.confidence ? `${(actionReport.confidence * 100).toFixed(0)}%` : '—'}</span>
+              </div>
+              {actionReport.action_steps.length > 0 && (
+                <ol className="space-y-2">
+                  {actionReport.action_steps.map((step, i) => {
+                    const docMatch = step.match(/DOC-\d+/g); const partMatch = step.match(/P\d{3}/g)
+                    return (
+                      <li key={i} className="flex gap-2" style={{ fontSize: '11px', color: 'var(--gray4)', fontFamily: sans }}>
+                        <span style={{ fontFamily: mono, color: 'var(--cyan)', minWidth: '16px', fontWeight: 600, flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                        <span className="flex-1">{step}{docMatch?.map(d => <span key={d} className="ml-1 px-1" style={{ background: 'rgba(0,212,255,0.08)', color: 'var(--cyan)', fontSize: '9px', fontFamily: mono, border: '1px solid rgba(0,212,255,0.15)', borderRadius: '1px' }}>{d}</span>)}{partMatch?.map(p => <span key={p} className="ml-1 px-1" style={{ background: 'rgba(52,211,153,0.08)', color: 'var(--green5)', fontSize: '9px', fontFamily: mono, border: '1px solid rgba(52,211,153,0.15)', borderRadius: '1px' }}>{p}</span>)}</span>
+                      </li>
+                    )
+                  })}
+                </ol>
+              )}
+            </div>
           )}
-        </PanelSection>
-      )}
 
-      {actionReport && actionReport.parts_needed.length > 0 && (
-        <PanelSection title="필요 부품">
-          <div className="space-y-1">
-            {actionReport.parts_needed.map(part => (
-              <div key={part.part_id} className="flex items-center justify-between px-3 py-1.5" style={{ background: 'var(--dg3)', border: '1px solid var(--border-subtle)', borderRadius: '2px', fontSize: '10px' }}>
-                <span style={{ fontFamily: mono, color: 'var(--cyan)', fontWeight: 600 }}>{part.part_id}</span>
-                <span style={{ fontFamily: mono, color: 'var(--gray3)' }}>×{part.quantity}</span>
-                <span style={{ fontFamily: sans, fontWeight: 600, fontSize: '10px', color: part.in_stock ? 'var(--green5)' : 'var(--red5)' }}>{part.in_stock ? '재고 있음' : '발주 필요'}</span>
+          {/* 필요 부품 */}
+          {actionReport && actionReport.parts_needed.length > 0 && (
+            <>
+              <div style={{ height: '1px', background: 'var(--border-mid)' }} />
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--gray5)', fontFamily: sans, marginBottom: '6px' }}>필요 부품</div>
+                <div className="space-y-1.5">
+                  {actionReport.parts_needed.map(part => (
+                    <div key={part.part_id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: '2px', padding: '6px 10px' }}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span style={{ fontFamily: mono, color: 'var(--cyan)', fontWeight: 600, fontSize: '10px' }}>{part.part_id}</span>
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontFamily: sans, color: 'var(--gray3)', fontSize: '10px' }}>×{part.quantity}</span>
+                          <span style={{ fontFamily: sans, fontWeight: 500, fontSize: '10px', color: part.in_stock ? 'var(--green5)' : 'var(--red5)' }}>{part.in_stock ? '재고 있음' : '발주 필요'}</span>
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray4)' }}>{PART_NAMES[part.part_id] ?? part.part_id}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </PanelSection>
-      )}
+            </>
+          )}
 
-      {ragData && ragData.related_documents.length > 0 && (
-        <PanelSection title="온톨로지 참조 문서">
-          <div className="space-y-1">
-            {ragData.related_documents.slice(0, 3).map(doc => (
-              <div key={doc.manual_id} className="flex items-center justify-between px-3 py-1.5" style={{ background: 'var(--dg3)', border: '1px solid var(--border-subtle)', borderRadius: '2px', fontSize: '10px' }}>
-                <span style={{ fontFamily: mono, color: 'var(--cyan)', fontWeight: 600 }}>{doc.manual_id}</span>
-                <span style={{ fontFamily: mono, color: 'var(--gray3)' }}>유사도 {doc.hybrid_score.toFixed(2)}</span>
+          {/* 온톨로지 참조 문서 */}
+          {ragData && ragData.related_documents.length > 0 && (
+            <>
+              <div style={{ height: '1px', background: 'var(--border-mid)' }} />
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--gray5)', fontFamily: sans, marginBottom: '6px' }}>온톨로지 참조 문서</div>
+                <div className="space-y-1.5">
+                  {ragData.related_documents.slice(0, 3).map(doc => (
+                    <div key={doc.manual_id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)', borderRadius: '2px', padding: '6px 10px' }}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span style={{ fontFamily: mono, color: 'var(--cyan)', fontWeight: 600, fontSize: '10px' }}>{doc.manual_id}</span>
+                        <span style={{ fontFamily: sans, color: 'var(--gray3)', fontSize: '9px' }}>유사도 {doc.hybrid_score.toFixed(2)}</span>
+                      </div>
+                      <div style={{ fontSize: '10px', fontFamily: sans, color: 'var(--gray4)', lineHeight: '1.4' }}>{DOC_TITLES[doc.manual_id] ?? doc.title ?? '문서'}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </PanelSection>
-      )}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
