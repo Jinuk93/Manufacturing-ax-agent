@@ -1,5 +1,5 @@
 // ============================================================
-// WorkOrderOverlay — 작업현황 슬라이드다운 오버레이
+// WorkOrderOverlay — 작업현황 오버레이 (AI패널 영역에서 내려옴)
 // ============================================================
 
 import { useQuery } from '@tanstack/react-query'
@@ -20,7 +20,17 @@ export default function WorkOrderOverlay({ open }: { open: boolean }) {
   })
 
   return (
-    <div style={{ position: 'absolute', top: 0, right: 0, width: '540px', overflow: 'hidden', maxHeight: open ? '220px' : '0', transition: 'max-height 0.25s ease', background: 'var(--dg2)', borderBottom: open ? '1px solid var(--border-mid)' : 'none', borderLeft: open ? '1px solid var(--border-mid)' : 'none', zIndex: 100 }}>
+    <div style={{
+      position: 'absolute', top: 0, left: 0, width: '420px',
+      overflow: 'hidden',
+      maxHeight: open ? '300px' : '0',
+      transition: 'max-height 0.3s ease',
+      background: 'var(--dg1-5)',
+      borderBottom: open ? '1px solid var(--border-mid)' : 'none',
+      borderRadius: '0 0 3px 3px',
+      boxShadow: open ? '0 4px 12px rgba(0,0,0,0.4)' : 'none',
+      zIndex: 50,
+    }}>
       <div className="p-4">
         <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--gray4)', fontFamily: sans, marginBottom: '10px' }}>작업지시 현황</div>
         <table className="w-full" style={{ fontSize: '10px' }}>

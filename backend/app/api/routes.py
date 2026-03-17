@@ -19,7 +19,7 @@ from app.models.schemas import (
     ChatRequest, ChatResponse,
     WorkOrderStatusResponse,
 )
-from app.services.db import get_connection
+from app.services.db import get_connection, release_connection
 from app.services.itot_sync import sync_itot_context
 from app.services.graphrag import search_graphrag as graphrag_search
 from app.services.llm_agent import generate_action as llm_generate_action
@@ -47,7 +47,7 @@ async def collect_sensor(req: SensorCollectRequest):
                 equipment_id=req.equipment_id, timestamp=req.timestamp,
             )
         finally:
-            conn.close()
+            release_connection(conn)
     except Exception as e:
         logger.error(f"F1 수집 실패: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail="F1 수집 실패.")
@@ -76,7 +76,7 @@ async def detect_anomaly(req: AnomalyDetectRequest):
                 columns = [desc[0] for desc in cur.description]
                 rows = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
 
         if not rows:
             return AnomalyDetectResponse(
@@ -104,7 +104,7 @@ async def detect_anomaly(req: AnomalyDetectRequest):
                       float(last["anomaly_score"])))
             conn.commit()
         finally:
-            conn.close()
+            release_connection(conn)
 
         return AnomalyDetectResponse(
             status="ok",
@@ -138,7 +138,7 @@ async def anomaly_history(equipment_id: str, limit: int = 100):
                 """, (equipment_id, limit))
                 rows = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
         history = [
             AnomalyResult(
                 timestamp=r[0], equipment_id=r[1], anomaly_score=r[2],
@@ -222,7 +222,7 @@ async def dashboard_summary():
                         last_updated=datetime.now(),
                     ))
         finally:
-            conn.close()
+            release_connection(conn)
         return DashboardSummary(equipments=equipments)
     except Exception as e:
         logger.error(f"F6 summary 실패: {e}", exc_info=True)
@@ -249,7 +249,7 @@ async def sensor_timeseries(equipment_id: str, duration_hours: int = 1):
                 columns = [desc[0] for desc in cur.description]
                 rows = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
         series = [dict(zip(columns, [str(v) if isinstance(v, datetime) else v for v in row])) for row in rows]
         return {"equipment_id": equipment_id, "duration_hours": duration_hours, "series": series}
     except Exception as e:
@@ -273,7 +273,7 @@ async def anomaly_status(equipment_id: str):
                 """, (equipment_id,))
                 row = cur.fetchone()
         finally:
-            conn.close()
+            release_connection(conn)
         if row:
             return AnomalyResult(
                 timestamp=row[0], equipment_id=row[1], anomaly_score=row[2],
@@ -314,14 +314,14 @@ async def work_order_status(equipment_id: str):
                 # 최근 정비 이력 (5건)
                 cur.execute("""
                     SELECT event_id, failure_code, event_type, duration_min, parts_used,
-                           event_time
+                           timestamp
                     FROM maintenance_events
                     WHERE equipment_id = %s
-                    ORDER BY event_time DESC LIMIT 5
+                    ORDER BY timestamp DESC LIMIT 5
                 """, (equipment_id,))
                 maint = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
         return {
             "equipment_id": equipment_id,
             "work_order": {"work_order_id": wo[0], "product_type": wo[1], "due_date": str(wo[2]), "priority": wo[3], "status": wo[4]} if wo else None,
@@ -354,7 +354,7 @@ async def action_report(equipment_id: str):
                 """, (equipment_id,))
                 row = cur.fetchone()
         finally:
-            conn.close()
+            release_connection(conn)
 
         if not row:
             raise HTTPException(status_code=404, detail="이상탐지 데이터 없음")
@@ -405,7 +405,7 @@ async def action_report(equipment_id: str):
                     ))
                 conn2.commit()
             finally:
-                conn2.close()
+                release_connection(conn2)
         except Exception as e:
             logger.warning(f"F5 결과 DB 저장 실패 (비치명적): {e}")
 
@@ -434,7 +434,7 @@ async def alarm_feed(limit: int = 20):
                 """, (limit,))
                 rows = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
         alarms = [
             AlarmEvent(
                 timestamp=r[0], equipment_id=r[1], anomaly_score=r[2],
@@ -469,7 +469,7 @@ async def health_check():
     try:
         conn = get_connection()
         conn.cursor().execute("SELECT 1")
-        conn.close()
+        release_connection(conn)
         pg_ok = True
     except Exception:
         pass

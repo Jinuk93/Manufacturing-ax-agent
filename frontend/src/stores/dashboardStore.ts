@@ -12,6 +12,10 @@ interface DashboardStore {
   selectedAlarm: AlarmEvent | null
   setSelectedAlarm: (alarm: AlarmEvent | null) => void
 
+  // 예지보전 탭 활성화
+  predictiveMode: boolean
+  setPredictiveMode: (on: boolean) => void
+
   prevAlarmCount: number
   setPrevAlarmCount: (count: number) => void
 
@@ -26,10 +30,13 @@ interface DashboardStore {
 
 export const useDashboardStore = create<DashboardStore>((set) => ({
   selectedEquipmentId: null,
-  setSelectedEquipmentId: (id) => set({ selectedEquipmentId: id, selectedAlarm: null }),
+  setSelectedEquipmentId: (id) => set({ selectedEquipmentId: id, selectedAlarm: null, predictiveMode: false }),
 
   selectedAlarm: null,
-  setSelectedAlarm: (alarm) => set({ selectedAlarm: alarm, selectedEquipmentId: null }),
+  setSelectedAlarm: (alarm) => set({ selectedAlarm: alarm, selectedEquipmentId: null, predictiveMode: false }),
+
+  predictiveMode: false,
+  setPredictiveMode: (on) => set({ predictiveMode: on, selectedEquipmentId: null, selectedAlarm: null }),
 
   prevAlarmCount: 0,
   setPrevAlarmCount: (count) => set({ prevAlarmCount: count }),

@@ -4,7 +4,7 @@
 
 import { useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getEquipmentSummary, getDashboardAlarms } from '@/lib/api/endpoints'
+import { getEquipmentSummary, getDashboardAlarms, getHealth } from '@/lib/api/endpoints'
 import { useDashboardStore } from '@/stores/dashboardStore'
 import type { Equipment, EquipmentStatus, AlarmEvent } from '@/types'
 
@@ -107,6 +107,49 @@ const SYSTEM_MODULES = [
   { key: 'F6', name: '대시보드', alwaysOn: true },
 ]
 
+function SystemStatusSection({ hasAnomaly }: { hasAnomaly: boolean }) {
+  const { data: health } = useQuery({ queryKey: ['health'], queryFn: getHealth, refetchInterval: 10000, retry: false })
+  const infra = [
+    { label: 'PostgreSQL', ok: health?.postgres ?? false },
+    { label: 'Neo4j', ok: health?.neo4j ?? false },
+    { label: 'Backend', ok: health?.status === 'ok' },
+  ]
+
+  return (
+    <div className="flex-shrink-0" style={{ paddingBottom: '12px' }}>
+      <Section>
+        <SectionTitle title="시스템 상태" right={<span style={{ fontSize: '9px', color: 'var(--gray3)', fontFamily: sans, fontWeight: 500 }}>폴링 5초</span>} />
+
+        {/* 인프라 연결 상태 */}
+        <div className="flex items-center gap-3 px-3 py-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+          {infra.map((s) => (
+            <div key={s.label} className="flex items-center gap-1">
+              <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: s.ok ? 'var(--green5)' : 'var(--red5)', flexShrink: 0 }} />
+              <span style={{ fontSize: '9px', fontFamily: sans, fontWeight: 500, color: s.ok ? 'var(--gray4)' : 'var(--red5)' }}>{s.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* 파이프라인 모듈 */}
+        <div className="px-3 py-2">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 12px' }}>
+            {SYSTEM_MODULES.map((mod) => {
+              const active = mod.alwaysOn || hasAnomaly
+              return (
+                <div key={mod.key} className="flex items-center gap-1">
+                  <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: active ? 'var(--green5)' : 'var(--gray2)', flexShrink: 0 }} />
+                  <span style={{ fontSize: '9px', fontFamily: mono, fontWeight: 600, color: active ? 'var(--gray5)' : 'var(--gray2)' }}>{mod.key}</span>
+                  <span style={{ fontSize: '8px', fontFamily: sans, color: active ? 'var(--gray3)' : 'var(--gray2)' }}>{mod.name}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </Section>
+    </div>
+  )
+}
+
 export default function Sidebar() {
   const { prevAlarmCount, setPrevAlarmCount } = useDashboardStore()
   const { data: equipmentList = [] } = useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, refetchInterval: 5000, retry: false })
@@ -146,8 +189,8 @@ export default function Sidebar() {
           <div className="flex items-center gap-2">
             <span style={{ fontSize: '11px', fontWeight: 600, fontFamily: sans, color: 'var(--gray4)' }}>이상감지 로그</span>
             <div className="flex items-center gap-1">
-              <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: sortedAlarms.length > 0 ? 'var(--green5)' : 'var(--gray2)', animation: 'pulse-dot 2s ease-in-out infinite' }} />
-              <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', fontWeight: 500 }}>실시간</span>
+              <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--green5)', animation: 'live-blink 1.5s ease-in-out infinite' }} />
+              <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--green5)', fontWeight: 600 }}>LIVE</span>
             </div>
           </div>
           <span style={{ fontSize: '10px', fontFamily: sans, color: sortedAlarms.length > 0 ? 'var(--red5)' : 'var(--gray3)', fontWeight: 600 }}>{sortedAlarms.length}건</span>
@@ -175,27 +218,7 @@ export default function Sidebar() {
       </div>
 
       {/* 시스템 상태 */}
-      <div className="flex-shrink-0" style={{ paddingBottom: '12px' }}>
-        <Section>
-          <SectionTitle title="시스템 상태" right={<span style={{ fontSize: '9px', color: 'var(--gray3)', fontFamily: sans, fontWeight: 500 }}>폴링 5초</span>} />
-          <div className="px-3 py-2.5">
-            <div className="grid grid-cols-3 gap-x-3 gap-y-2">
-              {SYSTEM_MODULES.map((mod) => {
-                const active = mod.alwaysOn || hasAnomaly
-                return (
-                  <div key={mod.key} className="flex items-center gap-1.5">
-                    <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: active ? 'var(--green5)' : 'var(--gray2)', flexShrink: 0 }} />
-                    <div>
-                      <div style={{ fontSize: '10px', fontFamily: mono, fontWeight: 600, color: active ? 'var(--gray5)' : 'var(--gray2)', lineHeight: 1 }}>{mod.key}</div>
-                      <div style={{ fontSize: '8px', fontFamily: sans, color: active ? 'var(--gray3)' : 'var(--gray2)', lineHeight: 1, marginTop: '2px' }}>{mod.name}</div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </Section>
-      </div>
+      <SystemStatusSection hasAnomaly={hasAnomaly} />
     </div>
   )
 }
