@@ -79,7 +79,7 @@ export default function ChatPanel() {
       const res = await api.post<{ content: string; timestamp: string; references: string[] }>(
         '/chat', { message: text }
       )
-      setMessages((prev) => [...prev, { role: 'assistant', content: res.content, timestamp: res.timestamp }])
+      setMessages((prev) => [...prev, { role: 'assistant', content: res?.content ?? '응답을 받지 못했습니다.', timestamp: res?.timestamp ?? new Date().toISOString() }])
     } catch {
       setMessages((prev) => [...prev, {
         role: 'assistant',

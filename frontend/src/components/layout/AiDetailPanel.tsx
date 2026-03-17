@@ -46,7 +46,7 @@ function AlarmAnalysisView({ alarm }: { alarm: AlarmEvent }) {
 
   const { data: actionReport, isLoading } = useQuery({ queryKey: ['action', alarm.equipment_id], queryFn: () => getActionReport(alarm.equipment_id), retry: false, staleTime: 30_000 })
   const failureCode = alarm.predicted_failure_code ?? actionReport?.predicted_failure_code
-  const { data: ragData } = useQuery({ queryKey: ['graphrag', alarm.equipment_id, failureCode], queryFn: () => searchGraphRAG(failureCode!, alarm.equipment_id), enabled: !!failureCode, staleTime: 60_000, retry: false })
+  const { data: ragData } = useQuery({ queryKey: ['graphrag', alarm.equipment_id, failureCode], queryFn: () => searchGraphRAG(failureCode!, alarm.equipment_id), enabled: !!failureCode, staleTime: 60_000, retry: 1 })
 
   const recommendation = actionReport?.recommendation ?? 'MONITOR'
   const actionColor = ACTION_COLORS[recommendation]
@@ -200,7 +200,7 @@ function EquipmentAnalysisView({ equipmentId }: { equipmentId: string }) {
   const { data: anomaly } = useQuery({ queryKey: ['anomaly', equipmentId], queryFn: () => getEquipmentAnomaly(equipmentId), refetchInterval: 5000, retry: false })
   const { data: actionReport, isLoading: actionLoading } = useQuery({ queryKey: ['action', equipmentId], queryFn: () => getActionReport(equipmentId), retry: false, staleTime: 30_000 })
   const failureCode = actionReport?.predicted_failure_code ?? anomaly?.predicted_failure_code
-  const { data: ragData } = useQuery({ queryKey: ['graphrag', equipmentId, failureCode], queryFn: () => searchGraphRAG(failureCode!, equipmentId), enabled: !!failureCode, staleTime: 60_000, retry: false })
+  const { data: ragData } = useQuery({ queryKey: ['graphrag', equipmentId, failureCode], queryFn: () => searchGraphRAG(failureCode!, equipmentId), enabled: !!failureCode, staleTime: 60_000, retry: 1 })
 
   const recommendation = actionReport?.recommendation ?? 'MONITOR'
   const actionColor = ACTION_COLORS[recommendation]
@@ -452,6 +452,40 @@ function OverviewAnalysisView() {
           </div>
         </div>
       </div>
+
+      {/* 구분선 */}
+      <div style={{ height: '1px', background: 'linear-gradient(90deg, var(--border-mid), transparent)' }} />
+
+      {/* 예지보전 예측 — 아직 정상이지만 위험 예상되는 설비만 */}
+      {(() => {
+        const predEqs = EQ_IDS.map((id, i) => {
+          const score = anomalies[i]?.anomaly_score ?? 0
+          const fc = anomalies[i]?.predicted_failure_code
+          // 0.3~0.8 사이만 = 아직 정상이지만 주의 필요
+          if (score >= 0.1 && score < 0.8) return { id, score, fc }
+          return null
+        }).filter(Boolean)
+        if (predEqs.length === 0) return null
+        return (
+          <div>
+            <div style={{ fontSize: '13px', fontWeight: 700, fontFamily: sans, color: 'var(--yellow5)', marginBottom: '6px' }}>예지보전 예측</div>
+            <div style={{ ...cardStyle, padding: '10px 12px', background: 'rgba(251,191,36,0.04)', border: '1px solid rgba(251,191,36,0.12)' }}>
+              <div style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', marginBottom: '6px' }}>아직 정상 범위이지만, 추세 분석 결과 주의가 필요한 설비입니다.</div>
+              {predEqs.map((eq) => eq && (
+                <div key={eq.id} className="flex items-center justify-between py-1.5" style={{ borderBottom: '1px solid rgba(251,191,36,0.06)' }}>
+                  <div className="flex items-center gap-2">
+                    <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--gray5)' }}>{eq.id}</span>
+                    <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--yellow5)' }}>
+                      현재 {eq.score.toFixed(2)} — 상승 추세
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--orange5)' }}>사전 점검 권고</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
 
       {/* 구분선 */}
       <div style={{ height: '1px', background: 'linear-gradient(90deg, var(--border-mid), transparent)' }} />

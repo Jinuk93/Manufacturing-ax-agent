@@ -188,6 +188,38 @@ export default function Sidebar() {
         {Array.isArray(equipmentList) && equipmentList.map((eq, i) => <EquipmentRow key={eq.equipment_id} eq={eq} isLast={i === equipmentList.length - 1} />)}
       </Section>
 
+      {/* 예측 경고 (예지보전) */}
+      {(() => {
+        const predWarnings = equipmentList.filter(eq => eq.anomaly_score >= 0.1 && eq.anomaly_score < 0.8)
+        if (predWarnings.length === 0) return null
+        return (
+          <div style={{ margin: '6px 8px 0', background: 'rgba(251,191,36,0.04)', border: '1px solid rgba(251,191,36,0.12)', borderRadius: '3px', overflow: 'hidden', flexShrink: 0 }}>
+            <div className="flex items-center justify-between px-3 py-1.5" style={{ borderBottom: '1px solid rgba(251,191,36,0.08)' }}>
+              <span style={{ fontSize: '10px', fontWeight: 600, fontFamily: sans, color: 'var(--yellow5)' }}>예측 경고</span>
+              <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--yellow5)' }}>{predWarnings.length}건</span>
+            </div>
+            {predWarnings.map(eq => (
+              <button
+                key={eq.equipment_id}
+                className="w-full text-left px-3 py-1.5 transition-all"
+                style={{ borderBottom: '1px solid rgba(251,191,36,0.06)' }}
+                onClick={() => { useDashboardStore.getState().setPredictiveMode(true) }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(251,191,36,0.06)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+              >
+                <div className="flex items-center justify-between">
+                  <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--yellow5)' }}>{eq.equipment_id}</span>
+                  <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 500, color: 'var(--yellow5)' }}>{eq.anomaly_score.toFixed(2)}</span>
+                </div>
+                <div style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', marginTop: '1px' }}>
+                  ↗ 아직 정상이나 상승 추세 — 사전 점검 권고
+                </div>
+              </button>
+            ))}
+          </div>
+        )
+      })()}
+
       {/* 이상감지 로그 */}
       <div style={{ margin: '6px 8px', background: 'var(--dg2)', border: '1px solid var(--border-mid)', borderRadius: '3px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.02)', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <div className="flex items-center justify-between px-3 py-2 flex-shrink-0" style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-subtle)' }}>
@@ -217,7 +249,7 @@ export default function Sidebar() {
         {sortedAlarms.length > 0 && (
           <div className="flex items-center justify-between px-3 py-1.5 flex-shrink-0" style={{ borderTop: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.015)' }}>
             <span style={{ fontSize: '9px', color: 'var(--gray3)', fontFamily: sans, fontWeight: 500 }}>총 {sortedAlarms.length}건</span>
-            <span style={{ fontSize: '9px', color: 'var(--gray3)', fontFamily: sans, fontWeight: 500 }}>최근 {new Date(sortedAlarms[0].timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span style={{ fontSize: '9px', color: 'var(--gray3)', fontFamily: sans, fontWeight: 500 }}>최근 {sortedAlarms[0]?.timestamp ? new Date(sortedAlarms[0].timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '—'}</span>
           </div>
         )}
       </div>

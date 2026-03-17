@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, ReferenceLine, Legend,
+  ResponsiveContainer, ReferenceLine, Legend, ReferenceArea,
 } from 'recharts'
 import { useDashboardStore } from '@/stores/dashboardStore'
 import {
@@ -361,15 +361,15 @@ function PredictiveMaintenanceView() {
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>융합 점수</td>
               {anomalies.map((a, i) => { const s = a?.anomaly_score ?? 0; const fs = getForecastScore(a, i); const fused = 0.6 * s + 0.4 * fs; return <td key={i} style={{ ...tdStyle, color: statusColor(fused), fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fused.toFixed(2)}</td> })}
             </tr>
-            <tr>
+            <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>추세</td>
               {histories.map((h, i) => { const t = calcTrend(h?.history ?? []); return <td key={i} style={{ ...tdStyle, color: t.color, fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{t.direction} {t.label}</td> })}
             </tr>
-            <tr style={{ background: 'rgba(255,255,255,0.015)' }}>
+            <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>STOP 도달</td>
               {anomalies.map((a, i) => { const eta = calcETA(a?.anomaly_score ?? 0, histories[i]?.history ?? []); const c = eta === '이미 초과' ? 'var(--red5)' : eta.includes('분') ? 'var(--yellow5)' : 'var(--gray4)'; return <td key={i} style={{ ...tdStyle, color: c, fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{eta}</td> })}
             </tr>
-            <tr>
+            <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>위험 센서</td>
               {anomalies.map((a, i) => { const fc = a?.predicted_failure_code; const info = fc ? FAULT_SENSOR_MAP[fc] : null; return <td key={i} style={{ ...tdStyle, color: info ? (info.level === '위험' ? 'var(--red5)' : 'var(--yellow5)') : 'var(--gray2)', fontWeight: 500, fontSize: '9px', borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{info?.sensor ?? '—'}</td> })}
             </tr>
@@ -378,7 +378,7 @@ function PredictiveMaintenanceView() {
       </div>
 
       {/* IF vs Forecast 비교 차트 — 3대 나란히 */}
-      <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(3, 1fr)', flex: '1 1 50%', minHeight: 0 }}>
+      <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(3, 1fr)', flex: '1 1 38%', minHeight: 0 }}>
         {EQ_IDS.map((eqId, idx) => {
           const history = histories[idx]?.history ?? []
           const reversed = [...history].reverse().slice(-60)
@@ -394,24 +394,52 @@ function PredictiveMaintenanceView() {
             }
           })
 
+          // 현재 상태 판정
+          const latestIf = chartData.length > 0 ? chartData[chartData.length - 1].if_score : 0
+          const latestFc = chartData.length > 0 ? chartData[chartData.length - 1].forecast : 0
+          const statusText = latestIf >= 0.8 ? '위험' : latestIf >= 0.6 ? '주의' : '정상'
+          const statusClr = latestIf >= 0.8 ? 'var(--red5)' : latestIf >= 0.6 ? 'var(--yellow5)' : 'var(--green5)'
+          const predictWarn = latestFc > latestIf + 0.05
+
           return (
             <div key={eqId} style={{ ...DETAIL_CARD_PM, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <PanelHeader title={`${eqId} IF vs Forecast`} live />
+              {/* 헤더: 설비명 + 상태 + 설명 */}
+              <div className="flex items-center justify-between px-3 py-1.5 flex-shrink-0" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.02)' }}>
+                <div className="flex items-center gap-2">
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--gray4)', fontFamily: sans }}>{eqId}</span>
+                  <span style={{ fontSize: '9px', fontWeight: 600, color: statusClr, fontFamily: sans }}>{statusText}</span>
+                  {predictWarn && <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--orange5)', background: 'rgba(251,146,60,0.1)', padding: '1px 4px', borderRadius: '2px', border: '1px solid rgba(251,146,60,0.15)' }}>예측 상승</span>}
+                </div>
+                <LiveDot />
+              </div>
+              {/* 범례 설명 */}
+              <div className="flex items-center justify-center gap-4 py-1 flex-shrink-0" style={{ background: 'rgba(255,255,255,0.01)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <div className="flex items-center gap-1">
+                  <div style={{ width: '16px', height: '2px', background: 'var(--cyan)' }} />
+                  <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)' }}>현재 탐지 (IF)</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div style={{ width: '16px', height: '2px', background: 'var(--orange5)', borderTop: '1px dashed var(--orange5)' }} />
+                  <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)' }}>미래 예측 (CNN)</span>
+                </div>
+              </div>
               {chartData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center" style={{ color: 'var(--gray2)', fontSize: '10px', fontFamily: sans }}>데이터 없음</div>
               ) : (
                 <div className="flex-1 px-1 pb-0" style={{ minHeight: 0 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={CHART_MARGIN}>
+                      {/* 위험/주의 영역 색칠 */}
+                      <ReferenceArea y1={0.8} y2={1} fill="rgba(248,113,113,0.06)" />
+                      <ReferenceArea y1={0.6} y2={0.8} fill="rgba(251,191,36,0.04)" />
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,200,255,0.04)" />
                       <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#475569' }} interval="preserveStartEnd" tickLine={false} axisLine={{ stroke: 'var(--border-subtle)' }} />
                       <YAxis domain={[0, 1]} tick={{ fontSize: 7, fill: '#475569' }} tickLine={false} axisLine={false} />
-                      <ReferenceLine y={0.8} stroke="var(--red5)" strokeDasharray="3 2" strokeOpacity={0.4} />
-                      <ReferenceLine y={0.6} stroke="var(--yellow5)" strokeDasharray="3 2" strokeOpacity={0.4} />
+                      <ReferenceLine y={0.8} stroke="var(--red5)" strokeDasharray="3 2" strokeOpacity={0.3} label={{ value: 'STOP', position: 'right', fill: '#f87171', fontSize: 7, fontFamily: sans }} />
+                      <ReferenceLine y={0.6} stroke="var(--yellow5)" strokeDasharray="3 2" strokeOpacity={0.3} label={{ value: 'REDUCE', position: 'right', fill: '#fbbf24', fontSize: 7, fontFamily: sans }} />
                       <Tooltip contentStyle={CHART_TOOLTIP} />
-                      <Legend layout="vertical" verticalAlign="top" align="right" wrapperStyle={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)', lineHeight: '14px', right: '-1%', top: '40%' }} iconSize={8} />
-                      <Line type="monotone" dataKey="if_score" stroke="var(--cyan)" dot={false} strokeWidth={1.2} name="IF 탐지" />
-                      <Line type="monotone" dataKey="forecast" stroke="var(--orange5)" dot={false} strokeWidth={1.2} strokeDasharray="4 3" name="CNN 예측" />
+                      <Line type="monotone" dataKey="if_score" stroke="var(--cyan)" dot={false} strokeWidth={1.5} name="현재 탐지" />
+                      <Line type="monotone" dataKey="forecast" stroke="var(--orange5)" dot={false} strokeWidth={1.5} strokeDasharray="4 3" name="미래 예측" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -421,36 +449,42 @@ function PredictiveMaintenanceView() {
         })}
       </div>
 
-      {/* 위험 센서 + 예지보전 이력 — 2열 */}
-      <div className="grid gap-2 flex-shrink-0" style={{ gridTemplateColumns: '1fr 1fr' }}>
-        {/* 위험 센서 분석 */}
-        <div style={DETAIL_CARD_PM}>
+      {/* 위험 센서 + 예지보전 이력 — 2열, flex 확장 */}
+      <div className="grid gap-2" style={{ gridTemplateColumns: '1fr 1fr', flex: '1 1 30%', minHeight: 0 }}>
+        {/* 위험 센서 분석 — 표 */}
+        <div style={{ ...DETAIL_CARD_PM, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <PanelHeader title="위험 센서 분석" />
-          <div className="px-3 py-2 space-y-1.5">
-            {EQ_IDS.map((id, i) => {
-              const fc = anomalies[i]?.predicted_failure_code
-              const info = fc ? FAULT_SENSOR_MAP[fc] : null
-              if (!info) return (
-                <div key={id} className="flex items-center gap-2" style={{ fontSize: '10px', fontFamily: sans }}>
-                  <span style={{ color: 'var(--gray5)', fontWeight: 600, minWidth: '55px' }}>{id}</span>
-                  <span style={{ color: 'var(--green5)' }}>정상 — 위험 센서 없음</span>
-                </div>
-              )
-              return (
-                <div key={id} style={{ background: info.level === '위험' ? 'rgba(248,113,113,0.04)' : 'rgba(251,191,36,0.04)', border: `1px solid ${info.level === '위험' ? 'rgba(248,113,113,0.12)' : 'rgba(251,191,36,0.12)'}`, borderRadius: '3px', padding: '6px 8px' }}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--gray5)' }}>{id}</span>
-                    <span style={{ fontSize: '9px', fontFamily: sans, fontWeight: 500, color: info.level === '위험' ? 'var(--red5)' : 'var(--yellow5)' }}>{info.level}</span>
-                  </div>
-                  <div style={{ fontSize: '10px', fontFamily: sans, color: 'var(--gray4)' }}>{info.desc}</div>
-                </div>
-              )
-            })}
+          <div className="flex-1 overflow-y-auto">
+            <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+              <thead>
+                <tr>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'left', borderBottom: '1px solid var(--border-mid)', width: '60px' }}>설비</th>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'center', borderBottom: '1px solid var(--border-mid)' }}>수준</th>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'center', borderBottom: '1px solid var(--border-mid)' }}>센서</th>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'left', borderBottom: '1px solid var(--border-mid)' }}>설명</th>
+                </tr>
+              </thead>
+              <tbody>
+                {EQ_IDS.map((id, i) => {
+                  const fc = anomalies[i]?.predicted_failure_code
+                  const info = fc ? FAULT_SENSOR_MAP[fc] : null
+                  const levelColor = info ? (info.level === '위험' ? 'var(--red5)' : 'var(--yellow5)') : 'var(--green5)'
+                  return (
+                    <tr key={id} style={{ background: info ? (info.level === '위험' ? 'rgba(248,113,113,0.04)' : 'rgba(251,191,36,0.03)') : 'transparent', borderBottom: '1px solid var(--border-subtle)' }}>
+                      <td style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--gray5)', padding: '6px 8px' }}>{id}</td>
+                      <td style={{ fontSize: '9px', fontFamily: sans, fontWeight: 500, color: levelColor, padding: '6px 8px', textAlign: 'center' }}>{info?.level ?? '정상'}</td>
+                      <td style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray4)', padding: '6px 8px', textAlign: 'center' }}>{info?.sensor ?? '—'}</td>
+                      <td style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray4)', padding: '6px 8px', lineHeight: '1.4' }}>{info?.desc ?? '이상 없음'}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
 
         {/* 예지보전 이력 */}
-        <div style={DETAIL_CARD_PM}>
+        <div style={{ ...DETAIL_CARD_PM, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
           <PanelHeader title="예지보전 이력" />
           <div className="px-3 py-2">
             {[
@@ -740,6 +774,7 @@ const TABS = [
 ]
 
 function MonitorTab({ tab, active, onClick }: { tab: typeof TABS[0]; active: boolean; onClick: () => void }) {
+  const isPredictive = tab.id === '__predictive__'
   return (
     <button
       onClick={onClick}
@@ -748,10 +783,16 @@ function MonitorTab({ tab, active, onClick }: { tab: typeof TABS[0]; active: boo
         fontSize: '11px',
         fontWeight: active ? 700 : 500,
         fontFamily: sans,
-        color: active ? 'var(--gray5)' : 'var(--gray3)',
-        background: active ? 'var(--dg2)' : 'var(--dg3)',
-        border: '1px solid var(--border-mid)',
-        borderBottom: active ? '1px solid var(--dg2)' : '1px solid var(--border-mid)',
+        color: active
+          ? (isPredictive ? '#1c2a3a' : 'var(--gray5)')
+          : (isPredictive ? 'var(--yellow5)' : 'var(--gray3)'),
+        background: active
+          ? (isPredictive ? 'rgba(251,191,36,0.7)' : 'var(--dg2)')
+          : (isPredictive ? 'rgba(251,191,36,0.08)' : 'var(--dg3)'),
+        border: isPredictive && active
+          ? '1px solid rgba(251,191,36,0.7)'
+          : '1px solid var(--border-mid)',
+        borderBottom: active ? (isPredictive ? '1px solid var(--dg2)' : '1px solid var(--dg2)') : '1px solid var(--border-mid)',
         borderRadius: '4px 4px 0 0',
         cursor: 'pointer',
         transition: 'all 0.15s',
