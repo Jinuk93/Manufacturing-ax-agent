@@ -252,19 +252,6 @@ Equipment ──[HAS_SENSOR]──→ Sensor ──[DETECTS]──→ FailureCod
 
 </div>
 
-### ADR (Architecture Decision Records)
-
-| ADR | 결정 | 근거 |
-|:---:|:----:|:----:|
-| [ADR-000](docs/adr/000-template.md) | CNC 단일 도메인 | 다중 도메인 조인 키 충돌 + LLM 환각 방지 |
-| [ADR-001](docs/adr/000-template.md) | Forecasting 방식 | 합성 RUL 신뢰성 부족 |
-| [ADR-002](docs/adr/000-template.md) | MES/ERP 합성 데이터 | 공개 데이터셋 없음 |
-| [ADR-003](docs/adr/000-template.md) | PostgreSQL + Neo4j (2 DB) | 1인 개발 관리 가능 범위 |
-| [ADR-004](docs/adr/000-template.md) | 5초 폴링 | MVP 복잡도 최소화 |
-| [ADR-005](docs/adr/000-template.md) | 대시보드 MVP 앞당김 | 시각적 검증 필요 |
-| [ADR-006](docs/adr/adr-006-frontend-stack.md) | React 18 + Vite SPA | SSR 불필요 |
-| [ADR-007](docs/adr/adr-007-f2-forecasting-model.md) | 1D-CNN + 가중 융합 | 짧은 시퀀스에 CNN 적합 |
-
 ---
 
 ## Quick Start
