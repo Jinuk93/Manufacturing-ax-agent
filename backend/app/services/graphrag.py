@@ -10,7 +10,7 @@ from typing import Optional
 
 from neo4j import GraphDatabase
 
-from app.services.db import get_connection
+from app.services.db import get_connection, release_connection
 from app.config import settings
 from app.models.schemas import (
     GraphRAGResponse,
@@ -43,17 +43,10 @@ def _get_embed_model():
     global _embed_model
     if _embed_model is None:
         from sentence_transformers import SentenceTransformer
-        _embed_model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+        _embed_model = SentenceTransformer(f"sentence-transformers/{settings.EMBED_MODEL}")
         logger.info("SentenceTransformer 모델 로드 완료 (384차원)")
     return _embed_model
 
-
-def _placeholder():
-    """이전 호환 — 사용하지 않음. 향후 삭제"""
-    return GraphDatabase.driver(
-        settings.NEO4J_URI,
-        auth=(settings.NEO4J_USER, settings.NEO4J_PASSWORD),
-    )
 
 
 def search_graphrag(
@@ -80,7 +73,7 @@ def search_graphrag(
             documents_neo = []
             maintenance = _pg_fallback_maintenance(conn, failure_code, equipment_id)
         finally:
-            conn.close()
+            release_connection(conn)
 
     # 2단계: pgvector 의미 검색 (Neo4j에서 찾은 매뉴얼 범위 내에서)
     try:
@@ -250,7 +243,7 @@ def _pgvector_search_documents(
         return documents
 
     finally:
-        conn.close()
+        release_connection(conn)
 
 
 # ============================================

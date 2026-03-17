@@ -23,13 +23,15 @@ class Settings(BaseSettings):
     MODEL_TYPE: str = "isolation_forest"
     IF_CONTAMINATION: float = 0.1           # IF 이상 비율 추정
     IF_N_ESTIMATORS: int = 200              # IF 트리 수
-    SPINDLE_CURRENT_RATIO: float = 1.3      # 고장분류: S1 전류 비율
-    SPINDLE_FEEDRATE_MIN: float = 15.0      # 고장분류: 고속 기준
-    TOOL_WEAR_RATIO: float = 0.7            # 고장분류: X1 전류 비율
-    CLAMP_POSITION_THRESHOLD: float = 0.5   # 고장분류: 위치 편차 (mm)
+
+    # F2 고장코드 분류 임계치
+    SPINDLE_CURRENT_RATIO: float = 1.3      # S1 전류 median 대비 비율
+    SPINDLE_FEEDRATE_MIN: float = 15.0      # 고속 기준 feedrate
+    TOOL_WEAR_RATIO: float = 0.7            # X1 전류 median 대비 비율
+    CLAMP_POSITION_THRESHOLD: float = 0.5   # 위치 편차 임계치 (mm)
 
     # F4 설정
-    HYBRID_ALPHA: float = 0.5
+    HYBRID_ALPHA: float = 0.5               # BM25 vs vector 비중
     TOP_K_DOCS: int = 5
     MAX_GRAPH_HOPS: int = 3
     EMBED_MODEL: str = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
@@ -41,8 +43,8 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "openai"
     OPENAI_MODEL: str = "gpt-4o-mini"
     OPENAI_API_KEY: str = ""
-    LLM_MAX_RETRIES: int = 2
-    LLM_TIMEOUT: int = 30
+    LLM_MAX_RETRIES: int = 2               # 재시도 횟수
+    LLM_TIMEOUT: int = 30                  # 타임아웃 (초)
 
     # CORS
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:5174"

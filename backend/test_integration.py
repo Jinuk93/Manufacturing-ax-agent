@@ -9,6 +9,7 @@
 """
 import sys
 import json
+import asyncio
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -81,11 +82,11 @@ def test_w5_coolant_scenario():
 
     # ── F5 LLM 자율 판단 ──
     logger.info("\n[F5] LLM 자율 판단")
-    f5_action = generate_action(
+    f5_action = asyncio.run(generate_action(
         f2_result=f2_result,
         f3_context=f3_context,
         f4_rag_result=f4_rag,
-    )
+    ))
     logger.info(f"  판단: {f5_action.recommendation}")
     logger.info(f"  신뢰도: {f5_action.confidence}")
     logger.info(f"  고장코드: {f5_action.predicted_failure_code}")
@@ -166,7 +167,7 @@ def test_spindle_overheat_scenario():
     )
     logger.info(f"[F4] 부품={[p.part_id for p in f4_rag.related_parts]}, 매뉴얼={[d.manual_id for d in f4_rag.related_documents]}")
 
-    f5_action = generate_action(f2_result, f3_context, f4_rag)
+    f5_action = asyncio.run(generate_action(f2_result, f3_context, f4_rag))
     logger.info(f"[F5] 판단: {f5_action.recommendation} (confidence={f5_action.confidence})")
     logger.info(f"     근거: {f5_action.reasoning[:200]}...")
 

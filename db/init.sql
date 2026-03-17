@@ -276,6 +276,27 @@ CREATE INDEX idx_doc_embedding ON document_embeddings
   USING hnsw (embedding vector_cosine_ops);
 
 -- ============================================
+-- 5. LLM 조치 리포트 저장 (F5 결과)
+-- ============================================
+
+CREATE TABLE llm_action_reports (
+  id              SERIAL        PRIMARY KEY,
+  equipment_id    VARCHAR(7)    NOT NULL,
+  timestamp       TIMESTAMPTZ   NOT NULL,
+  recommendation  VARCHAR(10)   NOT NULL,
+  confidence      FLOAT8        NOT NULL,
+  reasoning       TEXT,
+  action_steps    TEXT,          -- JSON 배열 문자열
+  parts_needed    TEXT,          -- JSON 배열 문자열
+  predicted_failure_code VARCHAR(30),
+  estimated_downtime_min INT,
+  created_at      TIMESTAMPTZ   DEFAULT NOW()
+);
+
+CREATE INDEX idx_action_equipment ON llm_action_reports(equipment_id);
+CREATE INDEX idx_action_timestamp ON llm_action_reports(timestamp DESC);
+
+-- ============================================
 -- 완료 메시지
 -- ============================================
 DO $$

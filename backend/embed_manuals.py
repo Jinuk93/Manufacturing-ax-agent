@@ -21,7 +21,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from app.services.db import get_connection
+from app.services.db import get_connection, release_connection
 
 logging.basicConfig(
     level=logging.INFO,
@@ -116,7 +116,7 @@ def insert_embeddings(chunks: list[dict], embeddings: np.ndarray):
         conn.commit()
         logger.info(f"INSERT 완료: {len(chunks)}청크")
     finally:
-        conn.close()
+        release_connection(conn)
 
 
 def verify():
@@ -159,7 +159,7 @@ def verify():
                 logger.info(f"  {row[0]} (sim={row[2]:.3f}): {row[1]}")
 
     finally:
-        conn.close()
+        release_connection(conn)
 
 
 def main():

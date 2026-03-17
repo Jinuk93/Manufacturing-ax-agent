@@ -16,7 +16,7 @@ except ImportError:
 from app.config import settings
 from app.models.schemas import ChatResponse
 from app.services.graphrag import _get_embed_model
-from app.services.db import get_connection
+from app.services.db import get_connection, release_connection
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ def _search_relevant_docs(query: str, top_k: int = 3) -> tuple[list[dict], list[
                 """, (vec_str, vec_str, top_k))
                 rows = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
 
         docs = [
             {"manual_id": r[0], "title": r[1], "content": r[2], "similarity": float(r[3])}

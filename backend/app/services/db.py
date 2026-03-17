@@ -23,7 +23,7 @@ def _get_pool():
 
 
 def get_connection():
-    """커넥션 풀에서 연결 반환 (사용 후 반드시 close 호출)"""
+    """커넥션 풀에서 연결 반환 (사용 후 반드시 release_connection() 호출)"""
     return _get_pool().getconn()
 
 
