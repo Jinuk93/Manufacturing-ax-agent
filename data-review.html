@@ -1119,17 +1119,46 @@
 
     <div class="fn-detail">
       <div class="fn-question"><span class="fn-num">F2</span> 이상탐지 + 미래 예측</div>
-      <p><strong>왜 필요한가:</strong> 센서 42개의 숫자를 사람이 매번 해석할 수 없습니다. <strong>기계가 자동으로 "이건 정상이 아니다"를 판단</strong>해야 합니다.</p>
-      <p>이상탐지는 크게 두 가지 접근이 있습니다. <strong>지도 학습</strong>(정상/이상 라벨이 필요)과 <strong>비지도 학습</strong>(라벨 없이 "평소와 다른 패턴"을 찾음). 우리 데이터에는 센서별 이상/정상 라벨이 없으므로 <strong>비지도 학습</strong>을 사용합니다. "정상일 때의 패턴을 학습하고, 거기서 벗어나면 이상"으로 판단하는 방식입니다.</p>
-      <h4 style="color:#f59e0b;margin-top:16px;">동작 원리</h4>
+      <p><strong>왜 필요한가:</strong> 센서 42개의 숫자를 사람이 매번 해석할 수 없습니다. <strong>기계가 자동으로 "이건 정상이 아니다"를 판단</strong>해야 합니다. 여기에 한 단계 더 나아가, <strong>"앞으로 이상해질 것인가"</strong>도 예측해야 진정한 예지보전이 됩니다.</p>
+      <p>F2는 <strong>두 가지 모델</strong>을 병행합니다:</p>
+      <ul style="font-size:14px;line-height:2;">
+        <li><strong>Isolation Forest</strong>(이상탐지) &mdash; "지금 이상한가?" &rarr; 현재 시점 판단</li>
+        <li><strong>1D-CNN</strong>(시계열 예측, ADR-007) &mdash; "30초 뒤에 고장날까?" &rarr; 미래 위험 예측</li>
+      </ul>
+      <h4 style="color:#f59e0b;margin-top:16px;">1단계: 이상탐지 (Isolation Forest)</h4>
       <ol style="font-size:13px;padding-left:20px;line-height:2;">
-        <li>F1이 준비한 윈도우 데이터를 <strong>이상탐지 모델</strong>에 넣음</li>
-        <li>모델 후보: <strong>Isolation Forest</strong>(빠르고 간단) vs <strong>Autoencoder</strong>(복잡한 패턴)<br><span style="color:#888;">Phase 3에서 둘 다 실험하고 성능 비교 후 선택</span></li>
-        <li><strong>이상 점수</strong>(anomaly_score) 산출 &mdash; 0(완전 정상) ~ 1(확실한 이상)</li>
-        <li>임계치 0.5 넘으면 <code>is_anomaly = true</code> &rarr; F3~F5 트리거 발동</li>
-        <li><strong>고장 유형 예측</strong> &mdash; 어떤 고장코드(4종)에 해당하는지 분류</li>
-        <li>결과를 <code>anomaly_scores</code> 테이블에 INSERT</li>
+        <li>F1이 준비한 윈도우 데이터(최근 6행, 30초)를 <strong>16개 피처</strong>로 변환</li>
+        <li><strong>Isolation Forest</strong> 모델이 "정상 패턴에서 얼마나 벗어나 있는지" 판단</li>
+        <li><strong>IF 점수</strong>(if_score) 산출 &mdash; 0(정상) ~ 1(이상)</li>
+        <li><strong>고장 유형 분류</strong> &mdash; 규칙 기반으로 4종 고장코드 중 하나 배정<br>
+          <span style="color:#888;">S1 전류 &uarr; + 고속 &rarr; 과열 / X1 전류 &darr; &rarr; 마모 / 위치 편차 &rarr; 클램프 / 기타 &rarr; 냉각</span></li>
       </ol>
+      <h4 style="color:#f59e0b;margin-top:16px;">2단계: 시계열 예측 (1D-CNN, ADR-007)</h4>
+      <ol style="font-size:13px;padding-left:20px;line-height:2;">
+        <li>최근 <strong>30초(300행)</strong>의 핵심 4피처를 입력<br>
+          <span style="color:#888;">X1_CurrentFeedback, S1_CurrentFeedback, S1_OutputPower, M1_CURRENT_FEEDRATE</span></li>
+        <li><strong>1D-CNN</strong>이 "다음 30초(300행)의 센서값"을 예측</li>
+        <li>정상 패턴으로 학습했으므로, <strong>비정상 데이터는 예측 오차가 급증</strong><br>
+          <span style="color:#888;">정상: 예측 잘 맞음(오차 작음) / 비정상: 예측 실패(오차 큼) = "예측 오차 = 이상 점수"</span></li>
+        <li><strong>forecast_score</strong> 산출 &mdash; 0(정상) ~ 1(고위험)</li>
+      </ol>
+      <h4 style="color:#f59e0b;margin-top:16px;">3단계: 합산 (ADR-007 가중 융합)</h4>
+      <ol style="font-size:13px;padding-left:20px;line-height:2;">
+        <li><code>final_score = 0.6 &times; if_score + 0.4 &times; forecast_score</code></li>
+        <li>final_score &ge; 0.5 &rarr; <code>is_anomaly = true</code> &rarr; F3~F5 트리거 발동</li>
+        <li>결과를 <code>anomaly_scores</code> 테이블에 INSERT (if_score, forecast_score 모두 저장)</li>
+      </ol>
+      <h4 style="color:#f59e0b;margin-top:16px;">실제 성능 (학습 결과)</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:4px;">Isolation Forest (현재 시점)</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">unworn 평균: 0.233 / worn 평균: 0.284<br><strong>분리도: 0.051</strong></p>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
+          <p style="font-size:13px;font-weight:700;color:#f59e0b;margin-bottom:4px;">1D-CNN Forecasting (미래 예측)</p>
+          <p style="font-size:13px;color:#bbb;margin:0;">unworn 평균: 0.242 / worn 평균: 0.626<br><strong>분리도: 0.384</strong> (IF의 7.5배)</p>
+        </div>
+      </div>
       <h4 style="color:#f59e0b;margin-top:16px;">Phase 1 EDA에서 발견한 핵심 패턴</h4>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:12px 16px;">
@@ -1151,8 +1180,8 @@
       </div>
       <div style="margin-top:12px;">
         <span class="fn-data-tag input">입력 : F1의 윈도우 데이터</span>
-        <span class="fn-data-tag db">DB : anomaly_scores (7컬럼 &mdash; 점수, 이상여부, 예측고장, 신뢰도, 모델버전 등)</span>
-        <span class="fn-data-tag output">출력 : 이상점수 + is_anomaly + 예측 고장코드 + 신뢰도</span>
+        <span class="fn-data-tag db">DB : anomaly_scores (8컬럼 &mdash; anomaly_score, forecast_score, is_anomaly, 예측고장, 신뢰도, 모델버전 등)</span>
+        <span class="fn-data-tag output">출력 : 합산 이상점수 + forecast_score + is_anomaly + 예측 고장코드</span>
       </div>
       <p class="fn-sub"><strong>이게 없으면:</strong> 센서 데이터만 쌓이고 아무도 안 봅니다. "알람만 울리는 시스템"조차 못 됩니다.</p>
     </div>
@@ -3884,7 +3913,7 @@ const phaseDetails={
       {text:'통합 테스트',detail:'test_integration.py — W5 + Spindle 시나리오 assert 검증'}
     ],
     handoff:[
-      {text:'F2 Forecasting 미구현',detail:'이상탐지는 완료, 시계열 예측(LSTM "30분 뒤 고장날까?")은 미구현 — PRD 100% 달성에 필요'},
+      {text:'F2 Forecasting 구현 완료',detail:'1D-CNN 시계열 예측 (ADR-007). 분리도 0.384, IF와 가중 합산(0.4). 개선 과제: Autoencoder 비교, 저속 마모 감지'},
       {text:'F2 모델 개선',detail:'분리도 0.051 → Autoencoder 비교, 추가 피처, 공정별 분리 학습'},
       {text:'하이브리드 검색 가중치',detail:'Neo4j + pgvector 점수 결합 최적화 (open-items #10)'}
     ],
