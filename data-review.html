@@ -3918,7 +3918,7 @@ const phaseDetails={
     ],
     outputs:[
       {text:'ontology-design.md',detail:'Neo4j 120노드 / 337관계 / 10종 관계 전부 완성. PG↔Neo4j 역할 분담, R7/R8 예외 명시'},
-      {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores 7컬럼, MES 9컬럼, 참조 마스터 4종'},
+      {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores 9컬럼(+if_score, forecast_score), MES 9컬럼, 참조 마스터 4종'},
       {text:'pipeline-design.md',detail:'F1→F2 매 5초 폴링, F3~F5 이벤트 트리거. 비동기 메인 루프 + process_alarm 분리'},
       {text:'api-design.md',detail:'14 엔드포인트 (F1~F5 POST 6 + F6 GET 6 + chat 1 + health 1). 챗봇 엔드포인트 추가'},
       {text:'ui-design.md',detail:'F6 대시보드 와이어프레임, 컴포넌트 8개, 폴링 전략, 색상 시스템. React 18 + Vite 확정 (ADR-006)'},
@@ -3963,7 +3963,7 @@ const phaseDetails={
       {text:'통합 테스트',detail:'test_integration.py — W5 + Spindle 시나리오 assert 검증'}
     ],
     handoff:[
-      {text:'F2 Forecasting 구현 완료',detail:'1D-CNN 시계열 예측 (ADR-007). 분리도 0.384, IF와 가중 합산(0.4). 개선 과제: Autoencoder 비교, 저속 마모 감지'},
+      {text:'F2 Forecasting 개선',detail:'1D-CNN 구현 완료 (ADR-007, 분리도 0.384). 남은 과제: Autoencoder 비교, 저속 마모(exp13) 감지 개선, FORECAST_WEIGHT 최적화'},
       {text:'F2 모델 개선',detail:'분리도 0.051 → Autoencoder 비교, 추가 피처, 공정별 분리 학습'},
       {text:'하이브리드 검색 가중치',detail:'Neo4j + pgvector 점수 결합 최적화 (open-items #10)'}
     ],
