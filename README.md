@@ -28,6 +28,19 @@
 
 <br/>
 
+### 프로젝트 리뷰 대시보드
+
+Phase 0~3 전체 진행 과정, EDA, 온톨로지, 파이프라인 설계를 인터랙티브하게 탐색할 수 있습니다.
+
+[![Review Dashboard](https://img.shields.io/badge/Live_Demo-프로젝트_리뷰_대시보드-00d4ff?style=for-the-badge)](https://young-shadow-e405.rlawlsdnr430.workers.dev/)
+
+<!-- 리뷰 대시보드 스크린샷 -->
+<img src="docs/assets/review-dashboard.png" alt="Project Review Dashboard" width="90%" />
+
+<br/>
+
+### 관제 대시보드 (F6)
+
 <!-- 메인 대시보드 스크린샷 -->
 <img src="docs/assets/dashboard-preview.png" alt="Manufacturing AX Agent Dashboard" width="90%" />
 
