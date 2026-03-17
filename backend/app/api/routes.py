@@ -131,7 +131,8 @@ async def anomaly_history(equipment_id: str, limit: int = 100):
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT timestamp, equipment_id, anomaly_score, is_anomaly,
-                           model_version, predicted_failure_code, confidence
+                           model_version, predicted_failure_code, confidence,
+                           if_score, forecast_score
                     FROM anomaly_scores
                     WHERE equipment_id = %s
                     ORDER BY timestamp DESC LIMIT %s
@@ -144,6 +145,7 @@ async def anomaly_history(equipment_id: str, limit: int = 100):
                 timestamp=r[0], equipment_id=r[1], anomaly_score=r[2],
                 is_anomaly=r[3], model_version=r[4],
                 predicted_failure_code=r[5], confidence=r[6],
+                if_score=r[7], forecast_score=r[8],
             ) for r in rows
         ]
         return AnomalyHistoryResponse(equipment_id=equipment_id, history=history)
@@ -203,7 +205,8 @@ async def dashboard_summary():
             for eq_id in ["CNC-001", "CNC-002", "CNC-003"]:
                 with conn.cursor() as cur:
                     cur.execute("""
-                        SELECT anomaly_score, is_anomaly, predicted_failure_code, timestamp
+                        SELECT anomaly_score, is_anomaly, predicted_failure_code, timestamp,
+                               if_score, forecast_score
                         FROM anomaly_scores
                         WHERE equipment_id = %s
                         ORDER BY timestamp DESC LIMIT 1
@@ -215,6 +218,8 @@ async def dashboard_summary():
                     equipments.append(EquipmentStatus(
                         equipment_id=eq_id, status=status, anomaly_score=score,
                         predicted_failure_code=row[2], last_updated=row[3],
+                        if_score=float(row[4]) if row[4] is not None else None,
+                        forecast_score=float(row[5]) if row[5] is not None else None,
                     ))
                 else:
                     equipments.append(EquipmentStatus(
@@ -266,7 +271,8 @@ async def anomaly_status(equipment_id: str):
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT timestamp, equipment_id, anomaly_score, is_anomaly,
-                           model_version, predicted_failure_code, confidence
+                           model_version, predicted_failure_code, confidence,
+                           if_score, forecast_score
                     FROM anomaly_scores
                     WHERE equipment_id = %s
                     ORDER BY timestamp DESC LIMIT 1
@@ -279,10 +285,11 @@ async def anomaly_status(equipment_id: str):
                 timestamp=row[0], equipment_id=row[1], anomaly_score=row[2],
                 is_anomaly=row[3], model_version=row[4],
                 predicted_failure_code=row[5], confidence=row[6],
+                if_score=row[7], forecast_score=row[8],
             )
         return AnomalyResult(
             timestamp=datetime.now(), equipment_id=equipment_id,
-            anomaly_score=0.0, is_anomaly=False, model_version="IF-v1",
+            anomaly_score=0.0, is_anomaly=False, model_version="IF+CNN-v1",
         )
     except Exception as e:
         logger.error(f"F6 anomaly 실패: {e}", exc_info=True)

@@ -198,12 +198,13 @@ async def run_main_loop(data_dir: str = None):
                     cur.execute("""
                         INSERT INTO anomaly_scores
                         (timestamp, equipment_id, anomaly_score, is_anomaly, model_version,
-                         predicted_failure_code, confidence, forecast_score)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                         predicted_failure_code, confidence, if_score, forecast_score)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT (timestamp, equipment_id) DO UPDATE
                         SET anomaly_score = EXCLUDED.anomaly_score,
+                            if_score = EXCLUDED.if_score,
                             forecast_score = EXCLUDED.forecast_score
-                    """, (ts, eq_id, score, is_anomaly, "IF+CNN-v1", fc, score, forecast_score_val))
+                    """, (ts, eq_id, score, is_anomaly, "IF+CNN-v1", fc, score, if_score, forecast_score_val))
                 conn.commit()
             finally:
                 release_connection(conn)

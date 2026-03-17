@@ -29,11 +29,13 @@ class AnomalyDetectRequest(BaseModel):
 class AnomalyResult(BaseModel):
     timestamp: datetime
     equipment_id: str
-    anomaly_score: float
+    anomaly_score: float               # 합산 점수 (IF × 0.6 + Forecast × 0.4)
     is_anomaly: bool
     predicted_failure_code: Optional[str] = None
     confidence: Optional[float] = None
     model_version: Optional[str] = None
+    if_score: Optional[float] = None          # Isolation Forest 단독 (ADR-007)
+    forecast_score: Optional[float] = None    # 1D-CNN 예측 점수 (ADR-007)
 
 
 class AnomalyDetectResponse(BaseModel):
@@ -166,9 +168,11 @@ class LLMActionResponse(BaseModel):
 class EquipmentStatus(BaseModel):
     equipment_id: str
     status: str  # normal / warning / critical
-    anomaly_score: float
+    anomaly_score: float                          # 합산 점수
     predicted_failure_code: Optional[str] = None
     last_updated: datetime
+    if_score: Optional[float] = None              # IF 단독 (ADR-007)
+    forecast_score: Optional[float] = None        # 1D-CNN 예측 (ADR-007)
 
 
 class DashboardSummary(BaseModel):
