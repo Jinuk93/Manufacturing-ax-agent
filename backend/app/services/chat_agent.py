@@ -187,6 +187,36 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
                             f"{row[5]}분, {row[6]}"
                         )
 
+                # 센서 원본값 조회
+                if any(kw in query_lower for kw in [
+                    "센서", "sensor", "전류", "current", "전압", "voltage",
+                    "전력", "power", "속도", "velocity", "위치", "position",
+                    "가속도", "acceleration", "feedrate", "피드", "값",
+                    "x1", "y1", "z1", "s1", "m1"
+                ]):
+                    eq_ids = [equipment_id] if equipment_id else ["CNC-001", "CNC-002", "CNC-003"]
+                    for eq in eq_ids:
+                        cur.execute("""
+                            SELECT timestamp,
+                                   x1_current_feedback, y1_current_feedback,
+                                   s1_current_feedback, s1_output_power,
+                                   x1_actual_position, x1_command_position,
+                                   m1_current_feedrate, machining_process
+                            FROM sensor_readings
+                            WHERE equipment_id = %s
+                            ORDER BY timestamp DESC LIMIT 1
+                        """, (eq,))
+                        row = cur.fetchone()
+                        if row:
+                            results.append(
+                                f"  {eq} 최신 센서 (시각={row[0]}):\n"
+                                f"    X1전류={row[1]:.4f}, Y1전류={row[2]:.4f}, "
+                                f"S1전류={row[3]:.4f}\n"
+                                f"    S1출력={row[4]:.4f}, X1위치={row[5]:.2f}, "
+                                f"X1명령위치={row[6]:.2f}\n"
+                                f"    Feedrate={row[7]:.1f}, 공정={row[8]}"
+                            )
+
         finally:
             release_connection(conn)
 
@@ -204,10 +234,16 @@ def _query_neo4j_context(query: str, equipment_id: str | None) -> tuple[str | No
     doc_refs = []
     query_lower = query.lower()
 
-    # 고장코드 추출
+    # 고장코드 추출 (영문 코드 + 한국어 키워드 모두 지원)
+    _FC_KEYWORDS = {
+        "TOOL_WEAR_001": ["tool", "wear", "마모", "공구", "엔드밀", "endmill"],
+        "SPINDLE_OVERHEAT_001": ["spindle", "overheat", "과열", "스핀들", "베어링", "bearing"],
+        "CLAMP_PRESSURE_001": ["clamp", "pressure", "클램프", "고정", "압력"],
+        "COOLANT_LOW_001": ["coolant", "냉각", "절삭유", "냉각수", "low"],
+    }
     failure_codes = []
-    for fc in ["TOOL_WEAR_001", "SPINDLE_OVERHEAT_001", "CLAMP_PRESSURE_001", "COOLANT_LOW_001"]:
-        if fc.lower() in query_lower or fc.split("_")[0].lower() in query_lower:
+    for fc, keywords in _FC_KEYWORDS.items():
+        if fc.lower() in query_lower or any(kw in query_lower for kw in keywords):
             failure_codes.append(fc)
 
     try:
