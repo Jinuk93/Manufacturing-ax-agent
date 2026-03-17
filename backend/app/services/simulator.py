@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from app.services.db import get_connection, insert_sensor_readings, insert_it_data
+from app.services.db import get_connection, release_connection, insert_sensor_readings, insert_it_data
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +169,7 @@ def batch_load(data_dir: str):
         logger.info("=== 배치 로드 전체 완료 ===")
 
     finally:
-        conn.close()
+        release_connection(conn)
 
 
 def stream_load(data_dir: str, poll_interval: int = 5):
@@ -208,4 +208,4 @@ def stream_load(data_dir: str, poll_interval: int = 5):
     except KeyboardInterrupt:
         logger.info(f"\n스트림 중단 (Ctrl+C). {i+1}행까지 완료.")
     finally:
-        conn.close()
+        release_connection(conn)

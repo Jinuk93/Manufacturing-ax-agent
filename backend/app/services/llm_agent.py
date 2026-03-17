@@ -347,7 +347,7 @@ async def _call_llm_api(
     f2: AnomalyResult,
     f3: ITOTSyncResponse,
     f4: GraphRAGResponse,
-    max_retries: int = 2,
+    max_retries: int = None,
 ) -> LLMActionResponse:
     """OpenAI GPT-4o-mini API 호출
 
@@ -355,10 +355,13 @@ async def _call_llm_api(
     - E4 타임아웃/429: 최대 max_retries회 재시도
     - E6 환각: failure_code/part_id 검증 → 실패 시 재시도
     """
+    if max_retries is None:
+        max_retries = settings.LLM_MAX_RETRIES
+
     if openai is None:
         raise ImportError("openai 패키지가 설치되지 않았습니다. pip install openai")
 
-    client = openai.OpenAI(api_key=settings.OPENAI_API_KEY)  # pydantic-settings에서 로드
+    client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)  # 비동기 클라이언트
 
     user_prompt = _build_user_prompt(f2, f3, f4)
 
@@ -366,15 +369,15 @@ async def _call_llm_api(
         try:
             logger.info(f"F5 LLM 호출 (시도 {attempt + 1}/{max_retries + 1})")
 
-            response = client.chat.completions.create(
-                model=settings.OPENAI_MODEL,  # #1: config에서 모델명 가져옴
+            response = await client.chat.completions.create(
+                model=settings.OPENAI_MODEL,
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=settings.TEMPERATURE,
                 response_format={"type": "json_object"},
-                timeout=30,
+                timeout=settings.LLM_TIMEOUT,
             )
 
             raw_text = response.choices[0].message.content

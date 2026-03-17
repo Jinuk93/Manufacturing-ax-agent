@@ -15,7 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from neo4j import GraphDatabase
-from app.services.db import get_connection
+from app.services.db import get_connection, release_connection
 from app.config import settings
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
@@ -34,7 +34,7 @@ def create_sensor_nodes(driver):
             cur.execute("SELECT sensor_id, sensor_type, axis, unit FROM sensors ORDER BY sensor_id")
             sensors = cur.fetchall()
     finally:
-        conn.close()
+        release_connection(conn)
 
     # 센서 → 설비 매핑 (모든 센서는 3대 모두에 달려있음)
     equipment_ids = ["CNC-001", "CNC-002", "CNC-003"]
@@ -79,7 +79,7 @@ def create_experiences_relations(driver):
             """)
             rows = cur.fetchall()
     finally:
-        conn.close()
+        release_connection(conn)
 
     with driver.session() as session:
         # 기존 EXPERIENCES 관계 삭제 후 재생성 (수동 매핑 오류 정리)
@@ -105,7 +105,7 @@ def create_workorder_nodes(driver):
             )
             work_orders = cur.fetchall()
     finally:
-        conn.close()
+        release_connection(conn)
 
     with driver.session() as session:
         for wo_id, eq_id, product_type, priority, status in work_orders:
@@ -136,7 +136,7 @@ def create_maintenance_nodes(driver):
             )
             events = cur.fetchall()
     finally:
-        conn.close()
+        release_connection(conn)
 
     with driver.session() as session:
         r7_count = 0

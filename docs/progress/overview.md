@@ -50,7 +50,7 @@
 
 ## Open Items
 
-현재 **4개 Open** / **8개 Decided** (#7, #8, #10, #12 Open) → [open-items.md](../0-project-definition/open-items.md)
+현재 **8건 Decided** / **1건 Partial** (#10) / **3건 Open** (#7, #8, #12) → [open-items.md](../0-project-definition/open-items.md)
 
 ---
 
@@ -62,9 +62,12 @@ docs/
 │   ├── overview.md                #   전체 현황 (이 문서)
 │   ├── adr-summary.md             #   ADR 의사결정 요약 표
 │   ├── constraints.md             #   Key Constraints
+│   ├── phase3-late-report.md      #   Phase 3 후반 작업 보고서
 │   └── phases/                    #   Phase별 날짜별 로그
 │       ├── phase-0.md             #     Phase 0 진행 기록
-│       └── phase-1.md             #     Phase 1 진행 기록
+│       ├── phase-1.md             #     Phase 1 진행 기록
+│       ├── phase-2.md             #     Phase 2 진행 기록
+│       └── phase-3.md             #     Phase 3 진행 기록
 ├── 0-project-definition/          # Phase 0: 프로젝트 정의
 │   ├── prd-v1.0.md                #   PRD (제품 요구사항 정의서)
 │   ├── data-collection-strategy.md #   데이터 수집 전략 기준 문서
@@ -78,6 +81,13 @@ docs/
 │   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
 │   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
 ├── 2-architecture/                # Phase 2: 아키텍처 설계
+│   ├── ontology-design.md         #   온톨로지 설계 (7종 노드, 10종 관계)
+│   ├── db-schema-design.md        #   DB 스키마 (11테이블)
+│   ├── pipeline-design.md         #   F1~F6 파이프라인 설계
+│   ├── api-design.md              #   FastAPI 14개 엔드포인트
+│   ├── ui-design.md               #   F6 대시보드 UI 설계
+│   ├── ui-ux-design.md            #   3-Pane UX 설계 (Palantir 스타일)
+│   └── f2-anomaly-detection-design.md  #   F2 이상탐지 상세 설계
 └── adr/                           # ADR 템플릿 및 결정 기록
     ├── 000-template.md
     └── adr-006-frontend-stack.md

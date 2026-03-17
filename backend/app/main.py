@@ -31,7 +31,7 @@ app.include_router(router)
 async def root():
     return {
         "name": "Manufacturing AX Agent",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "docs": "/docs",
-        "endpoints": 13,
+        "endpoints": 14,
     }

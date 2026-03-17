@@ -13,7 +13,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 
-from app.services.db import get_connection
+from app.services.db import get_connection, release_connection
 from app.models.schemas import (
     ITOTSyncResponse,
     WorkOrderInfo,
@@ -67,7 +67,7 @@ def sync_itot_context(
         )
 
     finally:
-        conn.close()
+        release_connection(conn)
 
 
 def _query_work_order(

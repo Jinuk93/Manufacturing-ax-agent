@@ -17,7 +17,7 @@ from pathlib import Path
 import pandas as pd
 
 from app.config import settings
-from app.services.db import get_connection, insert_sensor_readings
+from app.services.db import get_connection, release_connection, insert_sensor_readings
 from app.services.anomaly_detector import AnomalyDetector
 from app.services.itot_sync import sync_itot_context
 from app.services.graphrag import search_graphrag
@@ -78,6 +78,27 @@ async def process_alarm(
         logger.info(f"  F5: {f5.recommendation} (confidence={f5.confidence})")
         logger.info(f"  조치: {f5.action_steps[:2]}...")
 
+        # F5 결과 DB 저장
+        import json as _json
+        conn = get_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO llm_action_reports
+                    (equipment_id, timestamp, recommendation, confidence, reasoning,
+                     action_steps, parts_needed, predicted_failure_code, estimated_downtime_min)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    equipment_id, f2.timestamp, f5.recommendation, f5.confidence,
+                    f5.reasoning, _json.dumps(f5.action_steps, ensure_ascii=False),
+                    _json.dumps([p.dict() for p in f5.parts_needed], ensure_ascii=False) if f5.parts_needed else "[]",
+                    f5.predicted_failure_code, f5.estimated_downtime_min,
+                ))
+            conn.commit()
+            logger.info(f"  F5 결과 DB 저장 완료")
+        finally:
+            release_connection(conn)
+
     except Exception as e:
         logger.error(f"[ALARM] {equipment_id} 처리 실패: {e}", exc_info=True)
 
@@ -111,7 +132,7 @@ async def run_main_loop(data_dir: str = None):
         try:
             insert_sensor_readings(conn, [row])
         finally:
-            conn.close()
+            release_connection(conn)
 
         # F2: 이상탐지 (최근 6행 윈도우)
         conn = get_connection()
@@ -125,7 +146,7 @@ async def run_main_loop(data_dir: str = None):
                 columns = [desc[0] for desc in cur.description]
                 window_rows = cur.fetchall()
         finally:
-            conn.close()
+            release_connection(conn)
 
         if len(window_rows) >= 2:
             window_df = pd.DataFrame(window_rows, columns=columns)
@@ -146,7 +167,7 @@ async def run_main_loop(data_dir: str = None):
                     """, (ts, eq_id, score, is_anomaly, "IF-v1", fc, score))
                 conn.commit()
             finally:
-                conn.close()
+                release_connection(conn)
 
             # 이상 감지 시 F3→F4→F5 비동기 트리거
             if is_anomaly:

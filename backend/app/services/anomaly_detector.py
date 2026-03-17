@@ -264,19 +264,18 @@ class AnomalyDetector:
 
             # 규칙 1: S1 전류 높고 고속 → 스핀들 과열
             if (s1_current is not None and feedrate is not None
-                    and s1_current.iloc[i] > s1_current.median() * 1.3
-                    and feedrate.iloc[i] >= 15):
+                    and s1_current.iloc[i] > s1_current.median() * settings.SPINDLE_CURRENT_RATIO
+                    and feedrate.iloc[i] >= settings.SPINDLE_FEEDRATE_MIN):
                 codes[i] = "SPINDLE_OVERHEAT_001"
 
             # 규칙 2: X1 전류 낮음 → 공구 마모
             elif (x1_current is not None
-                    and x1_current.iloc[i] < x1_current.median() * 0.7):
+                    and x1_current.iloc[i] < x1_current.median() * settings.TOOL_WEAR_RATIO):
                 codes[i] = "TOOL_WEAR_001"
 
             # 규칙 3: 위치 편차 급변 → 클램프 압력 이상
-            # EDA: exp04(clamp=2.5), exp05(clamp=3.0)이 unworn인데 중단
             elif (x1_actual_pos is not None and x1_command_pos is not None
-                    and abs(x1_actual_pos.iloc[i] - x1_command_pos.iloc[i]) > 0.5):
+                    and abs(x1_actual_pos.iloc[i] - x1_command_pos.iloc[i]) > settings.CLAMP_POSITION_THRESHOLD):
                 codes[i] = "CLAMP_PRESSURE_001"
 
             # 규칙 4: 기본 → 냉각수 부족 (간접 감지)
