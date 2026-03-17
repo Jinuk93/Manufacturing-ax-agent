@@ -1,29 +1,38 @@
 // ============================================================
 // 대시보드 전역 상태 — Zustand
-// 선택된 설비, 알람 확인 여부, 챗봇 열림/닫힘
 // ============================================================
 
 import { create } from 'zustand'
+import type { AlarmEvent } from '@/types'
 
 interface DashboardStore {
-  // 현재 선택된 설비 ID
   selectedEquipmentId: string | null
   setSelectedEquipmentId: (id: string | null) => void
 
-  // 챗봇 FAB 열림 상태
+  selectedAlarm: AlarmEvent | null
+  setSelectedAlarm: (alarm: AlarmEvent | null) => void
+
+  prevAlarmCount: number
+  setPrevAlarmCount: (count: number) => void
+
   chatOpen: boolean
   setChatOpen: (open: boolean) => void
   toggleChat: () => void
 
-  // 상단 오버레이 (작업현황 / 재고현황)
   activeOverlay: 'work' | 'inventory' | null
   setActiveOverlay: (key: 'work' | 'inventory' | null) => void
   toggleOverlay: (key: 'work' | 'inventory') => void
 }
 
-export const useDashboardStore = create<DashboardStore>((set, _get) => ({
+export const useDashboardStore = create<DashboardStore>((set) => ({
   selectedEquipmentId: null,
-  setSelectedEquipmentId: (id) => set({ selectedEquipmentId: id }),
+  setSelectedEquipmentId: (id) => set({ selectedEquipmentId: id, selectedAlarm: null }),
+
+  selectedAlarm: null,
+  setSelectedAlarm: (alarm) => set({ selectedAlarm: alarm, selectedEquipmentId: null }),
+
+  prevAlarmCount: 0,
+  setPrevAlarmCount: (count) => set({ prevAlarmCount: count }),
 
   chatOpen: false,
   setChatOpen: (open) => set({ chatOpen: open }),
