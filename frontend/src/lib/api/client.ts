@@ -3,7 +3,10 @@
 // 로컬: /api (vite proxy) | 배포: VITE_API_URL 환경변수
 // ============================================================
 
-const BASE = import.meta.env.VITE_API_URL || '/api'
+const BASE = import.meta.env.VITE_API_URL
+  || (window.location.hostname.includes('railway.app')
+    ? 'https://manufacturing-ax-agent-production.up.railway.app/api'
+    : '/api')
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
