@@ -48,63 +48,7 @@ function PanelHeader({ title, sub, live }: { title: string; sub?: string; live?:
 }
 
 // ── 설비별 미니 센서 차트 ─────────────────────────────────
-function _MiniSensorChart({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 3000, retry: false })
-  const series: SensorPoint[] = [...(data?.series ?? [])].reverse()
-  const chartData = series.map((p) => ({ ...p, t: p.timestamp.slice(11, 19) }))
-
-  return (
-    <div style={PANEL_STYLE}>
-      <PanelHeader title="실시간 센서" sub="S1 전류" live />
-      {isLoading || chartData.length === 0 ? (
-        <div className="flex items-center justify-center" style={{ height: '100px', color: 'var(--gray2)', fontSize: '10px', fontFamily: sans }}>{isLoading ? '로딩...' : '데이터 없음'}</div>
-      ) : (
-        <div className="px-1 pb-1 pt-1">
-          <ResponsiveContainer width="100%" height={90}>
-            <LineChart data={chartData} margin={{ top: 2, right: 4, bottom: 2, left: -24 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,200,255,0.04)" />
-              <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#64748b' }} interval="preserveStartEnd" />
-              <YAxis tick={{ fontSize: 7, fill: '#64748b' }} />
-              <Tooltip contentStyle={{ background: 'var(--dg1)', border: '1px solid var(--border-mid)', fontSize: '9px', color: 'var(--gray5)', fontFamily: mono, borderRadius: '2px' }} />
-              <Line type="monotone" dataKey="s1_current_feedback" stroke="var(--cyan)" dot={false} strokeWidth={1.2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ── 설비별 미니 이상추이 차트 ─────────────────────────────
-function _MiniAnomalyChart({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 3000, retry: false })
-  const chartData = [...(data?.history ?? [])].reverse().slice(-40).map((h) => ({
-    t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
-    score: Number(h.anomaly_score.toFixed(3)),
-  }))
-
-  return (
-    <div style={PANEL_STYLE}>
-      <PanelHeader title="이상 추이" live />
-      {isLoading || chartData.length === 0 ? (
-        <div className="flex items-center justify-center" style={{ height: '80px', color: 'var(--gray2)', fontSize: '10px', fontFamily: sans }}>{isLoading ? '로딩...' : '데이터 없음'}</div>
-      ) : (
-        <div className="px-1 pb-1 pt-1">
-          <ResponsiveContainer width="100%" height={70}>
-            <LineChart data={chartData} margin={{ top: 2, right: 4, bottom: 2, left: -24 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,200,255,0.04)" />
-              <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#64748b' }} interval="preserveStartEnd" />
-              <YAxis domain={[0, 1]} tick={{ fontSize: 7, fill: '#64748b' }} />
-              <ReferenceLine y={0.8} stroke="var(--red5)" strokeDasharray="3 2" strokeOpacity={0.4} />
-              <ReferenceLine y={0.6} stroke="var(--yellow5)" strokeDasharray="3 2" strokeOpacity={0.4} />
-              <Line type="monotone" dataKey="score" stroke="var(--cyan)" dot={false} strokeWidth={1.2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </div>
-  )
-}
+// (MiniSensorChart, MiniAnomalyChart 제거됨 — OverviewMonitoring에서 직접 렌더링)
 
 // ── 종합 상태 테이블 ──────────────────────────────────────
 function SummaryTable({ eqs }: { eqs: Equipment[] }) {
