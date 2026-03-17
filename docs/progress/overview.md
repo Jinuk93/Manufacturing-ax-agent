@@ -30,6 +30,7 @@
 | ADR-004 | 2026-03-08 | 실시간 처리 | Kafka/Flink vs 폴링 | 스트리밍 인프라 복잡도 과도 | **5초 폴링으로 실시간성 모사** | MVP 목적에는 5초 주기면 충분하고, 나중에 스트리밍 전환해도 파이프라인 구조는 동일 |
 | ADR-005 | 2026-03-09 | 대시보드 우선순위 | 파이프라인 완성 후 vs 조기 시각화 | 중간 검증 없이 진행하면 방향 검증 어려움 | **대시보드 MVP 앞당김** | 시각적 결과물이 있어야 파이프라인 각 단계의 출력을 즉시 검증하고 방향 수정 가능 |
 | ADR-006 | 2026-03-16 | 프론트엔드 스택 | Next.js vs React+Vite vs HTML+Plotly | SSR/SEO 불필요, 페이지 2개 SPA | **React 18 + Vite** | 내부 관제 시스템에 SSR 불필요. 페이지 2개에 Next.js 과함. React Router로 충분 |
+| ADR-007 | 2026-03-17 | F2 Forecasting 모델 | 1D-CNN vs LSTM, 4피처 vs 16피처, 점수 합산 A/B/C | 25,286행 제약 + 짧은 시퀀스(300행) | **1D-CNN + 4피처 + 가중 합산(0.4)** | 짧은 시퀀스에 CNN 적합, 4피처로 과적합 방지, 가중 합산으로 IF+Forecast 결합 |
 
 ---
 
@@ -50,7 +51,7 @@
 
 ## Open Items
 
-현재 **8건 Decided** / **1건 Partial** (#10) / **3건 Open** (#7, #8, #12) → [open-items.md](../0-project-definition/open-items.md)
+현재 **9건 Decided** / **1건 Partial** (#10) / **2건 Open** (#8, #12) → [open-items.md](../0-project-definition/open-items.md)
 
 ---
 
