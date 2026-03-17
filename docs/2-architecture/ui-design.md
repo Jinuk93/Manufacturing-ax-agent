@@ -1,6 +1,11 @@
-# F6 대시보드 UI 설계서
+# F6 대시보드 UI 설계서 (v1 — 초기 설계)
 
-> **기술 스택:** React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui + Recharts + TanStack Query + Zustand + React Router v6
+> **참고:** 이 문서는 Phase 2에서 작성한 **초기 설계(v1)**입니다.
+> 실제 구현은 **3-Pane Palantir 레이아웃(v4)**으로 변경되었습니다.
+> 최종 설계는 **[ui-ux-design.md](ui-ux-design.md)**를 참조하세요.
+> 이 문서는 설계 이력 보존을 위해 유지합니다.
+
+> **기술 스택:** React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui + Recharts + TanStack Query + Zustand
 > **대상:** F6 관제 대시보드 — CNC 3대의 실시간 상태 + LLM 조치 리포트
 > **갱신 주기:** 5초 폴링 (TanStack Query)
 > **스택 결정:** ADR-006 (2026-03-16 확정)

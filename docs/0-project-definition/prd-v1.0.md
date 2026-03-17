@@ -154,6 +154,7 @@ PRD v1.0 시점의 미결 항목입니다.
 | ADR-004 | 실시간 처리를 폴링 방식으로 대체 | Decided |
 | ADR-005 | 시각적 결과물(대시보드 MVP) 앞당김 | Decided |
 | ADR-006 | 프론트엔드 스택: React 18 + Vite SPA (Next.js 배제) | Decided |
+| ADR-007 | F2 Forecasting 모델: 1D-CNN + 4피처 + 가중 합산(0.4) | Decided |
 
 ---
 

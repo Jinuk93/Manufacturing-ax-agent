@@ -185,9 +185,9 @@ class LLMActionResponse(BaseModel):
     rag_documents: Optional[List[str]] = None   # F4 참조 문서 ID 목록
     alternatives_considered: Optional[str] = None  # "REDUCE도 고려했지만..."
     full_reasoning: Optional[str] = None        # 전체 판단 과정 (접이식 표시)
+```
 
-
-### 2.8 챗봇
+### 2.7 챗봇
 
 ```python
 class ChatRequest(BaseModel):
@@ -200,7 +200,7 @@ class ChatResponse(BaseModel):
     equipment_id: Optional[str] = None
 ```
 
-### 2.7 F6: 대시보드
+### 2.8 F6: 대시보드
 
 ```python
 class EquipmentStatus(BaseModel):
@@ -475,7 +475,7 @@ async def acknowledge_alarm(alarm_id: str):
 
 > **Phase 3 구현 예약:** DB 스키마에 `acknowledged_at` / `acknowledged_by` 컬럼 추가 필요.
 
-### 3.11 `GET /api/health`
+### 3.12 `GET /api/health`
 
 ```python
 @app.get("/api/health")
@@ -599,7 +599,7 @@ class ErrorResponse(BaseModel):
 
 | # | 질문 | 결정 | 근거 |
 |---|------|------|------|
-| 1 | 엔드포인트 12개 | **적절** | 기능별 1:1 매핑, 억지로 합치면 복잡해짐 |
+| 1 | 엔드포인트 16개 | **적절** | 기능별 1:1 매핑, 억지로 합치면 복잡해짐 |
 | 2 | F6 5개 분리 | **분리 유지** | 갱신 주기가 다름 (센서 5초 vs 작업/재고 알람 시) |
 | 3 | 직접 호출 + HTTP | **적절** | 코드 공유, 디버깅 용이 |
 | 4 | 인증 생략 | **MVP OK** | Docker 내부 네트워크, 확장 지점 주석 있음 |
@@ -610,7 +610,7 @@ class ErrorResponse(BaseModel):
 
 ### 리뷰 #1 (2026-03-15)
 
-1. **엔드포인트 12개 — OK** ✅ 확인
+1. **엔드포인트 16개 — OK** ✅ 확인
 2. **F6 분리 — OK** ✅ 확인
 3. **직접 호출 + HTTP — OK** ✅ 확인
 4. **인증 생략 — OK** ✅ 확인

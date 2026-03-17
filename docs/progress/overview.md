@@ -59,37 +59,45 @@
 
 ```
 docs/
-├── progress/                      # 프로젝트 진행 관리
-│   ├── overview.md                #   전체 현황 (이 문서)
-│   ├── adr-summary.md             #   ADR 의사결정 요약 표
-│   ├── constraints.md             #   Key Constraints
-│   ├── phase3-late-report.md      #   Phase 3 후반 작업 보고서
-│   └── phases/                    #   Phase별 날짜별 로그
-│       ├── phase-0.md             #     Phase 0 진행 기록
-│       ├── phase-1.md             #     Phase 1 진행 기록
-│       ├── phase-2.md             #     Phase 2 진행 기록
-│       └── phase-3.md             #     Phase 3 진행 기록
-├── 0-project-definition/          # Phase 0: 프로젝트 정의
-│   ├── prd-v1.0.md                #   PRD (제품 요구사항 정의서)
-│   ├── data-collection-strategy.md #   데이터 수집 전략 기준 문서
-│   ├── required-data-summary.md   #   실수집/합성/미정 데이터 요약표
-│   └── open-items.md              #   미결 사항 추적
-├── future/                        # 향후 제품화/확장 비전
-│   └── customer-onboarding-ontology-strategy.md
-├── 1-data-exploration/            # Phase 1: 데이터 탐색 (EDA)
-│   ├── README.md                  #   Phase 1 개요 및 완료 요약
-│   ├── data-gap-analysis.md       #   데이터 갭 분석 (보유 vs 필요)
-│   ├── outlier-analysis.md        #   이상치 분석 (README 경고 전수 조사)
-│   └── it-data-synthesis-schema.md #   IT 데이터 합성 스키마
-├── 2-architecture/                # Phase 2: 아키텍처 설계
-│   ├── ontology-design.md         #   온톨로지 설계 (7종 노드, 10종 관계)
-│   ├── db-schema-design.md        #   DB 스키마 (11테이블)
-│   ├── pipeline-design.md         #   F1~F6 파이프라인 설계
-│   ├── api-design.md              #   FastAPI 14개 엔드포인트
-│   ├── ui-design.md               #   F6 대시보드 UI 설계
-│   ├── ui-ux-design.md            #   3-Pane UX 설계 (Palantir 스타일)
-│   └── f2-anomaly-detection-design.md  #   F2 이상탐지 상세 설계
-└── adr/                           # ADR 템플릿 및 결정 기록
-    ├── 000-template.md
-    └── adr-006-frontend-stack.md
+├── README.md                         ← 폴더 구조 안내
+├── 0-project-definition/
+│   ├── README.md                     ← Phase 0 색인
+│   ├── prd-v1.0.md                   ← 제품 요구사항 정의서
+│   ├── data-collection-strategy.md   ← 데이터 수집 전략 (v2)
+│   ├── required-data-summary.md      ← F1~F6 데이터 매핑
+│   └── open-items.md                 ← 미결사항 12건 (9 Decided / 1 Partial / 2 Open)
+├── 1-data-exploration/
+│   ├── README.md                     ← Phase 1 완료 요약
+│   ├── data-gap-analysis.md          ← 데이터 갭 분석
+│   ├── it-data-synthesis-schema.md   ← IT 합성 스키마 (MES/ERP/Maintenance)
+│   └── outlier-analysis.md           ← 이상치 분석 (42컬럼 확정)
+├── 2-architecture/
+│   ├── README.md                     ← Phase 2 색인
+│   ├── ontology-design.md            ← Neo4j 온톨로지 (120노드, 337관계)
+│   ├── db-schema-design.md           ← PostgreSQL 11테이블 + Neo4j
+│   ├── pipeline-design.md            ← F1~F6 파이프라인 데이터 흐름
+│   ├── api-design.md                 ← FastAPI 16 엔드포인트
+│   ├── ui-design.md                  ← F6 대시보드 초기 설계 (v1)
+│   ├── ui-ux-design.md               ← F6 대시보드 최종 설계 (v4, Palantir 3-Pane)
+│   └── f2-anomaly-detection-design.md ← F2 이상탐지 상세 설계 (16피처)
+├── adr/
+│   ├── 000-template.md               ← ADR 템플릿
+│   ├── adr-006-frontend-stack.md     ← React 18 + Vite 선택
+│   └── adr-007-f2-forecasting-model.md ← 1D-CNN + 4피처 + 가중합산
+├── progress/
+│   ├── overview.md                   ← 프로젝트 전체 현황 (이 문서)
+│   ├── adr-summary.md                ← ADR 요약 테이블 (000~007)
+│   ├── constraints.md                ← 핵심 제약사항
+│   └── phases/
+│       ├── phase-0.md                ← Phase 0 일일 로그
+│       ├── phase-1.md                ← Phase 1 일일 로그
+│       ├── phase-2.md                ← Phase 2 일일 로그
+│       ├── phase-3.md                ← Phase 3 일일 로그
+│       ├── phase3-late-report.md     ← Phase 3 후반 개선 보고서
+│       ├── chatbot-test-report.md    ← 챗봇 테스트 보고서
+│       └── forecast-backfill-log.md  ← F2 Forecast backfill 작업 기록
+├── future/
+│   └── customer-onboarding-ontology-strategy.md ← 향후 고객 온보딩 전략
+└── prompts/
+    └── maintenance-manual-generation.md ← 정비 매뉴얼 v2 생성 프롬프트
 ```

@@ -301,6 +301,33 @@ CREATE INDEX idx_doc_embedding ON document_embeddings
 
 ---
 
+### 2.8 LLM 조치 리포트 — `llm_action_reports`
+
+F5에서 생성한 LLM 자율 조치 판단 결과를 저장.
+
+```sql
+CREATE TABLE llm_action_reports (
+  id               SERIAL        PRIMARY KEY,
+  timestamp        TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
+  equipment_id     VARCHAR(7)    NOT NULL REFERENCES equipment(equipment_id),
+  failure_code     VARCHAR(30)   REFERENCES failure_codes(failure_code),
+  anomaly_score    FLOAT8,
+  recommendation   VARCHAR(10)   NOT NULL CHECK (recommendation IN ('STOP', 'REDUCE', 'MONITOR')),
+  confidence       FLOAT8,
+  reasoning        TEXT,
+  action_steps     JSONB,        -- ["1. ...", "2. ..."]
+  estimated_downtime_min INT,
+  parts_needed     JSONB,        -- [{"part_id": "P002", "quantity": 1, "in_stock": true}]
+  model_used       VARCHAR(30),  -- e.g. "gpt-4o-mini"
+  is_fallback      BOOLEAN       NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX idx_action_equipment ON llm_action_reports(equipment_id);
+CREATE INDEX idx_action_timestamp ON llm_action_reports(timestamp);
+```
+
+---
+
 ## 3. Neo4j 스키마
 
 온톨로지 설계(`ontology-design.md`)에서 정의한 7종 노드 + 10종 관계를 그대로 사용.
@@ -376,8 +403,9 @@ F4 서비스에서 Neo4j 순회 결과 → PG 쿼리 순서로 2단계 조회.
 | 8 | parts | 참조 (마스터) | 5 | 거의 고정 | 부품 |
 | 9 | sensors | 참조 (메타) | 42+ | 고정 | 센서 정의 |
 | 10 | document_embeddings | pgvector | ~20 (Phase 3) | 청크 시 증가 | 매뉴얼 벡터 |
+| 11 | llm_action_reports | 이벤트 | F5 출력 | 알람 시 증가 | LLM 조치 리포트 |
 
-**PostgreSQL 총 10개 테이블 + Neo4j 7종 노드/10종 관계**
+**PostgreSQL 총 11개 테이블 + Neo4j 7종 노드/10종 관계**
 
 ---
 

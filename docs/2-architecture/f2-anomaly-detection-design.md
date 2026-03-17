@@ -30,7 +30,7 @@
 
 Phase 1 EDA에서 발견한 핵심 패턴을 기반으로 선정.
 
-### 핵심 피처 (10개)
+### 핵심 피처 (16개: 14 base + 2 파생)
 
 | # | 피처 | EDA 근거 | 역할 |
 |---|------|----------|------|
@@ -46,9 +46,12 @@ Phase 1 EDA에서 발견한 핵심 패턴을 기반으로 선정.
 | 10 | Machining_Process | 가공 단계 | 공정별 정상 범위가 다름 |
 
 ### 확장 후보 (Phase 3 후반)
-- 축 간 편차: `X1_ActualPosition - X1_CommandPosition`
+- 축 간 편차: `X1_ActualPosition - X1_CommandPosition` — **구현 완료** (x_position_deviation 파생 피처로 포함)
 - 이동표준편차: 최근 30초 변동성
 - FFT 주파수 특성 (고급)
+
+> **참고:** ADR-007에서 1D-CNN Forecasting 모델이 companion 모델로 확정됨.
+> IF(비지도) + 1D-CNN(시계열 예측) 가중 합산(0.4)으로 최종 anomaly_score 산출.
 
 ---
 
@@ -57,7 +60,7 @@ Phase 1 EDA에서 발견한 핵심 패턴을 기반으로 선정.
 ```
 원본 센서값 (42컬럼)
     ↓
-피처 선택 (10개)
+피처 선택 (16개)
     ↓
 정규화 (MinMaxScaler, 0~1)
     ↓
