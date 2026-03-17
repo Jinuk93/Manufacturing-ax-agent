@@ -34,6 +34,11 @@
 
 <br/>
 
+<!-- 데모 영상 -->
+https://github.com/user-attachments/assets/74fe06db-dc87-4f64-8d02-61dff547c998
+
+<br/>
+
 센서 이상을 실시간 감지하고, 1D-CNN이 30초 후를 예측합니다.<br/>
 Neo4j 온톨로지가 고장 원인 → 필요 부품 → 정비 매뉴얼을 연결하고,<br/>
 GPT-4o-mini가 비즈니스 맥락을 종합하여 **STOP / REDUCE / MONITOR 조치를 자율 판단**합니다.
