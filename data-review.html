@@ -2914,7 +2914,7 @@
   </div>
 
   <!-- ── 섹션 4: 테이블 요약 표 ── -->
-  <h3>10개 테이블 요약</h3>
+  <h3>11개 테이블 요약</h3>
   <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);margin-bottom:20px;">
   <table>
     <thead><tr><th>#</th><th>테이블</th><th>유형</th><th>레코드</th><th>컬럼</th><th>무엇을 저장하는가</th></tr></thead>
@@ -3121,7 +3121,7 @@
       <span style="color:#f59e0b;font-weight:700;">6.</span> F5가 모든 정보를 받아 LLM에게 전달 &rarr; 조치 판단<br>
       <span style="color:#f59e0b;font-weight:700;">7.</span> F6가 전체 결과를 대시보드에 표시
     </div>
-    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">10개 테이블이 각각 어떤 단계(F1~F6)에서 쓰이는지가 명확하게 설계된 것이 이 스키마의 핵심입니다.</p>
+    <p style="font-size:12px;color:#888;margin-top:8px;margin-bottom:0;">11개 테이블이 각각 어떤 단계(F1~F6)에서 쓰이는지가 명확하게 설계된 것이 이 스키마의 핵심입니다.</p>
   </div>
 </div>
 </div>
@@ -3174,14 +3174,14 @@
   <h3>API 엔드포인트란?</h3>
   <div class="fn-detail">
     <p>API 엔드포인트는 <strong>"프로그램끼리 대화하는 주소"</strong>입니다. 대시보드(F6)가 센서 데이터를 가져오려면 <code>/api/f6/sensors/CNC-001</code>이라는 주소로 요청하면 됩니다. 마치 웹 주소(URL)처럼요.</p>
-    <p>우리 시스템은 <strong>FastAPI</strong>(Python 웹 프레임워크)로 13개 엔드포인트를 제공합니다. 크게 두 종류입니다:</p>
+    <p>우리 시스템은 <strong>FastAPI</strong>(Python 웹 프레임워크)로 14개 엔드포인트를 제공합니다. 크게 두 종류입니다:</p>
     <ul style="font-size:14px;line-height:2;">
       <li><strong>POST</strong> &mdash; "이 데이터를 처리해줘" (F1 수집, F2 감지, F3 동기화, F4 검색, F5 판단)</li>
       <li><strong>GET</strong> &mdash; "이 데이터를 보여줘" (이력 조회, 대시보드 표시, 헬스 체크)</li>
     </ul>
   </div>
 
-  <h3>13개 엔드포인트 상세</h3>
+  <h3>14개 엔드포인트 상세</h3>
   <div class="fn-detail">
     <h4>파이프라인 엔드포인트 (6개) &mdash; F1~F5 내부 동작</h4>
     <p style="font-size:13px;color:#999;margin-bottom:12px;">메인 루프가 내부적으로 호출합니다. HTTP로도 접근 가능하여 개별 테스트에 유용합니다.</p>
@@ -3215,7 +3215,9 @@
   </div>
 
   <div class="fn-detail">
-    <h4>시스템 엔드포인트 (1개)</h4>
+    <h4>시스템 엔드포인트 (2개)</h4>
+    <div class="ep-row"><span class="ep-method post">POST</span><span class="ep-path">/api/chat</span><span class="ep-desc">AI 챗봇 (GraphRAG + LLM)</span></div>
+    <p style="font-size:13px;color:#d4d4d4;margin:4px 0 12px 56px;">사용자가 설비 상태, 정비 방법 등을 자연어로 질문하면 F4(GraphRAG) + F5(LLM)를 재사용하여 답변합니다.</p>
     <div class="ep-row"><span class="ep-method get">GET</span><span class="ep-path">/api/health</span><span class="ep-desc">PG + Neo4j 헬스 체크</span></div>
     <p style="font-size:13px;color:#d4d4d4;margin:4px 0 0 56px;">PostgreSQL과 Neo4j 연결 상태를 확인합니다. 모니터링 시스템이 주기적으로 호출하여 DB가 살아있는지 체크합니다.</p>
   </div>
@@ -3829,17 +3831,17 @@ const phaseDetails={
     summary:'온톨로지 → DB 스키마 → 파이프라인 → API → UI 순서로 설계. 5개 문서 모두 리뷰 완료. 정비 매뉴얼 12건 합성. Phase 3 구현 청사진 확정.',
     goal:[
       {text:'온톨로지 설계',detail:'Neo4j 7종 노드 (Equipment, Sensor, FailureCode, Part, Document, WorkOrder, MaintenanceAction) + 10종 관계'},
-      {text:'DB 스키마 설계',detail:'PostgreSQL 10테이블 (TimescaleDB hypertable + pgvector) + Neo4j Cypher 매핑'},
-      {text:'파이프라인 설계',detail:'F1~F6 데이터 흐름, 에러 처리 6시나리오, 설정값 11개 파라미터화'},
-      {text:'API 설계',detail:'FastAPI 13 엔드포인트 (알람 피드 추가) + Pydantic 모델, F5 비동기 분리'},
+      {text:'DB 스키마 설계',detail:'PostgreSQL 11테이블 (TimescaleDB hypertable + pgvector + llm_action_reports) + Neo4j Cypher 매핑'},
+      {text:'파이프라인 설계',detail:'F1~F6 데이터 흐름, 에러 처리 6시나리오, 설정값 20+개 파라미터화'},
+      {text:'API 설계',detail:'FastAPI 14 엔드포인트 (알람 피드 + 챗봇 추가) + Pydantic 모델, F5 비동기 분리'},
       {text:'UI 설계',detail:'F6 관제 대시보드 — 페이지 2개, 컴포넌트 8개, 폴링 전략 3단계'},
       {text:'정비 매뉴얼 합성',detail:'4 고장코드 × 3 문서유형 = 12건 매뉴얼 합성 (교체 절차서, 점검 체크리스트, 트러블슈팅)'}
     ],
     outputs:[
-      {text:'ontology-design.md',detail:'Neo4j 123노드 / 10종 관계. PG↔Neo4j 역할 분담, R7/R8 예외 명시'},
+      {text:'ontology-design.md',detail:'Neo4j 120노드 / 337관계 / 10종 관계 전부 완성. PG↔Neo4j 역할 분담, R7/R8 예외 명시'},
       {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores 7컬럼, MES 9컬럼, 참조 마스터 4종'},
       {text:'pipeline-design.md',detail:'F1→F2 매 5초 폴링, F3~F5 이벤트 트리거. 비동기 메인 루프 + process_alarm 분리'},
-      {text:'api-design.md',detail:'13 엔드포인트 (F1~F5 POST 6 + F6 GET 6 + health 1). 알람 피드 엔드포인트 추가'},
+      {text:'api-design.md',detail:'14 엔드포인트 (F1~F5 POST 6 + F6 GET 6 + chat 1 + health 1). 챗봇 엔드포인트 추가'},
       {text:'ui-design.md',detail:'F6 대시보드 와이어프레임, 컴포넌트 8개, 폴링 전략, 색상 시스템. React 18 + Vite 확정 (ADR-006)'},
       {text:'maintenance_manuals.json',detail:'정비 매뉴얼 12건 합성 (DOC-001~012). 섹션별 청킹 가능, Phase 3 임베딩 대기'}
     ],
@@ -3857,32 +3859,40 @@ const phaseDetails={
     ]
   },
   phase3:{
-    phase:'Phase 3+',
+    phase:'Phase 3',
     title:'Build and Validate',
     subtitleKr:'구현 및 검증',
-    state:'다음 단계',
-    meta:['Phase 2 완료 → 시작 가능','구현 중심','선결 과제 3건'],
-    summary:'F1~F6를 점진적으로 연결하고, GraphRAG + LLM 판단이 실제로 동작하는지 검증합니다.',
+    state:'완료',
+    meta:['2026-03-16 ~ 2026-03-17 완료','F1~F6 전체 파이프라인 구현','리뷰 37건+ 반영'],
+    summary:'Docker 인프라 + F1~F5 파이프라인 + F6 대시보드 + 프론트-백엔드 실제 연동까지 완성. Neo4j 337관계, pgvector 47청크, GPT-4o-mini LLM 판단, 챗봇까지 동작.',
     goal:[
-      {text:'기능 구현',detail:'F1~F6 파이프라인을 실제 코드로 구현'},
-      {text:'통합 검증',detail:'각 기능이 전체 흐름 안에서 정상 동작하는지 확인'},
-      {text:'대시보드 연동',detail:'실시간 데이터가 대시보드에서 설명 가능하게 표시되는지 검증'}
+      {text:'인프라 구축',detail:'Docker Compose (PG timescaledb-ha + Neo4j 5-community), init.sql 11테이블 + 마스터 데이터'},
+      {text:'F1 시뮬레이터',detail:'CSV→DB batch/stream 모드. CamelCase→snake_case 변환, 제외 6컬럼 자동 제거'},
+      {text:'F2 이상탐지',detail:'Isolation Forest, 16개 피처 (14 base + 2 파생), unworn fit + worn 검증'},
+      {text:'F3~F5 서비스',detail:'IT/OT 동기화(실제 SQL) + GraphRAG(Neo4j+pgvector 2단계) + LLM(GPT-4o-mini, 환각 검증)'},
+      {text:'Neo4j 온톨로지',detail:'120노드 + 337관계, 10종 전부 완성 (R2 DETECTS 7건, R10 REFERENCES 90건 포함)'},
+      {text:'매뉴얼 임베딩',detail:'12문서 → 47청크 → pgvector 384차원 (sentence-transformers 로컬)'},
+      {text:'14개 엔드포인트',detail:'FastAPI 14개 전부 실제 서비스 연결 (mock 0개). 챗봇 /api/chat 포함'},
+      {text:'F6 대시보드',detail:'React 18 + Vite + Palantir 3-Pane + 챗봇 FAB. 프론트-백엔드 실제 연동'},
+      {text:'통합 테스트',detail:'W5 Coolant 재고=0 + Spindle 과열 시나리오 2건 통과'}
     ],
     outputs:[
-      {text:'기능 구현',detail:'F1~F6 각 기능의 동작 가능한 코드'},
-      {text:'실험 결과',detail:'모델 성능, 예측 정확도, 응답 시간 등 지표'},
-      {text:'대시보드 검증',detail:'실시간 관제 화면이 의미 있는 정보를 보여주는지 확인'},
-      {text:'LLM 판단 리포트',detail:'자율 판단 시나리오별 결과와 정확도'},
-      {text:'개선 포인트',detail:'다음 반복에서 보완할 사항 목록'}
+      {text:'backend/',detail:'FastAPI 앱 + F1~F5 서비스 + 시뮬레이터 + 모델 학습/검증 스크립트'},
+      {text:'frontend/',detail:'React 3-Pane 대시보드 + 챗봇 컴포넌트'},
+      {text:'docker-compose.yml + db/',detail:'PG + Neo4j 컨테이너 + init.sql + init_neo4j.cypher'},
+      {text:'Phase 3 보고서',detail:'phase3-late-report.md — 후반 6건 개선 상세'},
+      {text:'통합 테스트',detail:'test_integration.py — W5 + Spindle 시나리오 assert 검증'}
     ],
     handoff:[
-      {text:'반복 개선 항목',detail:'검증 결과에서 발견된 보완 포인트'},
-      {text:'성능 보완 포인트',detail:'병목, 정확도, 응답 시간 등 개선 대상'},
-      {text:'제품화 방향',detail:'MVP에서 실제 제품으로 전환하기 위한 로드맵'}
+      {text:'F2 Forecasting 미구현',detail:'이상탐지는 완료, 시계열 예측(LSTM "30분 뒤 고장날까?")은 미구현 — PRD 100% 달성에 필요'},
+      {text:'F2 모델 개선',detail:'분리도 0.051 → Autoencoder 비교, 추가 피처, 공정별 분리 학습'},
+      {text:'하이브리드 검색 가중치',detail:'Neo4j + pgvector 점수 결합 최적화 (open-items #10)'}
     ],
     links:[
-      {label:'핵심 ADR 보기', href:'#p0', primary:true},
-      {label:'프로젝트 개요로 이동', href:'#p0'}
+      {label:'핵심 기능 보기', href:'#p15', primary:true},
+      {label:'온톨로지 상세', href:'#p12'},
+      {label:'DB 스키마 상세', href:'#p13'},
+      {label:'파이프라인 상세', href:'#p14'}
     ]
   }
 };
