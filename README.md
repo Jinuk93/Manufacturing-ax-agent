@@ -39,10 +39,16 @@ Phase 0~3 전체 진행 과정, EDA, 온톨로지, 파이프라인 설계를 인
 
 <br/>
 
-### 관제 대시보드 (F6)
+### AI 자율 판단 관제 시스템
 
 <!-- 메인 대시보드 스크린샷 -->
 <img src="docs/assets/dashboard-preview.png" alt="Manufacturing AX Agent Dashboard" width="90%" />
+
+<br/>
+
+센서 이상을 실시간 감지하고, 1D-CNN이 30초 후를 예측합니다.<br/>
+Neo4j 온톨로지가 고장 원인 → 필요 부품 → 정비 매뉴얼을 연결하고,<br/>
+GPT-4o-mini가 비즈니스 맥락을 종합하여 **STOP / REDUCE / MONITOR 조치를 자율 판단**합니다.
 
 </div>
 
