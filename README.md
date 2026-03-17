@@ -344,6 +344,6 @@ Manufacturing-ax-agent/
 
 <div align="center">
 
-This project is for educational purposes.
+This project is for educational purposes
 
 </div>
