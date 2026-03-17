@@ -51,6 +51,8 @@ Phase 0~3 전체 진행 과정, EDA, 온톨로지, 파이프라인 설계를 인
 
 <a href="https://young-shadow-e405.rlawlsdnr430.workers.dev/" target="_blank"><img src="https://img.shields.io/badge/Live_Demo-개발_과정_한눈에_보기-00d4ff?style=for-the-badge" alt="Review Dashboard" /></a>
 
+위 배너를 클릭하면 프로젝트 전체 과정을 인터랙티브하게 확인할 수 있습니다.
+
 <!-- 리뷰 대시보드 스크린샷 -->
 <img src="docs/assets/review-dashboard.png" alt="Project Review Dashboard" width="90%" />
 
