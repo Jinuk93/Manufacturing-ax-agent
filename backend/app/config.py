@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     TOOL_WEAR_RATIO: float = 0.7            # X1 전류 median 대비 비율
     CLAMP_POSITION_THRESHOLD: float = 0.5   # 위치 편차 임계치 (mm)
 
+    # F2 Forecasting (ADR-007)
+    FORECAST_WEIGHT: float = 0.4            # final = (1-w)*IF + w*forecast
+    FORECAST_INPUT_STEPS: int = 300         # 30초 입력
+    FORECAST_OUTPUT_STEPS: int = 300        # 30초 예측
+
     # F4 설정
     HYBRID_ALPHA: float = 0.5               # BM25 vs vector 비중
     TOP_K_DOCS: int = 5

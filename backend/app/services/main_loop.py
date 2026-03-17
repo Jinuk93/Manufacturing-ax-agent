@@ -19,6 +19,7 @@ import pandas as pd
 from app.config import settings
 from app.services.db import get_connection, release_connection, insert_sensor_readings
 from app.services.anomaly_detector import AnomalyDetector
+from app.services.forecaster import SensorForecaster
 from app.services.itot_sync import sync_itot_context
 from app.services.graphrag import search_graphrag
 from app.services.llm_agent import generate_action
@@ -27,16 +28,31 @@ logger = logging.getLogger(__name__)
 
 # F2 모델 (전역 로드, 한 번만)
 _detector: AnomalyDetector | None = None
+_forecaster: SensorForecaster | None = None
 
 
 def _get_detector() -> AnomalyDetector:
-    """F2 모델 싱글턴 로드"""
+    """F2 IF 모델 싱글턴 로드"""
     global _detector
     if _detector is None:
         _detector = AnomalyDetector()
         model_path = Path(__file__).parent.parent.parent / "models" / "f2_detector.pkl"
         _detector.load(str(model_path))
     return _detector
+
+
+def _get_forecaster() -> SensorForecaster | None:
+    """F2 Forecasting 모델 싱글턴 로드 (없으면 None)"""
+    global _forecaster
+    if _forecaster is None:
+        model_path = Path(__file__).parent.parent.parent / "models" / "f2_forecaster.pkl"
+        if model_path.exists():
+            _forecaster = SensorForecaster()
+            _forecaster.load(str(model_path))
+            logger.info("F2 Forecaster 모델 로드 완료")
+        else:
+            logger.warning("F2 Forecaster 모델 없음 — IF만 사용")
+    return _forecaster
 
 
 async def process_alarm(
@@ -152,19 +168,42 @@ async def run_main_loop(data_dir: str = None):
             window_df = pd.DataFrame(window_rows, columns=columns)
             result = detector.predict(window_df)
             last = result.iloc[-1]
-            score = float(last["anomaly_score"])
-            is_anomaly = bool(last["is_anomaly"])
+            if_score = float(last["anomaly_score"])
             fc = last["predicted_failure_code"]
 
-            # anomaly_scores INSERT
+            # F2 Forecasting (ADR-007)
+            forecast_score_val = None
+            forecaster = _get_forecaster()
+            if forecaster is not None and len(window_df) >= 2:
+                try:
+                    # 최근 300행 윈도우가 필요하지만, 현재 6행만 있으면 패딩 처리됨
+                    fc_result = forecaster.predict(window_df)
+                    forecast_score_val = fc_result["forecast_score"]
+                except Exception as e:
+                    logger.debug(f"Forecaster 예측 실패 (IF만 사용): {e}")
+
+            # 합산 (ADR-007: weighted fusion)
+            w = settings.FORECAST_WEIGHT
+            if forecast_score_val is not None:
+                score = (1 - w) * if_score + w * forecast_score_val
+            else:
+                score = if_score
+
+            is_anomaly = score > settings.ANOMALY_THRESHOLD
+
+            # anomaly_scores INSERT (forecast_score 포함)
             conn = get_connection()
             try:
                 with conn.cursor() as cur:
                     cur.execute("""
-                        INSERT INTO anomaly_scores (timestamp, equipment_id, anomaly_score, is_anomaly, model_version, predicted_failure_code, confidence)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT (timestamp, equipment_id) DO UPDATE SET anomaly_score = EXCLUDED.anomaly_score
-                    """, (ts, eq_id, score, is_anomaly, "IF-v1", fc, score))
+                        INSERT INTO anomaly_scores
+                        (timestamp, equipment_id, anomaly_score, is_anomaly, model_version,
+                         predicted_failure_code, confidence, forecast_score)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        ON CONFLICT (timestamp, equipment_id) DO UPDATE
+                        SET anomaly_score = EXCLUDED.anomaly_score,
+                            forecast_score = EXCLUDED.forecast_score
+                    """, (ts, eq_id, score, is_anomaly, "IF+CNN-v1", fc, score, forecast_score_val))
                 conn.commit()
             finally:
                 release_connection(conn)
