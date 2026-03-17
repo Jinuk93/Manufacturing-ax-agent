@@ -28,11 +28,11 @@
 
 <br/>
 
-### 프로젝트 리뷰 대시보드
+### 개발 과정 한눈에 보기
 
 Phase 0~3 전체 진행 과정, EDA, 온톨로지, 파이프라인 설계를 인터랙티브하게 탐색할 수 있습니다.
 
-[![Review Dashboard](https://img.shields.io/badge/Live_Demo-프로젝트_리뷰_대시보드-00d4ff?style=for-the-badge)](https://young-shadow-e405.rlawlsdnr430.workers.dev/)
+<a href="https://young-shadow-e405.rlawlsdnr430.workers.dev/" target="_blank"><img src="https://img.shields.io/badge/Live_Demo-개발_과정_한눈에_보기-00d4ff?style=for-the-badge" alt="Review Dashboard" /></a>
 
 <!-- 리뷰 대시보드 스크린샷 -->
 <img src="docs/assets/review-dashboard.png" alt="Project Review Dashboard" width="90%" />
