@@ -43,7 +43,7 @@ def _get_embed_model():
     global _embed_model
     if _embed_model is None:
         from sentence_transformers import SentenceTransformer
-        _embed_model = SentenceTransformer(f"sentence-transformers/{settings.EMBED_MODEL}")
+        _embed_model = SentenceTransformer(settings.EMBED_MODEL)
         logger.info("SentenceTransformer 모델 로드 완료 (384차원)")
     return _embed_model
 
