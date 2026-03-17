@@ -25,11 +25,15 @@ logger = logging.getLogger(__name__)
 CHAT_SYSTEM_PROMPT = """당신은 CNC 밀링 머신 공장의 예지보전 AI 어시스턴트입니다.
 현장 기술자와 관리자가 설비 이상, 정비 절차, 부품 재고, 고장 원인에 대해 질문합니다.
 
+중요: 아래에 제공되는 [DB 실시간 데이터], [Neo4j 온톨로지], [정비 매뉴얼 검색 결과]는
+실제 시스템에서 조회한 실시간 데이터입니다. 반드시 이 데이터를 기반으로 답변하세요.
+데이터가 없다고 하지 마세요 — 아래 데이터에 답이 있습니다.
+
 답변 원칙:
-1. 제공된 [DB 데이터], [Neo4j 온톨로지], [정비 매뉴얼]을 근거로 답변하세요.
-2. 숫자, 날짜, 부품명 등은 데이터에서 가져온 정확한 값을 사용하세요.
-3. 확실하지 않은 내용은 "확인 필요합니다"라고 하세요.
-4. 짧고 명확하게 답변하세요 (3~5문장 이내).
+1. 제공된 데이터의 구체적 수치(anomaly_score, IF점수, 예측점수 등)를 인용하며 답변하세요.
+2. "매뉴얼이 없다", "정보를 제공할 수 없다" 같은 답변은 하지 마세요.
+3. 설비별 상태(정상/주의/위험), 고장 예측 코드, 권고 조치를 명확히 안내하세요.
+4. 짧고 명확하게 답변하세요 (3~7문장).
 5. 부품 교체, 점검 절차 등은 번호 목록으로 정리하세요.
 
 반드시 한국어로 답변하세요."""
@@ -99,7 +103,9 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
                     "상태", "status", "anomaly", "이상", "점수", "score",
                     "현재", "current", "cnc", "로그", "log", "감지",
                     "detect", "알람", "alarm", "데이터", "data", "모니터",
-                    "monitor", "위험", "경고", "warning", "critical"
+                    "monitor", "위험", "경고", "warning", "critical",
+                    "예지", "예측", "predict", "forecast", "보전",
+                    "리스트", "list", "목록", "현황", "전체",
                 ]):
                     eq_ids = [equipment_id] if equipment_id else ["CNC-001", "CNC-002", "CNC-003"]
                     for eq in eq_ids:
@@ -122,6 +128,62 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
                                 f"고장예측={row[2] or '없음'}, "
                                 f"시각={row[5]}"
                             )
+
+                # 예지보전 전용: 추세 분석 + 예측 경고
+                if any(kw in query_lower for kw in [
+                    "예지", "예측", "predict", "forecast", "보전",
+                    "추세", "trend", "도달", "사전", "선제",
+                ]):
+                    eq_ids = [equipment_id] if equipment_id else ["CNC-001", "CNC-002", "CNC-003"]
+                    pred_results = []
+                    for eq in eq_ids:
+                        cur.execute("""
+                            SELECT anomaly_score, if_score, forecast_score,
+                                   predicted_failure_code, timestamp
+                            FROM anomaly_scores
+                            WHERE equipment_id = %s
+                            ORDER BY timestamp DESC LIMIT 20
+                        """, (eq,))
+                        rows = cur.fetchall()
+                        if rows:
+                            latest = rows[0]
+                            score = float(latest[0]) if latest[0] else 0
+                            if_s = float(latest[1]) if latest[1] is not None else score
+                            fc_s = float(latest[2]) if latest[2] is not None else None
+                            fc_code = latest[3] or "없음"
+
+                            # 추세 계산
+                            scores = [float(r[0]) for r in rows if r[0] is not None]
+                            if len(scores) >= 5:
+                                half = len(scores) // 2
+                                avg_recent = sum(scores[:half]) / half
+                                avg_old = sum(scores[half:]) / (len(scores) - half)
+                                trend = "상승" if avg_recent - avg_old > 0.02 else ("하강" if avg_old - avg_recent > 0.02 else "안정")
+                            else:
+                                trend = "데이터 부족"
+
+                            # STOP 도달 예상
+                            if len(scores) >= 5 and score < 0.8:
+                                rate = (scores[0] - scores[-1]) / len(scores)
+                                if rate > 0:
+                                    eta_min = ((0.8 - score) / rate * 5) / 60
+                                    eta_str = f"약 {int(eta_min)}분" if eta_min <= 60 else f"약 {int(eta_min/60)}시간"
+                                else:
+                                    eta_str = "도달 예상 없음"
+                            elif score >= 0.8:
+                                eta_str = "이미 초과"
+                            else:
+                                eta_str = "데이터 부족"
+
+                            status = "위험" if score >= 0.8 else ("예지보전 대상" if score >= 0.1 else "정상")
+                            fc_info = f", CNN예측={fc_s:.2f}" if fc_s is not None else ""
+                            pred_results.append(
+                                f"  {eq}: 점수={score:.2f}({status}), IF={if_s:.2f}{fc_info}, "
+                                f"추세={trend}, STOP도달={eta_str}, "
+                                f"고장예측={fc_code}"
+                            )
+                    if pred_results:
+                        results.append("[예지보전 분석 결과]\n" + "\n".join(pred_results))
 
                 # 재고 조회
                 if any(kw in query_lower for kw in [

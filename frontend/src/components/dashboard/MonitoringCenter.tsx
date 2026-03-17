@@ -50,7 +50,7 @@ function PanelHeader({ title, sub, live }: { title: string; sub?: string; live?:
 
 // ── 설비별 미니 센서 차트 ─────────────────────────────────
 function MiniSensorChart({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 5000, retry: false })
+  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 3000, retry: false })
   const series: SensorPoint[] = [...(data?.series ?? [])].reverse()
   const chartData = series.map((p) => ({ ...p, t: p.timestamp.slice(11, 19) }))
 
@@ -78,7 +78,7 @@ function MiniSensorChart({ equipmentId }: { equipmentId: string }) {
 
 // ── 설비별 미니 이상추이 차트 ─────────────────────────────
 function MiniAnomalyChart({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 5000, retry: false })
+  const { data, isLoading } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 3000, retry: false })
   const chartData = [...(data?.history ?? [])].reverse().slice(-40).map((h) => ({
     t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     score: Number(h.anomaly_score.toFixed(3)),
@@ -110,9 +110,9 @@ function MiniAnomalyChart({ equipmentId }: { equipmentId: string }) {
 // ── 종합 상태 테이블 ──────────────────────────────────────
 function SummaryTable({ eqs }: { eqs: Equipment[] }) {
   // 각 설비별 추가 데이터 조회
-  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 5000, retry: false })
-  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 5000, retry: false })
-  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 5000, retry: false })
+  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 3000, retry: false })
+  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 3000, retry: false })
+  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 3000, retry: false })
   const r1 = useQuery({ queryKey: ['action', 'CNC-001'], queryFn: () => getActionReport('CNC-001'), retry: false, staleTime: 30_000 })
   const r2 = useQuery({ queryKey: ['action', 'CNC-002'], queryFn: () => getActionReport('CNC-002'), retry: false, staleTime: 30_000 })
   const r3 = useQuery({ queryKey: ['action', 'CNC-003'], queryFn: () => getActionReport('CNC-003'), retry: false, staleTime: 30_000 })
@@ -226,7 +226,7 @@ function SummaryTable({ eqs }: { eqs: Equipment[] }) {
 
 // ── 전체 모니터링 (디폴트) — 테이블 + 차트 3행 ──
 function OverviewMonitoring() {
-  const { data: equipments, isLoading } = useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, refetchInterval: 5000 })
+  const { data: equipments, isLoading } = useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, refetchInterval: 3000 })
   if (isLoading) return <div className="h-full flex items-center justify-center" style={{ color: 'var(--gray2)', fontSize: '11px', fontFamily: sans }}>설비 데이터 로딩 중...</div>
   const eqs = equipments ?? []
   const cols = Math.min(eqs.length, 3)
@@ -282,15 +282,15 @@ const FAULT_SENSOR_MAP: Record<string, { sensor: string; desc: string; level: st
 // ── 예지보전 뷰 ───────────────────────────────────────────
 function PredictiveMaintenanceView() {
   const EQ_IDS = ['CNC-001', 'CNC-002', 'CNC-003']
-  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 5000, retry: false })
-  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 5000, retry: false })
-  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 5000, retry: false })
+  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 3000, retry: false })
+  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 3000, retry: false })
+  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 3000, retry: false })
   const r1 = useQuery({ queryKey: ['action', 'CNC-001'], queryFn: () => getActionReport('CNC-001'), retry: false, staleTime: 30_000 })
   const r2 = useQuery({ queryKey: ['action', 'CNC-002'], queryFn: () => getActionReport('CNC-002'), retry: false, staleTime: 30_000 })
   const r3 = useQuery({ queryKey: ['action', 'CNC-003'], queryFn: () => getActionReport('CNC-003'), retry: false, staleTime: 30_000 })
-  const h1 = useQuery({ queryKey: ['anomaly-history', 'CNC-001'], queryFn: () => getAnomalyHistory('CNC-001'), refetchInterval: 5000, retry: false })
-  const h2 = useQuery({ queryKey: ['anomaly-history', 'CNC-002'], queryFn: () => getAnomalyHistory('CNC-002'), refetchInterval: 5000, retry: false })
-  const h3 = useQuery({ queryKey: ['anomaly-history', 'CNC-003'], queryFn: () => getAnomalyHistory('CNC-003'), refetchInterval: 5000, retry: false })
+  const h1 = useQuery({ queryKey: ['anomaly-history', 'CNC-001'], queryFn: () => getAnomalyHistory('CNC-001'), refetchInterval: 3000, retry: false })
+  const h2 = useQuery({ queryKey: ['anomaly-history', 'CNC-002'], queryFn: () => getAnomalyHistory('CNC-002'), refetchInterval: 3000, retry: false })
+  const h3 = useQuery({ queryKey: ['anomaly-history', 'CNC-003'], queryFn: () => getAnomalyHistory('CNC-003'), refetchInterval: 3000, retry: false })
 
   const anomalies = [a1.data, a2.data, a3.data]
   const actions = [r1.data, r2.data, r3.data]
@@ -321,12 +321,10 @@ function PredictiveMaintenanceView() {
     return `약 ${Math.round(min)}분`
   }
 
-  // 실제 API에서 forecast_score 가져오기 (없으면 fallback)
-  function getForecastScore(anomalyData: { anomaly_score: number; forecast_score?: number; if_score?: number } | undefined, idx: number) {
+  // 실제 API에서 forecast_score 가져오기 (없으면 null 반환)
+  function getForecastScore(anomalyData: { anomaly_score: number; forecast_score?: number; if_score?: number } | undefined, _idx: number) {
     if (anomalyData?.forecast_score != null) return anomalyData.forecast_score
-    // API에 아직 없으면 mock fallback
-    const jitter = [0.08, -0.03, 0.05][idx] ?? 0
-    return Math.max(0, Math.min(1, (anomalyData?.anomaly_score ?? 0) + jitter))
+    return null  // 데이터 없으면 null (가짜 jitter 제거)
   }
   function getIfScore(anomalyData: { anomaly_score: number; if_score?: number } | undefined) {
     return anomalyData?.if_score ?? anomalyData?.anomaly_score ?? 0
@@ -355,11 +353,11 @@ function PredictiveMaintenanceView() {
             </tr>
             <tr>
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>CNN 예측 점수</td>
-              {anomalies.map((a, i) => { const fs = getForecastScore(a, i); return <td key={i} style={{ ...tdStyle, color: 'var(--orange5)', fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fs.toFixed(2)}</td> })}
+              {anomalies.map((a, i) => { const fs = getForecastScore(a, i); return <td key={i} style={{ ...tdStyle, color: fs != null ? 'var(--orange5)' : 'var(--gray2)', fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fs != null ? fs.toFixed(2) : '—'}</td> })}
             </tr>
             <tr style={{ background: 'rgba(255,255,255,0.015)' }}>
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>융합 점수</td>
-              {anomalies.map((a, i) => { const s = a?.anomaly_score ?? 0; const fs = getForecastScore(a, i); const fused = 0.6 * s + 0.4 * fs; return <td key={i} style={{ ...tdStyle, color: statusColor(fused), fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fused.toFixed(2)}</td> })}
+              {anomalies.map((a, i) => { const s = a?.anomaly_score ?? 0; const fs = getForecastScore(a, i); const fused = fs != null ? 0.6 * s + 0.4 * fs : s; return <td key={i} style={{ ...tdStyle, color: statusColor(fused), fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fused.toFixed(2)}</td> })}
             </tr>
             <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
               <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>추세</td>
@@ -384,19 +382,17 @@ function PredictiveMaintenanceView() {
           const reversed = [...history].reverse().slice(-60)
           const chartData = reversed.map((h) => {
             const ifScore = h.anomaly_score ?? 0
-            const jitter = [0.08, -0.03, 0.05][idx] ?? 0
             const fs = (h as { forecast_score?: number }).forecast_score
-            const forecastScore = fs != null ? fs : Math.max(0, Math.min(1, ifScore + jitter))
             return {
               t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
               if_score: Number(ifScore.toFixed(3)),
-              forecast: Number(forecastScore.toFixed(3)),
+              forecast: fs != null ? Number(fs.toFixed(3)) : undefined,  // null이면 차트에 안 그림
             }
           })
 
           // 현재 상태 판정
           const latestIf = chartData.length > 0 ? chartData[chartData.length - 1].if_score : 0
-          const latestFc = chartData.length > 0 ? chartData[chartData.length - 1].forecast : 0
+          const latestFc = chartData.length > 0 ? (chartData[chartData.length - 1].forecast ?? 0) : 0
           const statusText = latestIf >= 0.8 ? '위험' : latestIf >= 0.6 ? '주의' : '정상'
           const statusClr = latestIf >= 0.8 ? 'var(--red5)' : latestIf >= 0.6 ? 'var(--yellow5)' : 'var(--green5)'
           const predictWarn = latestFc > latestIf + 0.05
@@ -510,7 +506,7 @@ const CHART_MARGIN = { top: 4, right: 4, bottom: 0, left: -28 }
 const CHART_TOOLTIP = { background: 'var(--dg1)', border: '1px solid var(--border-mid)', fontSize: '9px', color: 'var(--gray5)', fontFamily: mono, borderRadius: '2px' }
 
 function MiniSensorContent({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 5000, retry: false })
+  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 3000, retry: false })
   const series: SensorPoint[] = [...(data?.series ?? [])].reverse()
   const chartData = series.map((p) => ({ ...p, t: p.timestamp.slice(11, 19) }))
 
@@ -533,7 +529,7 @@ function MiniSensorContent({ equipmentId }: { equipmentId: string }) {
 }
 
 function MiniX1Content({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 5000, retry: false })
+  const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 3000, retry: false })
   const series: SensorPoint[] = [...(data?.series ?? [])].reverse()
   const chartData = series.map((p) => ({ ...p, t: p.timestamp.slice(11, 19) }))
 
@@ -556,7 +552,7 @@ function MiniX1Content({ equipmentId }: { equipmentId: string }) {
 }
 
 function MiniAnomalyContent({ equipmentId }: { equipmentId: string }) {
-  const { data, isLoading } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 5000, retry: false })
+  const { data, isLoading } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 3000, retry: false })
   const chartData = [...(data?.history ?? [])].reverse().slice(-40).map((h) => ({
     t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     score: Number(h.anomaly_score.toFixed(3)),
@@ -584,9 +580,9 @@ function MiniAnomalyContent({ equipmentId }: { equipmentId: string }) {
 
 // ── 개별 설비 상세 (Tier 1~3) ─────────────────────────────
 function DetailView({ equipmentId }: { equipmentId: string }) {
-  const { data: sensorData, isLoading: sensorLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 5000, retry: false })
-  const { data: anomaly } = useQuery({ queryKey: ['anomaly', equipmentId], queryFn: () => getEquipmentAnomaly(equipmentId), refetchInterval: 5000, retry: false })
-  const { data: historyData } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 5000, retry: false })
+  const { data: sensorData, isLoading: sensorLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 3000, retry: false })
+  const { data: anomaly } = useQuery({ queryKey: ['anomaly', equipmentId], queryFn: () => getEquipmentAnomaly(equipmentId), refetchInterval: 3000, retry: false })
+  const { data: historyData } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 3000, retry: false })
   const { data: action } = useQuery({ queryKey: ['action', equipmentId], queryFn: () => getActionReport(equipmentId), retry: false, staleTime: 30_000 })
   const { data: woData } = useQuery({ queryKey: ['work-order', equipmentId], queryFn: () => getWorkOrderStatus(equipmentId), retry: false, staleTime: 60_000 })
 

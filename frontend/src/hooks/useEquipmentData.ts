@@ -11,18 +11,18 @@ import {
 } from '@/lib/api/endpoints'
 
 // 공통 쿼리 옵션 — 일관된 설정
-const POLL_5S = { refetchInterval: 5000, retry: 1, staleTime: 4000 }
+const POLL_3S = { refetchInterval: 3000, retry: 1, staleTime: 2500 }
 const POLL_10S = { refetchInterval: 10000, retry: 1, staleTime: 8000 }
 const LAZY = { retry: 1, staleTime: 30000 }
 
 // 설비 목록
 export function useEquipmentSummary() {
-  return useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, ...POLL_5S })
+  return useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, ...POLL_3S })
 }
 
 // 알람 피드
 export function useAlarms() {
-  return useQuery({ queryKey: ['alarms'], queryFn: getDashboardAlarms, ...POLL_5S })
+  return useQuery({ queryKey: ['alarms'], queryFn: getDashboardAlarms, ...POLL_3S })
 }
 
 // 특정 설비 이상 점수
@@ -31,7 +31,7 @@ export function useAnomaly(equipmentId: string | null) {
     queryKey: ['anomaly', equipmentId],
     queryFn: () => getEquipmentAnomaly(equipmentId!),
     enabled: !!equipmentId,
-    ...POLL_5S,
+    ...POLL_3S,
   })
 }
 

@@ -8,6 +8,7 @@ __pycache__/
 .venv/
 venv/
 .env
+*.env
 
 # Jupyter Notebook
 .ipynb_checkpoints/
@@ -19,6 +20,23 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Claude Code 설정 (개인 설정, API 키 등)
+.claude/settings.local.json
+
 # 모델 파일 (바이너리)
 backend/models/
 *.pkl
+
+# 빌드 캐시
+frontend/.vite/
+frontend/dist/
+node_modules/
+
+# 임시 파일
+*.patch
+*.bak
+*.tmp
+
+# 목업/프로토타입
+ui-mockup*.html

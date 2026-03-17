@@ -9,7 +9,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 5000,         // 5초 내 동일 쿼리 재요청 방지
+      staleTime: 3000,         // 3초 내 동일 쿼리 재요청 방지
       refetchOnWindowFocus: false, // 탭 전환 시 불필요한 refetch 방지
     },
   },

@@ -1582,7 +1582,7 @@
       <li><strong>Phase 0 (문서 중심) :</strong> &nbsp;PRD, 데이터 전략, ADR, 제약사항 등 의사결정 기록. 코드 없음</li>
       <li><strong>Phase 1 (분석 중심) :</strong> &nbsp;EDA로 실데이터 검증, 42컬럼 확정, IT 합성 완료 <span style="color:#00a854;">[완료]</span></li>
       <li><strong>Phase 2 (설계 중심) :</strong> &nbsp;온톨로지 + DB 스키마 + 파이프라인 + API 설계 완료 (리뷰 4회) <span style="color:#00a854;">[완료]</span></li>
-      <li><strong>Phase 3+ (구현 중심) :</strong> &nbsp;FastAPI, PostgreSQL, Neo4j, 대시보드 개발. 코드 규칙 적용 <span style="color:#3182f6;">[다음]</span></li>
+      <li><strong>Phase 3 (구현 및 검증) :</strong> &nbsp;FastAPI + F1~F6 파이프라인 + F2 Forecasting + 챗봇 + 대시보드 완성 <span style="color:#00c853;">[완료]</span></li>
     </ul>
     <p style="color:#888;font-size:13px;">코드 규칙(타입 힌트, 한국어 주석, Docker Compose 등)은 Phase 2 이후부터 적용됩니다.</p>
   </div>
@@ -1638,7 +1638,7 @@
       <button class="ph-tab" data-ph="phase3">
         <span class="ph-tab-label">Phase 3+</span>
         <span class="ph-tab-name-kr">구현 및 검증</span>
-        <span class="ph-tab-state current">다음</span>
+        <span class="ph-tab-state done">완료</span>
       </button>
     </div>
 
@@ -1665,10 +1665,7 @@
               <div class="ph-summary-box-label">핵심 산출물</div>
               <ul id="ph-summary-outputs"></ul>
             </div>
-            <div class="ph-summary-box">
-              <div class="ph-summary-box-label">다음 단계로 넘기는 것</div>
-              <ul id="ph-summary-handoff"></ul>
-            </div>
+            <!-- 다음 단계로 넘기는 것 — 제거됨 (Phase 3+ 완료) -->
           </div>
         </div>
 
@@ -2583,7 +2580,7 @@
         <div class="arch-flow-box">Document<br><span style="font-size:11px;color:#888;">12건</span></div>
       </div>
     </div>
-    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">7종 노드 &middot; 10종 관계 &middot; 총 ~123개 노드 &middot; FailureCode가 그래프의 중심 허브</p>
+    <p style="text-align:center;font-size:12px;color:#888;margin-top:8px;">7종 노드 &middot; 10종 관계 &middot; 120개 노드 + 337개 관계 &middot; FailureCode가 그래프의 중심 허브</p>
   </div>
 
   <!-- ── 섹션 4: 노드 하나씩 설명 ── -->
@@ -3942,8 +3939,8 @@ const phaseDetails={
     title:'Build and Validate',
     subtitleKr:'구현 및 검증',
     state:'완료',
-    meta:['2026-03-16 ~ 2026-03-17 완료','F1~F6 전체 파이프라인 구현','리뷰 37건+ 반영'],
-    summary:'Docker 인프라 + F1~F5 파이프라인 + F6 대시보드 + 프론트-백엔드 실제 연동까지 완성. Neo4j 337관계, pgvector 47청크, GPT-4o-mini LLM 판단, 챗봇까지 동작.',
+    meta:['2026-03-16 ~ 2026-03-17 완료','F1~F6 전체 파이프라인 + F2 예지보전 구현','리뷰 37건+ 반영, 갭 5/5건 해결'],
+    summary:'Docker 인프라 + F1~F5 파이프라인 + F2 Forecasting(1D-CNN, ADR-007) + F6 대시보드 + 챗봇 3소스 통합. Neo4j 337관계, pgvector 47청크, GPT-4o-mini LLM 판단. 갭 분석 5건 전부 해결.',
     goal:[
       {text:'인프라 구축',detail:'Docker Compose (PG timescaledb-ha + Neo4j 5-community), init.sql 11테이블 + 마스터 데이터'},
       {text:'F1 시뮬레이터',detail:'CSV→DB batch/stream 모드. CamelCase→snake_case 변환, 제외 6컬럼 자동 제거'},
@@ -3953,19 +3950,23 @@ const phaseDetails={
       {text:'매뉴얼 임베딩',detail:'12문서 → 47청크 → pgvector 384차원 (sentence-transformers 로컬)'},
       {text:'14개 엔드포인트',detail:'FastAPI 14개 전부 실제 서비스 연결 (mock 0개). 챗봇 /api/chat 포함'},
       {text:'F6 대시보드',detail:'React 18 + Vite + Palantir 3-Pane + 챗봇 FAB. 프론트-백엔드 실제 연동'},
-      {text:'통합 테스트',detail:'W5 Coolant 재고=0 + Spindle 과열 시나리오 2건 통과'}
+      {text:'통합 테스트',detail:'W5 Coolant 재고=0 + Spindle 과열 시나리오 2건 통과'},
+      {text:'F2 Forecasting',detail:'1D-CNN 4피처 30초→30초 예측 (ADR-007). 분리도 0.384 (IF의 7.5배). 29,036행 backfill 완료'},
+      {text:'IF+CNN 가중 합산',detail:'final = 0.6×IF + 0.4×forecast. anomaly_scores에 if_score/forecast_score 분리 저장. 프론트 차트 연동'},
+      {text:'IF 모델 재학습',detail:'16피처(14 base + 2 파생)로 IF 모델 재학습. DB snake_case 컬럼과 호환'}
     ],
     outputs:[
-      {text:'backend/',detail:'FastAPI 앱 + F1~F5 서비스 + 시뮬레이터 + 모델 학습/검증 스크립트'},
-      {text:'frontend/',detail:'React 3-Pane 대시보드 + 챗봇 컴포넌트'},
-      {text:'docker-compose.yml + db/',detail:'PG + Neo4j 컨테이너 + init.sql + init_neo4j.cypher'},
-      {text:'Phase 3 보고서',detail:'phase3-late-report.md — 후반 6건 개선 상세'},
-      {text:'통합 테스트',detail:'test_integration.py — W5 + Spindle 시나리오 assert 검증'}
+      {text:'backend/',detail:'FastAPI 앱 + F1~F5 서비스 + F2 Forecasting + 시뮬레이터 + 모델 학습/검증/backfill 스크립트'},
+      {text:'frontend/',detail:'React 3-Pane 대시보드 + 챗봇 FAB + IF vs Forecast 비교 차트 + 예지보전 테이블'},
+      {text:'docker-compose.yml + db/',detail:'PG + Neo4j 컨테이너 + init.sql 11테이블 + init_neo4j.cypher'},
+      {text:'모델 파일',detail:'f2_detector.pkl (IF 16피처) + f2_forecaster.pkl (1D-CNN 4피처, 19MB)'},
+      {text:'통합 테스트',detail:'test_integration.py — W5 + Spindle 시나리오 assert 검증'},
+      {text:'ADR-007',detail:'F2 Forecasting 모델 선택: 1D-CNN vs LSTM → 1D-CNN 결정'}
     ],
     handoff:[
-      {text:'F2 Forecasting 개선',detail:'1D-CNN 구현 완료 (ADR-007, 분리도 0.384). 남은 과제: Autoencoder 비교, 저속 마모(exp13) 감지 개선, FORECAST_WEIGHT 최적화'},
-      {text:'F2 모델 개선',detail:'분리도 0.051 → Autoencoder 비교, 추가 피처, 공정별 분리 학습'},
-      {text:'하이브리드 검색 가중치',detail:'Neo4j + pgvector 점수 결합 최적화 (open-items #10)'}
+      {text:'F2 모델 개선',detail:'IF 분리도 0.046 → Autoencoder 비교, 저속 마모(exp13) 감지 개선, FORECAST_WEIGHT 최적화'},
+      {text:'하이브리드 검색 가중치',detail:'Neo4j + pgvector 점수 결합 최적화 (open-items #10)'},
+      {text:'매뉴얼 v2 보강',detail:'maintenance-manual-generation.md 프롬프트로 v2 생성 → 임베딩 재실행'}
     ],
     links:[
       {label:'핵심 기능 보기', href:'#p15', primary:true},
@@ -4081,8 +4082,8 @@ const phaseOverlayData={
       {num:'1',cls:'g',title:'F2 이상탐지 분리도 낮음 (0.051)',desc:'IF 단독으로는 worn/unworn 구분이 약함. 저속 마모(exp13) 감지율 1~2%.',fix:'해결: 1D-CNN Forecasting 추가로 분리도 0.384 달성 (7.5배 개선). 저속 마모는 후속 과제'},
       {num:'2',cls:'g',title:'온톨로지 R2/R10 관계 부재',desc:'Phase 3 전반에서 8/10종만 구축. DETECTS, REFERENCES가 0건.',fix:'해결 완료: R2 DETECTS 7건 + R10 REFERENCES 90건 추가 → 10/10종 337관계'},
       {num:'3',cls:'g',title:'mock 엔드포인트 10개 남음',desc:'14개 중 F3~F5만 실제 연결, 나머지 mock 응답.',fix:'해결 완료: 14개 전부 실제 DB 연결 (mock 0개)'},
-      {num:'4',cls:'y',title:'챗봇이 DB 데이터를 못 읽음',desc:'pgvector 매뉴얼 검색만 가능, 재고/작업/센서값 질문에 "확인 필요"',fix:'해결: DB 조회 + Neo4j 순회 + pgvector 3소스 통합. 12/12 테스트 통과'},
-      {num:'5',cls:'y',title:'F2 Forecasting 미구현 (PRD 핵심)',desc:'PRD의 "예지보전" 약속 중 "예측" 부분 미구현. 이상탐지만 있음.',fix:'해결: ADR-007, 1D-CNN 구현. 분리도 0.384, IF와 가중 합산(0.4)'}
+      {num:'4',cls:'g',title:'챗봇이 DB 데이터를 못 읽음',desc:'pgvector 매뉴얼 검색만 가능, 재고/작업/센서값 질문에 "확인 필요"',fix:'해결 완료: DB 조회 + Neo4j 순회 + pgvector 3소스 통합. 12/12 테스트 통과'},
+      {num:'5',cls:'g',title:'F2 Forecasting 미구현 (PRD 핵심)',desc:'PRD의 "예지보전" 약속 중 "예측" 부분 미구현. 이상탐지만 있음.',fix:'해결 완료: ADR-007, 1D-CNN 구현. 분리도 0.384, IF+CNN 가중 합산(0.4). 29,036행 backfill + 프론트 차트 연동'}
     ]
   }
 };
@@ -4118,14 +4119,16 @@ function renderPhaseHub(phaseKey){
     outputs.appendChild(li);
   });
 
-  // 다음 단계로 넘기는 것 (리스트 with detail)
+  // 다음 단계로 넘기는 것 (Phase 3+ 완료로 제거됨)
   const handoff=document.getElementById('ph-summary-handoff');
-  handoff.innerHTML='';
-  detail.handoff.forEach(h=>{
-    const li=document.createElement('li');
-    li.innerHTML='<strong>'+h.text+'</strong><span class="box-detail">'+h.detail+'</span>';
-    handoff.appendChild(li);
-  });
+  if (handoff) {
+    handoff.innerHTML='';
+    detail.handoff.forEach(h=>{
+      const li=document.createElement('li');
+      li.innerHTML='<strong>'+h.text+'</strong><span class="box-detail">'+h.detail+'</span>';
+      handoff.appendChild(li);
+    });
+  }
 
   document.querySelectorAll('.ph-tab').forEach(t=>t.classList.toggle('active',t.dataset.ph===phaseKey));
 
