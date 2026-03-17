@@ -157,8 +157,8 @@ function SystemStatusSection({ hasAnomaly }: { hasAnomaly: boolean }) {
 
 export default function Sidebar() {
   const { prevAlarmCount, setPrevAlarmCount } = useDashboardStore()
-  const { data: equipmentList = [] } = useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, refetchInterval: 5000, retry: false })
-  const { data: alarmData } = useQuery({ queryKey: ['alarms'], queryFn: getDashboardAlarms, refetchInterval: 5000, retry: false })
+  const { data: equipmentList = [] } = useQuery({ queryKey: ['equipment-summary'], queryFn: getEquipmentSummary, refetchInterval: 3000, retry: false })
+  const { data: alarmData } = useQuery({ queryKey: ['alarms'], queryFn: getDashboardAlarms, refetchInterval: 3000, retry: false })
 
   const alarms = alarmData?.alarms ?? []
   const sortedAlarms = [...alarms].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
@@ -172,7 +172,7 @@ export default function Sidebar() {
     }
   }, [sortedAlarms.length, setPrevAlarmCount])
 
-  const hasAnomaly = equipmentList.some((e) => e.status === 'warning' || e.status === 'critical')
+  const hasAnomaly = equipmentList.some((e) => e.status === 'warning' || e.status === 'critical') || alarms.length > 0
 
   return (
     <div className="flex flex-col flex-shrink-0 overflow-hidden" style={{ width: 'var(--sidebar-w)', background: 'var(--dg1)' }}>

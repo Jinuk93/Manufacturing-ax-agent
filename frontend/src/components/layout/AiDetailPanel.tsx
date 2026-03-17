@@ -197,7 +197,7 @@ function AlarmAnalysisView({ alarm }: { alarm: AlarmEvent }) {
 
 // ── 설비 분석 모드 ──
 function EquipmentAnalysisView({ equipmentId }: { equipmentId: string }) {
-  const { data: anomaly } = useQuery({ queryKey: ['anomaly', equipmentId], queryFn: () => getEquipmentAnomaly(equipmentId), refetchInterval: 5000, retry: false })
+  const { data: anomaly } = useQuery({ queryKey: ['anomaly', equipmentId], queryFn: () => getEquipmentAnomaly(equipmentId), refetchInterval: 3000, retry: false })
   const { data: actionReport, isLoading: actionLoading } = useQuery({ queryKey: ['action', equipmentId], queryFn: () => getActionReport(equipmentId), retry: false, staleTime: 30_000 })
   const failureCode = actionReport?.predicted_failure_code ?? anomaly?.predicted_failure_code
   const { data: ragData } = useQuery({ queryKey: ['graphrag', equipmentId, failureCode], queryFn: () => searchGraphRAG(failureCode!, equipmentId), enabled: !!failureCode, staleTime: 60_000, retry: 1 })
@@ -341,15 +341,15 @@ function EquipmentAnalysisView({ equipmentId }: { equipmentId: string }) {
 // ── 전체 설비 종합 분석 ──
 function OverviewAnalysisView() {
   const EQ_IDS = ['CNC-001', 'CNC-002', 'CNC-003']
-  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 5000, retry: false })
-  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 5000, retry: false })
-  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 5000, retry: false })
+  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 3000, retry: false })
+  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 3000, retry: false })
+  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 3000, retry: false })
   const r1 = useQuery({ queryKey: ['action', 'CNC-001'], queryFn: () => getActionReport('CNC-001'), retry: false, staleTime: 30_000 })
   const r2 = useQuery({ queryKey: ['action', 'CNC-002'], queryFn: () => getActionReport('CNC-002'), retry: false, staleTime: 30_000 })
   const r3 = useQuery({ queryKey: ['action', 'CNC-003'], queryFn: () => getActionReport('CNC-003'), retry: false, staleTime: 30_000 })
-  const s1 = useQuery({ queryKey: ['sensors', 'CNC-001'], queryFn: () => getSensorTimeseries('CNC-001'), refetchInterval: 5000, retry: false })
-  const s2 = useQuery({ queryKey: ['sensors', 'CNC-002'], queryFn: () => getSensorTimeseries('CNC-002'), refetchInterval: 5000, retry: false })
-  const s3 = useQuery({ queryKey: ['sensors', 'CNC-003'], queryFn: () => getSensorTimeseries('CNC-003'), refetchInterval: 5000, retry: false })
+  const s1 = useQuery({ queryKey: ['sensors', 'CNC-001'], queryFn: () => getSensorTimeseries('CNC-001'), refetchInterval: 3000, retry: false })
+  const s2 = useQuery({ queryKey: ['sensors', 'CNC-002'], queryFn: () => getSensorTimeseries('CNC-002'), refetchInterval: 3000, retry: false })
+  const s3 = useQuery({ queryKey: ['sensors', 'CNC-003'], queryFn: () => getSensorTimeseries('CNC-003'), refetchInterval: 3000, retry: false })
 
   const anomalies = [a1.data, a2.data, a3.data]
   const actions = [r1.data, r2.data, r3.data]
@@ -711,9 +711,123 @@ function InventoryAnalysisView() {
   )
 }
 
+// ── 예지보전 분석 모드 ──
+function PredictiveAnalysisView() {
+  const EQ_IDS = ['CNC-001', 'CNC-002', 'CNC-003']
+  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 3000, retry: false })
+  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 3000, retry: false })
+  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 3000, retry: false })
+  const r1 = useQuery({ queryKey: ['action', 'CNC-001'], queryFn: () => getActionReport('CNC-001'), retry: false, staleTime: 30_000 })
+  const r2 = useQuery({ queryKey: ['action', 'CNC-002'], queryFn: () => getActionReport('CNC-002'), retry: false, staleTime: 30_000 })
+  const r3 = useQuery({ queryKey: ['action', 'CNC-003'], queryFn: () => getActionReport('CNC-003'), retry: false, staleTime: 30_000 })
+
+  const anomalies = [a1.data, a2.data, a3.data]
+  const actions = [r1.data, r2.data, r3.data]
+
+  const FAULT_SENSOR: Record<string, { sensor: string; desc: string }> = {
+    TOOL_WEAR_001: { sensor: 'X1 전류', desc: 'X축 전류 하락 — 공구 마모 진행' },
+    SPINDLE_OVERHEAT_001: { sensor: 'S1 전류/파워', desc: '스핀들 전류 급증 — 과열 위험' },
+    CLAMP_PRESSURE_001: { sensor: 'X1 위치편차', desc: '위치 편차 증가 — 클램프 이상' },
+    COOLANT_LOW_001: { sensor: '복합 센서', desc: '복합 패턴 — 냉각수 점검 필요' },
+  }
+
+  const statusColor = (s: number) => s >= 0.8 ? 'var(--red5)' : s >= 0.6 ? 'var(--yellow5)' : 'var(--green5)'
+  const cardBg = { background: 'var(--dg3)', border: '1px solid var(--border-mid)', borderRadius: '3px', boxShadow: '0 1px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.03)' }
+
+  return (
+    <div className="p-3 space-y-2 overflow-y-auto flex-1">
+      {EQ_IDS.map((id, idx) => {
+        const anomaly = anomalies[idx]
+        const action = actions[idx]
+        const ifScore = (anomaly as { if_score?: number } | undefined)?.if_score ?? anomaly?.anomaly_score ?? 0
+        const fcScore = (anomaly as { forecast_score?: number } | undefined)?.forecast_score
+        const combined = anomaly?.anomaly_score ?? 0
+        const fc = anomaly?.predicted_failure_code ?? action?.predicted_failure_code
+        const faultInfo = fc ? FAULT_SENSOR[fc] : null
+        const recommendation = action?.recommendation ?? 'MONITOR'
+        const isForecastHigh = fcScore != null && fcScore > ifScore + 0.1
+
+        return (
+          <div key={id} style={{ ...cardBg, padding: '10px' }}>
+            <div className="space-y-2">
+              {/* 헤더: 설비 + 상태 */}
+              <div className="flex items-center justify-between">
+                <span style={{ fontSize: '12px', fontWeight: 700, fontFamily: sans, color: 'var(--gray5)' }}>{id}</span>
+                <span style={{ fontSize: '11px', fontWeight: 600, fontFamily: sans, color: ACTION_COLORS[recommendation] }}>{ACTION_LABELS[recommendation]}</span>
+              </div>
+
+              {/* 점수 분석: IF vs CNN vs 융합 */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)', borderRadius: '3px', padding: '8px 10px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '4px', fontSize: '10px', fontFamily: sans }}>
+                  <div>
+                    <div style={{ color: 'var(--gray3)', marginBottom: '2px' }}>현재 탐지 (IF)</div>
+                    <div style={{ color: 'var(--cyan)', fontWeight: 600, fontSize: '13px', fontFamily: mono }}>{ifScore.toFixed(2)}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--gray3)', marginBottom: '2px' }}>미래 예측 (CNN)</div>
+                    <div style={{ color: fcScore != null ? 'var(--orange5)' : 'var(--gray2)', fontWeight: 600, fontSize: '13px', fontFamily: mono }}>{fcScore != null ? fcScore.toFixed(2) : '—'}</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'var(--gray3)', marginBottom: '2px' }}>융합 점수</div>
+                    <div style={{ color: statusColor(combined), fontWeight: 600, fontSize: '13px', fontFamily: mono }}>{combined.toFixed(2)}</div>
+                  </div>
+                </div>
+              </div>
+
+              <ScoreBlocks score={combined} />
+
+              {/* 예측 근거 */}
+              {isForecastHigh && (
+                <div style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.15)', borderRadius: '3px', padding: '6px 10px' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--orange5)', fontFamily: sans, marginBottom: '2px' }}>CNN 예측 상승 감지</div>
+                  <div style={{ fontSize: '10px', color: 'var(--gray4)', fontFamily: sans, lineHeight: '1.5' }}>
+                    예측 점수({fcScore?.toFixed(2)})가 현재 탐지({ifScore.toFixed(2)})보다 높음
+                    — 지금은 정상이지만 <span style={{ color: 'var(--orange5)', fontWeight: 600 }}>30초 후 악화 가능성</span>
+                  </div>
+                </div>
+              )}
+
+              {/* 위험 센서 + 고장코드 */}
+              {faultInfo && (
+                <div style={{ fontSize: '10px', fontFamily: sans, color: 'var(--gray4)', lineHeight: '1.5' }}>
+                  <span style={{ color: 'var(--yellow5)', fontWeight: 600 }}>위험 센서:</span> {faultInfo.sensor} — {faultInfo.desc}
+                  <br />
+                  <span style={{ color: 'var(--green5)', fontWeight: 600 }}>고장코드:</span> {fc?.replace(/_/g, ' ')}
+                </div>
+              )}
+
+              {/* LLM 조치 요약 */}
+              {action?.reasoning && (
+                <div style={{ fontSize: '10px', fontFamily: sans, color: 'var(--gray4)', lineHeight: '1.5', borderTop: '1px solid var(--border-subtle)', paddingTop: '6px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--gray5)' }}>AI 분석:</span> {action.reasoning.length > 120 ? action.reasoning.slice(0, 120) + '...' : action.reasoning}
+                </div>
+              )}
+
+              {/* 조치 단계 (축약) */}
+              {action && action.action_steps.length > 0 && (
+                <div style={{ fontSize: '10px', fontFamily: sans, color: 'var(--gray4)' }}>
+                  {action.action_steps.slice(0, 2).map((step, i) => (
+                    <div key={i} style={{ display: 'flex', gap: '6px', marginBottom: '2px' }}>
+                      <span style={{ fontFamily: mono, color: 'var(--cyan)', fontWeight: 600, flexShrink: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                      <span>{step.length > 60 ? step.slice(0, 60) + '...' : step}</span>
+                    </div>
+                  ))}
+                  {action.action_steps.length > 2 && (
+                    <div style={{ color: 'var(--gray2)', fontSize: '9px' }}>+{action.action_steps.length - 2}개 추가 조치</div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ── 메인 ──
 export default function AiDetailPanel() {
-  const { selectedEquipmentId, selectedAlarm, activeOverlay } = useDashboardStore()
+  const { selectedEquipmentId, selectedAlarm, activeOverlay, predictiveMode } = useDashboardStore()
   const hasSelection = !!selectedEquipmentId || !!selectedAlarm
   const headerRight = selectedAlarm?.equipment_id ?? selectedEquipmentId ?? ''
 
@@ -721,16 +835,18 @@ export default function AiDetailPanel() {
   const isOverlay = activeOverlay === 'work' || activeOverlay === 'inventory'
   const headerLabel = isOverlay
     ? (activeOverlay === 'work' ? 'AI 작업현황 분석' : 'AI 재고현황 분석')
+    : predictiveMode ? '예지보전 AI 분석'
     : selectedAlarm ? '이상감지 분석'
     : hasSelection ? 'AI 분석 결과'
     : 'AI 전체 설비 종합 분석'
-  const headerDot = selectedAlarm ? 'var(--yellow5)' : 'var(--cyan)'
+  const headerDot = predictiveMode ? 'var(--orange5)' : selectedAlarm ? 'var(--yellow5)' : 'var(--cyan)'
 
   // 현재 보여줄 뷰 결정
   const renderContent = () => {
     if (isOverlay) {
       return activeOverlay === 'work' ? <WorkOrderAnalysisView /> : <InventoryAnalysisView />
     }
+    if (predictiveMode) return <PredictiveAnalysisView />
     if (selectedAlarm) return <AlarmAnalysisView alarm={selectedAlarm} />
     if (selectedEquipmentId) return <EquipmentAnalysisView equipmentId={selectedEquipmentId} />
     return <OverviewAnalysisView />

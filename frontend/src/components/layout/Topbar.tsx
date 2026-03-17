@@ -32,12 +32,12 @@ function NavButton({ label, active, onClick }: { label: string; active: boolean;
 // 예지보전 경고 계산
 function usePredictiveWarnings() {
   const EQ_IDS = ['CNC-001', 'CNC-002', 'CNC-003']
-  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 5000, retry: false })
-  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 5000, retry: false })
-  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 5000, retry: false })
-  const h1 = useQuery({ queryKey: ['anomaly-history', 'CNC-001'], queryFn: () => getAnomalyHistory('CNC-001'), refetchInterval: 5000, retry: false })
-  const h2 = useQuery({ queryKey: ['anomaly-history', 'CNC-002'], queryFn: () => getAnomalyHistory('CNC-002'), refetchInterval: 5000, retry: false })
-  const h3 = useQuery({ queryKey: ['anomaly-history', 'CNC-003'], queryFn: () => getAnomalyHistory('CNC-003'), refetchInterval: 5000, retry: false })
+  const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 3000, retry: false })
+  const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 3000, retry: false })
+  const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 3000, retry: false })
+  const h1 = useQuery({ queryKey: ['anomaly-history', 'CNC-001'], queryFn: () => getAnomalyHistory('CNC-001'), refetchInterval: 3000, retry: false })
+  const h2 = useQuery({ queryKey: ['anomaly-history', 'CNC-002'], queryFn: () => getAnomalyHistory('CNC-002'), refetchInterval: 3000, retry: false })
+  const h3 = useQuery({ queryKey: ['anomaly-history', 'CNC-003'], queryFn: () => getAnomalyHistory('CNC-003'), refetchInterval: 3000, retry: false })
 
   const anomalies = [a1.data, a2.data, a3.data]
   const histories = [h1.data, h2.data, h3.data]
