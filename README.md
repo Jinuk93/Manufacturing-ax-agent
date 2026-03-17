@@ -35,7 +35,7 @@
 <br/>
 
 <!-- 데모 영상 -->
-https://github.com/user-attachments/assets/74fe06db-dc87-4f64-8d02-61dff547c998
+https://github.com/user-attachments/assets/a3f8a1e7-ae99-4b52-afc5-2d4c11ca3d9c
 
 <br/>
 
