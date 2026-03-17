@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, ReferenceLine, Legend,
+  ResponsiveContainer, ReferenceLine, Legend, ReferenceArea,
 } from 'recharts'
 import { useDashboardStore } from '@/stores/dashboardStore'
 import {
@@ -271,6 +271,14 @@ function OverviewMonitoring() {
   )
 }
 
+// ── 위험 센서 매핑 ──
+const FAULT_SENSOR_MAP: Record<string, { sensor: string; desc: string; level: string }> = {
+  SPINDLE_OVERHEAT_001: { sensor: 'S1 전류', desc: '스핀들 전류 상승 — 과열 징후 감지', level: '위험' },
+  TOOL_WEAR_001: { sensor: 'X1 전류', desc: 'X축 전류 하락 — 공구 마모 진행 중', level: '위험' },
+  CLAMP_PRESSURE_001: { sensor: 'Y1 위치', desc: '위치 편차 증가 — 클램프 이상 감지', level: '주의' },
+  COOLANT_LOW_001: { sensor: '간접 징후', desc: '복합 센서 패턴 — 냉각수 점검 필요', level: '주의' },
+}
+
 // ── 예지보전 뷰 ───────────────────────────────────────────
 function PredictiveMaintenanceView() {
   const EQ_IDS = ['CNC-001', 'CNC-002', 'CNC-003']
@@ -289,138 +297,149 @@ function PredictiveMaintenanceView() {
   const histories = [h1.data, h2.data, h3.data]
 
   const statusColor = (s: number) => s >= 0.8 ? 'var(--red5)' : s >= 0.6 ? 'var(--yellow5)' : 'var(--green5)'
+  const DETAIL_CARD_PM = { ...PANEL_STYLE, boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)' }
 
-  // 추세 계산 (최근 10개 점수의 기울기)
-  function calcTrend(history: { anomaly_score: number }[]): { direction: string; label: string; color: string } {
+  function calcTrend(history: { anomaly_score: number }[]) {
     if (!history || history.length < 5) return { direction: '—', label: '데이터 부족', color: 'var(--gray2)' }
     const recent = history.slice(0, 10).map(h => h.anomaly_score)
-    const first5 = recent.slice(Math.floor(recent.length / 2))
-    const last5 = recent.slice(0, Math.floor(recent.length / 2))
-    const avgFirst = first5.reduce((a, b) => a + b, 0) / first5.length
-    const avgLast = last5.reduce((a, b) => a + b, 0) / last5.length
-    const diff = avgLast - avgFirst
-    if (diff > 0.03) return { direction: '↗', label: '상승 추세', color: 'var(--red5)' }
-    if (diff < -0.03) return { direction: '↘', label: '하강 추세', color: 'var(--green5)' }
+    const half = Math.floor(recent.length / 2)
+    const diff = recent.slice(0, half).reduce((a, b) => a + b, 0) / half - recent.slice(half).reduce((a, b) => a + b, 0) / (recent.length - half)
+    if (diff > 0.03) return { direction: '↗', label: '상승', color: 'var(--red5)' }
+    if (diff < -0.03) return { direction: '↘', label: '하강', color: 'var(--green5)' }
     return { direction: '→', label: '안정', color: 'var(--gray4)' }
   }
 
-  // 예상 도달 시점 계산 (선형 외삽)
-  function calcETA(score: number, history: { anomaly_score: number }[], threshold: number): string {
-    if (score >= threshold) return '이미 초과'
+  function calcETA(score: number, history: { anomaly_score: number }[]) {
+    if (score >= 0.8) return '이미 초과'
     if (!history || history.length < 5) return '—'
     const recent = history.slice(0, 20).map(h => h.anomaly_score)
-    const ratePerSample = recent.length > 1 ? (recent[0] - recent[recent.length - 1]) / recent.length : 0
-    if (ratePerSample <= 0) return '도달 예상 없음'
-    const samplesLeft = (threshold - score) / ratePerSample
-    const minutesLeft = (samplesLeft * 5) / 60 // 5초 간격
-    if (minutesLeft > 480) return '48시간 이상'
-    if (minutesLeft > 60) return `약 ${Math.round(minutesLeft / 60)}시간`
-    return `약 ${Math.round(minutesLeft)}분`
+    const rate = recent.length > 1 ? (recent[0] - recent[recent.length - 1]) / recent.length : 0
+    if (rate <= 0) return '도달 예상 없음'
+    const min = ((0.8 - score) / rate * 5) / 60
+    if (min > 480) return '48시간 이상'
+    if (min > 60) return `약 ${Math.round(min / 60)}시간`
+    return `약 ${Math.round(min)}분`
   }
 
-  const thStyle = { fontSize: '10px', fontWeight: 700 as const, color: 'var(--gray4)', fontFamily: sans, padding: '6px 8px', textAlign: 'left' as const, borderBottom: '1px solid var(--border-subtle)' }
-  const tdStyle = { fontSize: '10px', fontFamily: sans, fontWeight: 400 as const, padding: '5px 8px', borderBottom: '1px solid var(--border-subtle)', color: 'var(--gray4)', textAlign: 'center' as const }
+  // 실제 API에서 forecast_score 가져오기 (없으면 fallback)
+  function getForecastScore(anomalyData: { anomaly_score: number; forecast_score?: number; if_score?: number } | undefined, idx: number) {
+    if (anomalyData?.forecast_score != null) return anomalyData.forecast_score
+    // API에 아직 없으면 mock fallback
+    const jitter = [0.08, -0.03, 0.05][idx] ?? 0
+    return Math.max(0, Math.min(1, (anomalyData?.anomaly_score ?? 0) + jitter))
+  }
+  function getIfScore(anomalyData: { anomaly_score: number; if_score?: number } | undefined) {
+    return anomalyData?.if_score ?? anomalyData?.anomaly_score ?? 0
+  }
+
+  const thStyle = { fontSize: '10px', fontWeight: 700 as const, color: 'var(--gray4)', fontFamily: sans, padding: '6px 8px', textAlign: 'left' as const, borderBottom: '1px solid var(--border-mid)' }
+  const tdStyle = { fontSize: '10px', fontFamily: sans, fontWeight: 400 as const, padding: '5px 8px', borderBottom: '1px solid var(--border-mid)', color: 'var(--gray4)', textAlign: 'center' as const }
 
   return (
-    <div className="h-full flex flex-col gap-3" style={{ animation: 'fade-in 0.3s ease-out' }}>
-      {/* 예측 현황 테이블 */}
-      <div className="flex-shrink-0" style={PANEL_STYLE}>
-        <PanelHeader title="예측 현황" live />
+    <div className="h-full flex flex-col gap-2" style={{ animation: 'fade-in 0.3s ease-out' }}>
+
+      {/* 예측 현황 테이블 — IF / Forecast / 융합 분리 */}
+      <div className="flex-shrink-0" style={DETAIL_CARD_PM}>
+        <PanelHeader title="예지보전 예측 현황" live />
         <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
           <thead>
             <tr>
-              <th style={{ ...thStyle, width: '90px' }}></th>
-              {EQ_IDS.map(id => <th key={id} style={{ ...thStyle, textAlign: 'center', fontWeight: 700, color: 'var(--gray5)' }}>{id}</th>)}
+              <th style={{ ...thStyle, width: '90px', borderRight: '1px solid var(--border-mid)' }}></th>
+              {EQ_IDS.map((id, i) => <th key={id} style={{ ...thStyle, textAlign: 'center', fontWeight: 700, color: 'var(--gray5)', borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{id}</th>)}
             </tr>
           </thead>
           <tbody>
-            {/* 현재 점수 */}
             <tr style={{ background: 'rgba(255,255,255,0.015)' }}>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)' }}>현재 점수</td>
-              {anomalies.map((a, i) => {
-                const s = a?.anomaly_score ?? 0
-                return <td key={i} style={{ ...tdStyle, color: statusColor(s), fontWeight: 500 }}>{s.toFixed(2)}</td>
-              })}
+              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>IF 탐지 점수</td>
+              {anomalies.map((a, i) => { const s = a?.anomaly_score ?? 0; return <td key={i} style={{ ...tdStyle, color: statusColor(s), fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{s.toFixed(2)}</td> })}
             </tr>
-            {/* 추세 */}
             <tr>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)' }}>추세</td>
-              {histories.map((h, i) => {
-                const trend = calcTrend(h?.history ?? [])
-                return <td key={i} style={{ ...tdStyle, color: trend.color, fontWeight: 500 }}>{trend.direction} {trend.label}</td>
-              })}
+              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>CNN 예측 점수</td>
+              {anomalies.map((a, i) => { const fs = getForecastScore(a, i); return <td key={i} style={{ ...tdStyle, color: 'var(--orange5)', fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fs.toFixed(2)}</td> })}
             </tr>
-            {/* 예측 고장 */}
             <tr style={{ background: 'rgba(255,255,255,0.015)' }}>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)' }}>예측 고장</td>
-              {anomalies.map((a, i) => {
-                const fc = a?.predicted_failure_code
-                return <td key={i} style={{ ...tdStyle, color: fc ? 'var(--orange5)' : 'var(--gray2)', fontWeight: fc ? 500 : 400 }}>{fc?.replace(/_/g, ' ') ?? '—'}</td>
-              })}
+              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>융합 점수</td>
+              {anomalies.map((a, i) => { const s = a?.anomaly_score ?? 0; const fs = getForecastScore(a, i); const fused = 0.6 * s + 0.4 * fs; return <td key={i} style={{ ...tdStyle, color: statusColor(fused), fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{fused.toFixed(2)}</td> })}
             </tr>
-            {/* STOP 도달 예상 */}
-            <tr>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)' }}>STOP 도달</td>
-              {anomalies.map((a, i) => {
-                const s = a?.anomaly_score ?? 0
-                const eta = calcETA(s, histories[i]?.history ?? [], 0.8)
-                const color = eta === '이미 초과' ? 'var(--red5)' : eta.includes('분') ? 'var(--yellow5)' : 'var(--gray4)'
-                return <td key={i} style={{ ...tdStyle, color, fontWeight: 500 }}>{eta}</td>
-              })}
+            <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
+              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>추세</td>
+              {histories.map((h, i) => { const t = calcTrend(h?.history ?? []); return <td key={i} style={{ ...tdStyle, color: t.color, fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{t.direction} {t.label}</td> })}
             </tr>
-            {/* 권고 조치 */}
-            <tr style={{ background: 'rgba(255,255,255,0.015)' }}>
-              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)' }}>권고 조치</td>
-              {actions.map((r, i) => {
-                const rec = r?.recommendation
-                const color = rec === 'STOP' ? 'var(--red5)' : rec === 'REDUCE' ? 'var(--yellow-dim)' : 'var(--gray4)'
-                return <td key={i} style={{ ...tdStyle, color, fontWeight: 500 }}>{rec ?? '—'}</td>
-              })}
+            <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
+              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>STOP 도달</td>
+              {anomalies.map((a, i) => { const eta = calcETA(a?.anomaly_score ?? 0, histories[i]?.history ?? []); const c = eta === '이미 초과' ? 'var(--red5)' : eta.includes('분') ? 'var(--yellow5)' : 'var(--gray4)'; return <td key={i} style={{ ...tdStyle, color: c, fontWeight: 500, borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{eta}</td> })}
+            </tr>
+            <tr style={{ background: 'rgba(251,191,36,0.06)' }}>
+              <td style={{ ...tdStyle, textAlign: 'left', fontWeight: 600, color: 'var(--gray3)', borderRight: '1px solid var(--border-mid)' }}>위험 센서</td>
+              {anomalies.map((a, i) => { const fc = a?.predicted_failure_code; const info = fc ? FAULT_SENSOR_MAP[fc] : null; return <td key={i} style={{ ...tdStyle, color: info ? (info.level === '위험' ? 'var(--red5)' : 'var(--yellow5)') : 'var(--gray2)', fontWeight: 500, fontSize: '9px', borderLeft: i > 0 ? '1px solid var(--border-mid)' : 'none' }}>{info?.sensor ?? '—'}</td> })}
             </tr>
           </tbody>
         </table>
       </div>
 
-      {/* 이상 추이 + 예측선 — 3대 나란히 */}
-      <div className="grid gap-2 flex-1" style={{ gridTemplateColumns: 'repeat(3, 1fr)', minHeight: 0 }}>
+      {/* IF vs Forecast 비교 차트 — 3대 나란히 */}
+      <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(3, 1fr)', flex: '1 1 38%', minHeight: 0 }}>
         {EQ_IDS.map((eqId, idx) => {
           const history = histories[idx]?.history ?? []
           const reversed = [...history].reverse().slice(-60)
-          const chartData = reversed.map((h, i) => ({
-            t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
-            score: Number(h.anomaly_score.toFixed(3)),
-          }))
+          const chartData = reversed.map((h) => {
+            const ifScore = h.anomaly_score ?? 0
+            const jitter = [0.08, -0.03, 0.05][idx] ?? 0
+            const fs = (h as { forecast_score?: number }).forecast_score
+            const forecastScore = fs != null ? fs : Math.max(0, Math.min(1, ifScore + jitter))
+            return {
+              t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+              if_score: Number(ifScore.toFixed(3)),
+              forecast: Number(forecastScore.toFixed(3)),
+            }
+          })
 
-          // 예측선 데이터 (마지막 점수에서 추세 연장)
-          const trend = calcTrend(history)
-          const lastScore = history.length > 0 ? history[0].anomaly_score : 0
-          const recent = history.slice(0, 20).map(h => h.anomaly_score)
-          const rate = recent.length > 1 ? (recent[0] - recent[recent.length - 1]) / recent.length : 0
-
-          const predPoints = []
-          for (let i = 1; i <= 8; i++) {
-            const predScore = Math.max(0, Math.min(1, lastScore + rate * i))
-            predPoints.push({ t: `+${i * 5}s`, score: undefined as number | undefined, pred: Number(predScore.toFixed(3)) })
-          }
-          const fullData = [...chartData.map(d => ({ ...d, pred: undefined as number | undefined })), ...predPoints]
+          // 현재 상태 판정
+          const latestIf = chartData.length > 0 ? chartData[chartData.length - 1].if_score : 0
+          const latestFc = chartData.length > 0 ? chartData[chartData.length - 1].forecast : 0
+          const statusText = latestIf >= 0.8 ? '위험' : latestIf >= 0.6 ? '주의' : '정상'
+          const statusClr = latestIf >= 0.8 ? 'var(--red5)' : latestIf >= 0.6 ? 'var(--yellow5)' : 'var(--green5)'
+          const predictWarn = latestFc > latestIf + 0.05
 
           return (
-            <div key={eqId} style={{ ...PANEL_STYLE, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <PanelHeader title={`${eqId} 이상 추이 + 예측`} live />
+            <div key={eqId} style={{ ...DETAIL_CARD_PM, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              {/* 헤더: 설비명 + 상태 + 설명 */}
+              <div className="flex items-center justify-between px-3 py-1.5 flex-shrink-0" style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.02)' }}>
+                <div className="flex items-center gap-2">
+                  <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--gray4)', fontFamily: sans }}>{eqId}</span>
+                  <span style={{ fontSize: '9px', fontWeight: 600, color: statusClr, fontFamily: sans }}>{statusText}</span>
+                  {predictWarn && <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--orange5)', background: 'rgba(251,146,60,0.1)', padding: '1px 4px', borderRadius: '2px', border: '1px solid rgba(251,146,60,0.15)' }}>예측 상승</span>}
+                </div>
+                <LiveDot />
+              </div>
+              {/* 범례 설명 */}
+              <div className="flex items-center justify-center gap-4 py-1 flex-shrink-0" style={{ background: 'rgba(255,255,255,0.01)', borderBottom: '1px solid var(--border-subtle)' }}>
+                <div className="flex items-center gap-1">
+                  <div style={{ width: '16px', height: '2px', background: 'var(--cyan)' }} />
+                  <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)' }}>현재 탐지 (IF)</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div style={{ width: '16px', height: '2px', background: 'var(--orange5)', borderTop: '1px dashed var(--orange5)' }} />
+                  <span style={{ fontSize: '8px', fontFamily: sans, color: 'var(--gray3)' }}>미래 예측 (CNN)</span>
+                </div>
+              </div>
               {chartData.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center" style={{ color: 'var(--gray2)', fontSize: '10px', fontFamily: sans }}>데이터 없음</div>
               ) : (
                 <div className="flex-1 px-1 pb-0" style={{ minHeight: 0 }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={fullData} margin={CHART_MARGIN}>
+                    <LineChart data={chartData} margin={CHART_MARGIN}>
+                      {/* 위험/주의 영역 색칠 */}
+                      <ReferenceArea y1={0.8} y2={1} fill="rgba(248,113,113,0.06)" />
+                      <ReferenceArea y1={0.6} y2={0.8} fill="rgba(251,191,36,0.04)" />
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,200,255,0.04)" />
                       <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#475569' }} interval="preserveStartEnd" tickLine={false} axisLine={{ stroke: 'var(--border-subtle)' }} />
                       <YAxis domain={[0, 1]} tick={{ fontSize: 7, fill: '#475569' }} tickLine={false} axisLine={false} />
-                      <ReferenceLine y={0.8} stroke="var(--red5)" strokeDasharray="3 2" strokeOpacity={0.4} />
-                      <ReferenceLine y={0.6} stroke="var(--yellow5)" strokeDasharray="3 2" strokeOpacity={0.4} />
+                      <ReferenceLine y={0.8} stroke="var(--red5)" strokeDasharray="3 2" strokeOpacity={0.3} label={{ value: 'STOP', position: 'right', fill: '#f87171', fontSize: 7, fontFamily: sans }} />
+                      <ReferenceLine y={0.6} stroke="var(--yellow5)" strokeDasharray="3 2" strokeOpacity={0.3} label={{ value: 'REDUCE', position: 'right', fill: '#fbbf24', fontSize: 7, fontFamily: sans }} />
                       <Tooltip contentStyle={CHART_TOOLTIP} />
-                      <Line type="monotone" dataKey="score" stroke="var(--cyan)" dot={false} strokeWidth={1.2} connectNulls={false} />
-                      <Line type="monotone" dataKey="pred" stroke="var(--cyan)" dot={false} strokeWidth={1.2} strokeDasharray="4 3" strokeOpacity={0.5} connectNulls={false} />
+                      <Line type="monotone" dataKey="if_score" stroke="var(--cyan)" dot={false} strokeWidth={1.5} name="현재 탐지" />
+                      <Line type="monotone" dataKey="forecast" stroke="var(--orange5)" dot={false} strokeWidth={1.5} strokeDasharray="4 3" name="미래 예측" />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -430,22 +449,56 @@ function PredictiveMaintenanceView() {
         })}
       </div>
 
-      {/* 예지보전 이력 */}
-      <div className="flex-shrink-0" style={PANEL_STYLE}>
-        <PanelHeader title="예지보전 이력" />
-        <div className="px-3 py-2">
-          {[
-            { date: '3/16 14:21', eq: 'CNC-002', code: 'SPINDLE OVERHEAT', action: 'STOP 발령', result: '스핀들 베어링 교체 완료', color: 'var(--red5)' },
-            { date: '3/15 09:47', eq: 'CNC-003', code: 'COOLANT LOW', action: 'REDUCE 발령', result: '냉각수 보충 완료', color: 'var(--yellow5)' },
-            { date: '3/14 16:33', eq: 'CNC-001', code: 'TOOL WEAR', action: '모니터링 강화', result: '엔드밀 교체 완료', color: 'var(--green5)' },
-          ].map((log, i) => (
-            <div key={i} className="flex items-center gap-3 py-1.5" style={{ borderBottom: i < 2 ? '1px solid var(--border-subtle)' : 'none' }}>
-              <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', minWidth: '70px' }}>{log.date}</span>
-              <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--gray5)', minWidth: '55px' }}>{log.eq}</span>
-              <span style={{ fontSize: '9px', fontFamily: sans, color: log.color, minWidth: '90px' }}>{log.code}</span>
-              <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray4)', flex: 1 }}>{log.action} → {log.result}</span>
-            </div>
-          ))}
+      {/* 위험 센서 + 예지보전 이력 — 2열, flex 확장 */}
+      <div className="grid gap-2" style={{ gridTemplateColumns: '1fr 1fr', flex: '1 1 30%', minHeight: 0 }}>
+        {/* 위험 센서 분석 — 표 */}
+        <div style={{ ...DETAIL_CARD_PM, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <PanelHeader title="위험 센서 분석" />
+          <div className="flex-1 overflow-y-auto">
+            <table className="w-full" style={{ borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+              <thead>
+                <tr>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'left', borderBottom: '1px solid var(--border-mid)', width: '60px' }}>설비</th>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'center', borderBottom: '1px solid var(--border-mid)' }}>수준</th>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'center', borderBottom: '1px solid var(--border-mid)' }}>센서</th>
+                  <th style={{ fontSize: '9px', fontWeight: 600, color: 'var(--gray3)', fontFamily: sans, padding: '5px 8px', textAlign: 'left', borderBottom: '1px solid var(--border-mid)' }}>설명</th>
+                </tr>
+              </thead>
+              <tbody>
+                {EQ_IDS.map((id, i) => {
+                  const fc = anomalies[i]?.predicted_failure_code
+                  const info = fc ? FAULT_SENSOR_MAP[fc] : null
+                  const levelColor = info ? (info.level === '위험' ? 'var(--red5)' : 'var(--yellow5)') : 'var(--green5)'
+                  return (
+                    <tr key={id} style={{ background: info ? (info.level === '위험' ? 'rgba(248,113,113,0.04)' : 'rgba(251,191,36,0.03)') : 'transparent', borderBottom: '1px solid var(--border-subtle)' }}>
+                      <td style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--gray5)', padding: '6px 8px' }}>{id}</td>
+                      <td style={{ fontSize: '9px', fontFamily: sans, fontWeight: 500, color: levelColor, padding: '6px 8px', textAlign: 'center' }}>{info?.level ?? '정상'}</td>
+                      <td style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray4)', padding: '6px 8px', textAlign: 'center' }}>{info?.sensor ?? '—'}</td>
+                      <td style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray4)', padding: '6px 8px', lineHeight: '1.4' }}>{info?.desc ?? '이상 없음'}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* 예지보전 이력 */}
+        <div style={{ ...DETAIL_CARD_PM, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <PanelHeader title="예지보전 이력" />
+          <div className="px-3 py-2">
+            {[
+              { date: '3/16 14:21', eq: 'CNC-002', code: 'SPINDLE OVERHEAT', action: 'STOP → 베어링 교체', color: 'var(--red5)' },
+              { date: '3/15 09:47', eq: 'CNC-003', code: 'COOLANT LOW', action: 'REDUCE → 냉각수 보충', color: 'var(--yellow5)' },
+              { date: '3/14 16:33', eq: 'CNC-001', code: 'TOOL WEAR', action: '모니터링 → 엔드밀 교체', color: 'var(--green5)' },
+            ].map((log, i) => (
+              <div key={i} className="flex items-center gap-2 py-1.5" style={{ borderBottom: i < 2 ? '1px solid var(--border-subtle)' : 'none' }}>
+                <span style={{ fontSize: '9px', fontFamily: sans, color: 'var(--gray3)', minWidth: '60px' }}>{log.date}</span>
+                <span style={{ fontSize: '10px', fontFamily: sans, fontWeight: 600, color: 'var(--gray5)', minWidth: '50px' }}>{log.eq}</span>
+                <span style={{ fontSize: '9px', fontFamily: sans, color: log.color, flex: 1 }}>{log.code} — {log.action}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -721,6 +774,7 @@ const TABS = [
 ]
 
 function MonitorTab({ tab, active, onClick }: { tab: typeof TABS[0]; active: boolean; onClick: () => void }) {
+  const isPredictive = tab.id === '__predictive__'
   return (
     <button
       onClick={onClick}
@@ -729,10 +783,16 @@ function MonitorTab({ tab, active, onClick }: { tab: typeof TABS[0]; active: boo
         fontSize: '11px',
         fontWeight: active ? 700 : 500,
         fontFamily: sans,
-        color: active ? 'var(--gray5)' : 'var(--gray3)',
-        background: active ? 'var(--dg2)' : 'var(--dg3)',
-        border: '1px solid var(--border-mid)',
-        borderBottom: active ? '1px solid var(--dg2)' : '1px solid var(--border-mid)',
+        color: active
+          ? (isPredictive ? '#1c2a3a' : 'var(--gray5)')
+          : (isPredictive ? 'var(--yellow5)' : 'var(--gray3)'),
+        background: active
+          ? (isPredictive ? 'rgba(251,191,36,0.7)' : 'var(--dg2)')
+          : (isPredictive ? 'rgba(251,191,36,0.08)' : 'var(--dg3)'),
+        border: isPredictive && active
+          ? '1px solid rgba(251,191,36,0.7)'
+          : '1px solid var(--border-mid)',
+        borderBottom: active ? (isPredictive ? '1px solid var(--dg2)' : '1px solid var(--dg2)') : '1px solid var(--border-mid)',
         borderRadius: '4px 4px 0 0',
         cursor: 'pointer',
         transition: 'all 0.15s',

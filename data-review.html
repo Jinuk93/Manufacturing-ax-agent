@@ -1440,13 +1440,63 @@
           <div style="font-size:14px;color:#f5f5f5;font-weight:600;">작업 + 재고 현황</div>
           <div style="font-size:12px;color:#888;margin-top:4px;">현재 작업 정보<br>부품 재고 + 발주 상태</div>
         </div>
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:14px;text-align:center;">
+          <div style="font-size:28px;margin-bottom:6px;">&#128172;</div>
+          <div style="font-size:14px;color:#f5f5f5;font-weight:600;">AI 챗봇</div>
+          <div style="font-size:12px;color:#888;margin-top:4px;">자연어 질문 &rarr; 답변<br>DB + Neo4j + 매뉴얼 통합</div>
+        </div>
       </div>
       <div style="margin-top:12px;">
         <span class="fn-data-tag input">입력 : F1~F5의 모든 결과</span>
-        <span class="fn-data-tag output">출력 : 웹 대시보드 (FastAPI + HTML)</span>
+        <span class="fn-data-tag output">출력 : React 3-Pane 대시보드 + AI 챗봇</span>
       </div>
-      <p style="font-size:13px;color:#d4d4d4;margin-top:12px;">ADR-005에 의해 Phase 1부터 조기 착수했습니다. 현재 프로젝트 리뷰 대시보드(data-review.html)가 존재하며, 실제 운영 대시보드(F6)는 Phase 3에서 구현합니다.</p>
+      <p style="font-size:13px;color:#d4d4d4;margin-top:12px;">ADR-005에 의해 Phase 1부터 조기 착수. ADR-006에 의해 React 18 + Vite 선택. 3-Pane 레이아웃(Sidebar + Center + AI Panel) + 챗봇 FAB 구현 완료.</p>
       <p class="fn-sub"><strong>이게 없으면:</strong> 시스템이 좋은 판단을 내려도 아무도 모릅니다.</p>
+    </div>
+
+    <!-- 챗봇 상세 -->
+    <div class="fn-detail" style="border-color:rgba(255,255,255,0.12);">
+      <div class="fn-question"><span class="fn-num">Chat</span> AI 챗봇 &mdash; 3소스 통합 질의응답</div>
+      <p><strong>왜 필요한가:</strong> F5가 자동 판단을 내리지만, 현장 기술자가 <strong>"왜 이런 판단이 나왔는지"</strong>, <strong>"이 부품 재고가 얼마인지"</strong>, <strong>"교체 절차가 뭔지"</strong> 등을 직접 물어봐야 할 때가 있습니다. 챗봇이 F4+F5를 재사용하여 자연어로 답변합니다.</p>
+
+      <h4 style="color:#f59e0b;margin-top:16px;">동작 원리 &mdash; 3소스 통합</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:12px 0;">
+        <div style="background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px;padding:14px;">
+          <p style="font-size:13px;font-weight:700;color:#4ade80;margin-bottom:6px;">1. DB 실시간 조회</p>
+          <p style="font-size:12px;color:#bbb;margin:0;">설비 이상 점수 (anomaly_scores)<br>부품 재고 (erp_inventory)<br>작업지시 (mes_work_orders)<br>정비이력 (maintenance_events)</p>
+        </div>
+        <div style="background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.15);border-radius:8px;padding:14px;">
+          <p style="font-size:13px;font-weight:700;color:#60a5fa;margin-bottom:6px;">2. Neo4j 온톨로지 순회</p>
+          <p style="font-size:12px;color:#bbb;margin:0;">고장코드 &rarr; 필요 부품 (R4)<br>고장코드 &rarr; 관련 매뉴얼 (R5)<br>설비 &rarr; 과거 고장 이력 (R3)<br>정비 &rarr; 해결한 고장 (R8)</p>
+        </div>
+        <div style="background:rgba(232,119,14,0.06);border:1px solid rgba(232,119,14,0.15);border-radius:8px;padding:14px;">
+          <p style="font-size:13px;font-weight:700;color:#e8770e;margin-bottom:6px;">3. pgvector 매뉴얼 검색</p>
+          <p style="font-size:12px;color:#bbb;margin:0;">47청크 중 유사도 Top 3<br>384차원 벡터 코사인 유사도<br>교체 절차서 / 체크리스트 /<br>트러블슈팅 가이드</p>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#d4d4d4;">3소스의 컨텍스트를 모두 합쳐서 <strong>GPT-4o-mini</strong>에 전달 &rarr; 근거 있는 답변 생성</p>
+
+      <h4 style="color:#f59e0b;margin-top:16px;">테스트 결과 (11/11 통과)</h4>
+      <div class="tbl-wrap" style="border-color:rgba(255,255,255,0.1);">
+      <table>
+        <thead><tr><th>카테고리</th><th>질문 예시</th><th>답변 핵심</th><th>소스</th></tr></thead>
+        <tbody>
+          <tr><td><strong>데이터 기반</strong></td><td>"CNC-002 현재 상태?"</td><td>"합산점수 0.83 위험, SPINDLE_OVERHEAT"</td><td>DB</td></tr>
+          <tr><td><strong>데이터 기반</strong></td><td>"P003 냉각수 재고?"</td><td>"P003 냉각수(20L) 재고 6개"</td><td>DB</td></tr>
+          <tr><td><strong>온톨로지</strong></td><td>"TOOL_WEAR 필요 부품?"</td><td>"P001 Endmill 6mm Carbide"</td><td>Neo4j</td></tr>
+          <tr><td><strong>온톨로지</strong></td><td>"CNC-001 과거 고장?"</td><td>"TOOL_WEAR, COOLANT_LOW, CLAMP_PRESSURE"</td><td>Neo4j</td></tr>
+          <tr><td><strong>정비 지식</strong></td><td>"스핀들 베어링 교체?"</td><td>6단계 절차 + "P002 재고 확인"</td><td>pgvector + Neo4j</td></tr>
+          <tr><td><strong>정비 지식</strong></td><td>"냉각수 부족 대응?"</td><td>5단계 + P003/P005 언급</td><td>pgvector</td></tr>
+          <tr><td><strong>일반</strong></td><td>"hello"</td><td>인사 + 도움 안내</td><td>LLM</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div style="margin-top:12px;">
+        <span class="fn-data-tag input">입력 : 자연어 질문 + 설비 ID(선택)</span>
+        <span class="fn-data-tag db">DB + Neo4j + pgvector 3소스</span>
+        <span class="fn-data-tag output">출력 : 한국어 답변 + 참조 문서 ID</span>
+      </div>
+      <p class="fn-sub"><strong>이게 없으면:</strong> 기술자가 매뉴얼을 직접 찾고, DB를 직접 조회해야 합니다. 수동 프로세스가 그대로 남습니다.</p>
     </div>
   </div>
 
@@ -3868,7 +3918,7 @@ const phaseDetails={
     ],
     outputs:[
       {text:'ontology-design.md',detail:'Neo4j 120노드 / 337관계 / 10종 관계 전부 완성. PG↔Neo4j 역할 분담, R7/R8 예외 명시'},
-      {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores 7컬럼, MES 9컬럼, 참조 마스터 4종'},
+      {text:'db-schema-design.md',detail:'sensor_readings 와이드 44컬럼, anomaly_scores 9컬럼(+if_score, forecast_score), MES 9컬럼, 참조 마스터 4종'},
       {text:'pipeline-design.md',detail:'F1→F2 매 5초 폴링, F3~F5 이벤트 트리거. 비동기 메인 루프 + process_alarm 분리'},
       {text:'api-design.md',detail:'14 엔드포인트 (F1~F5 POST 6 + F6 GET 6 + chat 1 + health 1). 챗봇 엔드포인트 추가'},
       {text:'ui-design.md',detail:'F6 대시보드 와이어프레임, 컴포넌트 8개, 폴링 전략, 색상 시스템. React 18 + Vite 확정 (ADR-006)'},
@@ -3913,7 +3963,7 @@ const phaseDetails={
       {text:'통합 테스트',detail:'test_integration.py — W5 + Spindle 시나리오 assert 검증'}
     ],
     handoff:[
-      {text:'F2 Forecasting 구현 완료',detail:'1D-CNN 시계열 예측 (ADR-007). 분리도 0.384, IF와 가중 합산(0.4). 개선 과제: Autoencoder 비교, 저속 마모 감지'},
+      {text:'F2 Forecasting 개선',detail:'1D-CNN 구현 완료 (ADR-007, 분리도 0.384). 남은 과제: Autoencoder 비교, 저속 마모(exp13) 감지 개선, FORECAST_WEIGHT 최적화'},
       {text:'F2 모델 개선',detail:'분리도 0.051 → Autoencoder 비교, 추가 피처, 공정별 분리 학습'},
       {text:'하이브리드 검색 가중치',detail:'Neo4j + pgvector 점수 결합 최적화 (open-items #10)'}
     ],
@@ -3987,7 +4037,54 @@ const phaseOverlayData={
       {num:'5',cls:'g',title:'ADR-006 프론트엔드 스택 확정',desc:'React 18 + Vite SPA 선택. SSR/SEO 불필요, 페이지 2개에 Next.js 과함',fix:'해결 완료: ADR-006 Decided (2026-03-16). open-items #11 Decided'}
     ]
   },
-  phase3:{log:[],adr:[],gap:[]}
+  phase3:{
+    log:[
+      {date:'2026-03-16 (Day 1)',goal:'인프라 구축 + F1~F2 구현',
+       items:[
+         '<strong>Docker Compose</strong> — PG(timescaledb-ha:pg16) + Neo4j(5-community) 컨테이너 구성',
+         '<strong>init.sql</strong> — 11테이블 + 마스터 데이터(3설비, 4고장, 5부품, 39센서) + hypertable + pgvector HNSW',
+         '<strong>FastAPI 스켈레톤</strong> — 14개 엔드포인트 mock 응답 + Pydantic 모델 + config 20+파라미터',
+         '<strong>F1 시뮬레이터</strong> — CSV→DB batch/stream, CamelCase→snake_case 변환, 25,286행 배치 로드 성공',
+         '<strong>F2 이상탐지</strong> — Isolation Forest 16피처, unworn fit + worn 검증 (분리도 0.051)',
+         '<strong>리뷰 18건 반영</strong> — 인프라 8건 + F1 5건 + F2 5건'
+       ],
+       outputs:'docker-compose.yml, db/init.sql, backend/ 스켈레톤, f2_detector.pkl'},
+      {date:'2026-03-16 (Day 1 연장)',goal:'F3~F5 + Neo4j + 임베딩 + 프론트엔드',
+       items:[
+         '<strong>F3 IT/OT 동기화</strong> — MES/Maintenance/ERP 실제 SQL 조회 (end_time 조건, 시점 필터)',
+         '<strong>F4 GraphRAG</strong> — Neo4j Cypher 순회 + pgvector 의미검색 2단계. 정적 매핑 → 실제 연동',
+         '<strong>F5 LLM 판단</strong> — GPT-4o-mini, JSON mode, 환각 검증(failure_code/part_id 화이트리스트)',
+         '<strong>Neo4j 온톨로지</strong> — 120노드 + 240관계(8종). init_neo4j.cypher + init_neo4j.py',
+         '<strong>매뉴얼 임베딩</strong> — 12문서 → 47청크 → pgvector 384차원 (sentence-transformers 로컬)',
+         '<strong>F6 React 대시보드</strong> — Palantir 3-Pane + 챗봇 FAB. 프론트-백엔드 실제 연동',
+         '<strong>통합 테스트</strong> — W5 Coolant 재고=0 + Spindle 과열 시나리오 2건 통과'
+       ],
+       outputs:'F3~F5 서비스, init_neo4j.py, embed_manuals.py, frontend/, test_integration.py'},
+      {date:'2026-03-17 (Day 2)',goal:'Phase 3 후반 개선 + F2 Forecasting',
+       items:[
+         '<strong>커넥션 풀</strong> — conn.close() → release_connection() 전체 교체 + SimpleConnectionPool(2~10)',
+         '<strong>AsyncOpenAI</strong> — llm_agent.py 동기→비동기 전환 (이벤트 루프 블로킹 제거)',
+         '<strong>config 이관</strong> — 매직넘버 14개 → settings 파라미터화',
+         '<strong>R2 DETECTS(7) + R10 REFERENCES(90)</strong> — 온톨로지 10/10종 337관계 완성',
+         '<strong>F5 판단 투명성</strong> — input_summary, rag_documents, alternatives_considered, full_reasoning',
+         '<strong>F2 Forecasting (ADR-007)</strong> — 1D-CNN 4피처, 30초→30초 예측. 분리도 0.384 (IF의 7.5배)',
+         '<strong>IF+Forecast 합산</strong> — final = 0.6×IF + 0.4×forecast, anomaly_scores에 if_score/forecast_score 저장',
+         '<strong>챗봇 3소스 통합</strong> — DB(재고/작업/센서) + Neo4j(고장→부품/매뉴얼) + pgvector(의미검색)',
+         '<strong>문서 동기화</strong> — overview, open-items, constraints, ontology, db-schema, pipeline 전부 최신화'
+       ],
+       outputs:'phase3-late-report.md, chatbot-test-report.md, ADR-007, f2_forecaster.pkl'}
+    ],
+    adr:[
+      {num:'ADR-007',title:'F2 Forecasting 모델 선택',decision:'1D-CNN + 4피처 + 가중 합산(0.4) + 30초/30초 윈도우',reason:'25,286행 제약 + 짧은 시퀀스(300행)에 CNN 적합. LSTM은 과적합 위험. 4피처로 해석 가능성↑',constraint:'매우 긴 주기 패턴(수 시간) 감지 불가. 실제 현장 데이터 시 LSTM/Transformer 재검토 필요'}
+    ],
+    gap:[
+      {num:'1',cls:'g',title:'F2 이상탐지 분리도 낮음 (0.051)',desc:'IF 단독으로는 worn/unworn 구분이 약함. 저속 마모(exp13) 감지율 1~2%.',fix:'해결: 1D-CNN Forecasting 추가로 분리도 0.384 달성 (7.5배 개선). 저속 마모는 후속 과제'},
+      {num:'2',cls:'g',title:'온톨로지 R2/R10 관계 부재',desc:'Phase 3 전반에서 8/10종만 구축. DETECTS, REFERENCES가 0건.',fix:'해결 완료: R2 DETECTS 7건 + R10 REFERENCES 90건 추가 → 10/10종 337관계'},
+      {num:'3',cls:'g',title:'mock 엔드포인트 10개 남음',desc:'14개 중 F3~F5만 실제 연결, 나머지 mock 응답.',fix:'해결 완료: 14개 전부 실제 DB 연결 (mock 0개)'},
+      {num:'4',cls:'y',title:'챗봇이 DB 데이터를 못 읽음',desc:'pgvector 매뉴얼 검색만 가능, 재고/작업/센서값 질문에 "확인 필요"',fix:'해결: DB 조회 + Neo4j 순회 + pgvector 3소스 통합. 12/12 테스트 통과'},
+      {num:'5',cls:'y',title:'F2 Forecasting 미구현 (PRD 핵심)',desc:'PRD의 "예지보전" 약속 중 "예측" 부분 미구현. 이상탐지만 있음.',fix:'해결: ADR-007, 1D-CNN 구현. 분리도 0.384, IF와 가중 합산(0.4)'}
+    ]
+  }
 };
 
 function renderPhaseHub(phaseKey){

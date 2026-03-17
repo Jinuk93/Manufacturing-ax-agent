@@ -319,8 +319,8 @@ CREATE FULLTEXT INDEX document_search FOR (d:Document) ON EACH [d.text_represent
 | WorkOrder 노드 | 18 | IT 합성 MES |
 | MaintenanceAction 노드 | 39 | IT 합성 Maintenance |
 | Document 노드 | 12 | 합성 완료 (4 고장코드 × 3 문서유형) |
-| **총 노드** | **~123** | |
-| **총 관계** | **~200+ (예상)** | 노드 간 연결 |
+| **총 노드** | **120** | Phase 3 확정 |
+| **총 관계** | **337** | 10종 전부 완성 (R2 DETECTS 7 + R10 REFERENCES 90 포함) |
 
 > 소규모 그래프이지만, F4 GraphRAG의 핵심은 크기가 아니라 **관계의 정확성**과 **질의 경로의 명확성**이다.
 

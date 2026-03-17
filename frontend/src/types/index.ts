@@ -11,6 +11,8 @@ export interface Equipment {
   anomaly_score: number
   predicted_failure_code?: string
   last_updated: string          // ISO 8601
+  if_score?: number
+  forecast_score?: number
 }
 
 export interface DashboardSummary {
@@ -26,6 +28,8 @@ export interface AnomalyResult {
   predicted_failure_code?: string
   confidence?: number
   model_version?: string
+  if_score?: number
+  forecast_score?: number
 }
 
 // F5 — LLM 판단 결과

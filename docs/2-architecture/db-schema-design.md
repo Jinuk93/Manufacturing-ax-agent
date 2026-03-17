@@ -114,6 +114,8 @@ CREATE TABLE anomaly_scores (
   model_version    VARCHAR(20),              -- 사용된 모델 버전
   predicted_failure_code VARCHAR(30),         -- 예측된 고장코드 (nullable)
   confidence       FLOAT8,                   -- 예측 신뢰도
+  if_score         FLOAT8,                   -- Isolation Forest 단독 점수 (ADR-007)
+  forecast_score   FLOAT8,                   -- 1D-CNN 예측 점수 (ADR-007)
 
   PRIMARY KEY (timestamp, equipment_id)
 );
