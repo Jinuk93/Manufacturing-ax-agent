@@ -146,8 +146,8 @@
 
 | 파라미터 | 기본값 | 설명 | 결정 시점 |
 |---------|--------|------|-----------|
-| `PREDICTION_WINDOW_MIN` | 30 | 예측 입력 윈도우 (분) | Phase 3 실험 |
-| `FORECAST_HORIZON_MIN` | 30 | 예측 범위 (분) | Phase 3 실험 |
+| `PREDICTION_WINDOW_MIN` | 30 | 예측 입력 윈도우 → **ADR-007: 30초(300행)로 조정** | Phase 3 확정 |
+| `FORECAST_HORIZON_MIN` | 30 | 예측 범위 → **ADR-007: 30초(300행)로 조정** (실험 1~4분 제약) | Phase 3 확정 |
 | `ANOMALY_THRESHOLD` | 0.5 | 이상 판정 임계치 | Phase 3 PR곡선 |
 | `MODEL_TYPE` | isolation_forest | 모델 종류 | Phase 3 비교 |
 | `MODEL_VERSION` | v0.1 | 모델 버전 추적 | 학습 시 자동 |
