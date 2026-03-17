@@ -520,7 +520,6 @@ function WorkOrderAnalysisView() {
 
   const workOrders = [w1.data, w2.data, w3.data]
   const actions = [r1.data, r2.data, r3.data]
-  const cardStyle = { background: 'var(--dg3)', border: '1px solid var(--border-mid)', borderRadius: '3px', boxShadow: '0 1px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.03)' }
 
   // 분석 데이터
   const activeWOs = workOrders.filter(w => w?.work_order).length

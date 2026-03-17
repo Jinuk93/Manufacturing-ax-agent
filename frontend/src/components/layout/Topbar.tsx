@@ -46,7 +46,6 @@ function usePredictiveWarnings() {
 
   EQ_IDS.forEach((id, i) => {
     const score = anomalies[i]?.anomaly_score ?? 0
-    const fc = anomalies[i]?.predicted_failure_code
     const history = histories[i]?.history ?? []
 
     // 이미 STOP 초과 → 이건 "이상 감지"이므로 예지보전 경고에서 제외
@@ -75,12 +74,10 @@ function usePredictiveWarnings() {
 }
 
 export default function Topbar() {
-  const { activeOverlay, toggleOverlay, selectedEquipmentId, selectedAlarm, setSelectedEquipmentId, setSelectedAlarm, setPredictiveMode } = useDashboardStore()
+  const { activeOverlay, toggleOverlay, setPredictiveMode } = useDashboardStore()
 
   const { data: health, dataUpdatedAt } = useQuery({ queryKey: ['health'], queryFn: getHealth, refetchInterval: 10000, retry: false })
   const warnings = usePredictiveWarnings()
-
-  const isOverview = selectedEquipmentId === null && selectedAlarm === null
   const lastUpdated = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     : '--:--:--'

@@ -684,7 +684,7 @@ function DetailView({ equipmentId }: { equipmentId: string }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,200,255,0.04)" />
                 <XAxis dataKey="t" tick={{ fontSize: 7, fill: '#475569' }} interval="preserveStartEnd" tickLine={false} axisLine={{ stroke: 'var(--border-subtle)' }} />
                 <YAxis domain={[0, 1]} tick={{ fontSize: 7, fill: '#475569' }} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={CHART_TOOLTIP} formatter={(v: number) => [v.toFixed(3), '이상점수']} />
+                <Tooltip contentStyle={CHART_TOOLTIP} formatter={(v) => [Number(v).toFixed(3), '이상점수']} />
                 <ReferenceLine y={0.8} stroke="var(--red5)" strokeDasharray="4 2" strokeOpacity={0.5} />
                 <ReferenceLine y={0.6} stroke="var(--yellow5)" strokeDasharray="4 2" strokeOpacity={0.5} />
                 <Line type="monotone" dataKey="score" stroke="var(--cyan)" dot={false} strokeWidth={1.5} />
