@@ -28,7 +28,7 @@ PRD v1.0 시점에서 아직 결정되지 않은 항목들을 추적합니다.
 | # | 항목 | 왜 미결인가 | 결정 시점 | 상태 |
 |---|------|------------|-----------|------|
 | 6 | 이상 탐지 모델 선택 | Isolation Forest 선택 (f2-anomaly-detection-design.md). **16개 피처** (14 base + 2 파생: x_position_deviation, x_power_ratio), unworn fit, worn 검증. Autoencoder 비교는 후속 과제 | Phase 3 | **Decided** |
-| 7 | LSTM 예측 윈도우 크기 | WINDOW_SIZE_SEC=30 (config 파라미터). Phase 3 후반 실험으로 조정 예정 | 모델 실험 시 | Open |
+| 7 | ~~LSTM 예측 윈도우~~ → **F2 Forecasting 모델** | ADR-007: 1D-CNN + 4피처 + 30초입력→30초예측 + 가중합산(weight=0.4). LSTM 대신 1D-CNN 선택 (짧은 시퀀스 적합) | Phase 4 | **Decided (ADR-007)** |
 | 8 | Anomaly Score 임계치 기준 | ANOMALY_THRESHOLD=0.5 (config). STOP=0.8, REDUCE=0.6. Phase 3 후반 PR곡선으로 최적화 예정 | 모델 실험 시 | Open |
 
 ## C. 시스템/인프라 관련
@@ -47,7 +47,7 @@ PRD v1.0 시점에서 아직 결정되지 않은 항목들을 추적합니다.
 
 ---
 
-> **요약:** 12건 중 **8건 Decided** / **1건 Partial** (#10) / **3건 Open** (#7, #8, #12)
+> **요약:** 12건 중 **9건 Decided** / **1건 Partial** (#10) / **2건 Open** (#8, #12)
 >
 > **운영 규칙:**
 > - 결정되면 상태를 `Decided`로 변경하고, 해당 ADR 번호를 기재
