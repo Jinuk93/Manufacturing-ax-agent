@@ -3,7 +3,6 @@
 // 디폴트: 전체 설비 3대 동시 모니터링
 // ============================================================
 
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -49,7 +48,7 @@ function PanelHeader({ title, sub, live }: { title: string; sub?: string; live?:
 }
 
 // ── 설비별 미니 센서 차트 ─────────────────────────────────
-function MiniSensorChart({ equipmentId }: { equipmentId: string }) {
+function _MiniSensorChart({ equipmentId }: { equipmentId: string }) {
   const { data, isLoading } = useQuery({ queryKey: ['sensors', equipmentId], queryFn: () => getSensorTimeseries(equipmentId), refetchInterval: 3000, retry: false })
   const series: SensorPoint[] = [...(data?.series ?? [])].reverse()
   const chartData = series.map((p) => ({ ...p, t: p.timestamp.slice(11, 19) }))
@@ -77,7 +76,7 @@ function MiniSensorChart({ equipmentId }: { equipmentId: string }) {
 }
 
 // ── 설비별 미니 이상추이 차트 ─────────────────────────────
-function MiniAnomalyChart({ equipmentId }: { equipmentId: string }) {
+function _MiniAnomalyChart({ equipmentId }: { equipmentId: string }) {
   const { data, isLoading } = useQuery({ queryKey: ['anomaly-history', equipmentId], queryFn: () => getAnomalyHistory(equipmentId), refetchInterval: 3000, retry: false })
   const chartData = [...(data?.history ?? [])].reverse().slice(-40).map((h) => ({
     t: new Date(h.timestamp).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
@@ -126,8 +125,6 @@ function SummaryTable({ eqs }: { eqs: Equipment[] }) {
 
   const statusColor = (s: string) => s === 'critical' ? 'var(--red5)' : s === 'warning' ? 'var(--yellow5)' : 'var(--green5)'
   const statusLabel = (s: string) => s === 'critical' ? '위험' : s === 'warning' ? '경고' : '정상'
-  const recColor = (r?: string) => r === 'STOP' ? 'var(--red5)' : r === 'REDUCE' ? 'var(--yellow5)' : 'var(--cyan)'
-
   const cellFont = { fontSize: '10px', fontFamily: sans, fontWeight: 400 as const }
   const thStyle = { fontSize: '10px', fontWeight: 700 as const, color: 'var(--gray4)', fontFamily: sans, padding: '6px 8px', textAlign: 'left' as const, borderBottom: '1px solid var(--border-mid)' }
   const tdStyle = { ...cellFont, padding: '5px 8px', borderBottom: '1px solid var(--border-mid)', color: 'var(--gray4)', textAlign: 'center' as const, background: 'transparent' }
@@ -285,15 +282,11 @@ function PredictiveMaintenanceView() {
   const a1 = useQuery({ queryKey: ['anomaly', 'CNC-001'], queryFn: () => getEquipmentAnomaly('CNC-001'), refetchInterval: 3000, retry: false })
   const a2 = useQuery({ queryKey: ['anomaly', 'CNC-002'], queryFn: () => getEquipmentAnomaly('CNC-002'), refetchInterval: 3000, retry: false })
   const a3 = useQuery({ queryKey: ['anomaly', 'CNC-003'], queryFn: () => getEquipmentAnomaly('CNC-003'), refetchInterval: 3000, retry: false })
-  const r1 = useQuery({ queryKey: ['action', 'CNC-001'], queryFn: () => getActionReport('CNC-001'), retry: false, staleTime: 30_000 })
-  const r2 = useQuery({ queryKey: ['action', 'CNC-002'], queryFn: () => getActionReport('CNC-002'), retry: false, staleTime: 30_000 })
-  const r3 = useQuery({ queryKey: ['action', 'CNC-003'], queryFn: () => getActionReport('CNC-003'), retry: false, staleTime: 30_000 })
   const h1 = useQuery({ queryKey: ['anomaly-history', 'CNC-001'], queryFn: () => getAnomalyHistory('CNC-001'), refetchInterval: 3000, retry: false })
   const h2 = useQuery({ queryKey: ['anomaly-history', 'CNC-002'], queryFn: () => getAnomalyHistory('CNC-002'), refetchInterval: 3000, retry: false })
   const h3 = useQuery({ queryKey: ['anomaly-history', 'CNC-003'], queryFn: () => getAnomalyHistory('CNC-003'), refetchInterval: 3000, retry: false })
 
   const anomalies = [a1.data, a2.data, a3.data]
-  const actions = [r1.data, r2.data, r3.data]
   const histories = [h1.data, h2.data, h3.data]
 
   const statusColor = (s: number) => s >= 0.8 ? 'var(--red5)' : s >= 0.6 ? 'var(--yellow5)' : 'var(--green5)'
@@ -326,10 +319,6 @@ function PredictiveMaintenanceView() {
     if (anomalyData?.forecast_score != null) return anomalyData.forecast_score
     return null  // 데이터 없으면 null (가짜 jitter 제거)
   }
-  function getIfScore(anomalyData: { anomaly_score: number; if_score?: number } | undefined) {
-    return anomalyData?.if_score ?? anomalyData?.anomaly_score ?? 0
-  }
-
   const thStyle = { fontSize: '10px', fontWeight: 700 as const, color: 'var(--gray4)', fontFamily: sans, padding: '6px 8px', textAlign: 'left' as const, borderBottom: '1px solid var(--border-mid)' }
   const tdStyle = { fontSize: '10px', fontFamily: sans, fontWeight: 400 as const, padding: '5px 8px', borderBottom: '1px solid var(--border-mid)', color: 'var(--gray4)', textAlign: 'center' as const }
 

@@ -525,7 +525,6 @@ function WorkOrderAnalysisView() {
   const activeWOs = workOrders.filter(w => w?.work_order).length
   const completedWOs = workOrders.filter(w => w?.work_order?.status === 'completed').length
   const urgentWOs = workOrders.filter(w => w?.work_order?.priority === 'urgent' || w?.work_order?.priority === 'critical').length
-  const stopEquipments = actions.filter(r => r?.recommendation === 'STOP')
   const totalMaint = workOrders.reduce((sum, w) => sum + (w?.recent_maintenance?.length ?? 0), 0)
 
   // 리스크 분석

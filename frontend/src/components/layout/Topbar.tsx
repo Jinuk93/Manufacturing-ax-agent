@@ -76,7 +76,7 @@ function usePredictiveWarnings() {
 export default function Topbar() {
   const { activeOverlay, toggleOverlay, setPredictiveMode } = useDashboardStore()
 
-  const { data: health, dataUpdatedAt } = useQuery({ queryKey: ['health'], queryFn: getHealth, refetchInterval: 10000, retry: false })
+  const { dataUpdatedAt } = useQuery({ queryKey: ['health'], queryFn: getHealth, refetchInterval: 10000, retry: false })
   const warnings = usePredictiveWarnings()
   const lastUpdated = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
