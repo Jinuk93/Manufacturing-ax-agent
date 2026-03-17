@@ -39,7 +39,10 @@ def _get_neo4j_driver():
 
 
 def _get_embed_model():
-    """SentenceTransformer 싱글턴 (첫 호출 시 수 초 로드, 이후 즉시)"""
+    """SentenceTransformer 싱글턴 — DISABLE_EMBED=true면 None (OOM 방지)"""
+    import os
+    if os.environ.get('DISABLE_EMBED', '').lower() in ('true', '1', 'yes'):
+        return None
     global _embed_model
     if _embed_model is None:
         from sentence_transformers import SentenceTransformer

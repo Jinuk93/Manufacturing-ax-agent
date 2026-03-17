@@ -380,6 +380,8 @@ def _search_relevant_docs(query: str, top_k: int = 3) -> tuple[list[dict], list[
     """pgvector 의미 검색으로 관련 매뉴얼 청크 조회"""
     try:
         model = _get_embed_model()
+        if model is None:
+            return [], []
         query_vec = model.encode(query, normalize_embeddings=True)
         vec_str = "[" + ",".join(str(v) for v in query_vec.tolist()) + "]"
 
