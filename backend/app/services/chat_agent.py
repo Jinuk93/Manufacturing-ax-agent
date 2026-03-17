@@ -97,7 +97,9 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
                 # 설비 상태 (anomaly_score)
                 if any(kw in query_lower for kw in [
                     "상태", "status", "anomaly", "이상", "점수", "score",
-                    "현재", "current", "cnc"
+                    "현재", "current", "cnc", "로그", "log", "감지",
+                    "detect", "알람", "alarm", "데이터", "data", "모니터",
+                    "monitor", "위험", "경고", "warning", "critical"
                 ]):
                     eq_ids = [equipment_id] if equipment_id else ["CNC-001", "CNC-002", "CNC-003"]
                     for eq in eq_ids:
@@ -124,7 +126,9 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
                 # 재고 조회
                 if any(kw in query_lower for kw in [
                     "재고", "stock", "inventory", "부품", "part", "p00",
-                    "coolant", "endmill", "bearing", "filter", "bolt"
+                    "coolant", "endmill", "bearing", "filter", "bolt",
+                    "냉각", "엔드밀", "베어링", "필터", "볼트", "수량",
+                    "남은", "잔량", "발주", "reorder"
                 ]):
                     cur.execute("""
                         SELECT p.part_id, p.part_name, e.stock_quantity, e.reorder_point,
@@ -143,7 +147,8 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
 
                 # 작업지시 조회
                 if any(kw in query_lower for kw in [
-                    "작업", "work", "order", "납기", "due", "진행"
+                    "작업", "work", "order", "납기", "due", "진행",
+                    "생산", "가공", "production", "schedule", "일정"
                 ]):
                     eq_filter = "WHERE equipment_id = %s" if equipment_id else ""
                     params = (equipment_id,) if equipment_id else ()
@@ -163,7 +168,8 @@ def _query_db_context(query: str, equipment_id: str | None) -> str | None:
                 # 정비이력 조회
                 if any(kw in query_lower for kw in [
                     "정비", "maintenance", "이력", "history", "수리",
-                    "고장", "failure", "과거"
+                    "고장", "failure", "과거", "교체", "점검", "repair",
+                    "교정", "preventive", "corrective"
                 ]):
                     eq_filter = "WHERE equipment_id = %s" if equipment_id else ""
                     params = (equipment_id,) if equipment_id else ()
